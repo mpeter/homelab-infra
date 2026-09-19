@@ -46,6 +46,7 @@ to diagnose or rebuild the cluster.
 | `docs/implementation-plan.md` | Ordered delivery plan and completion evidence |
 | `docs/storage-plan.md` | Pool layout, boot resilience, and disk identities |
 | `docs/networking-plan.md` | Management and workload network design |
+| `docs/brocade-projects.md` | Prioritized ICX experiments and community patterns |
 | `network/` | Brocade and UniFi ownership, adoption, and recovery contracts |
 | `docs/backup-recovery.md` | Backup, restore, UPS, and bare-metal recovery |
 | `docs/decisions/` | Architecture Decision Records |

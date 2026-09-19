@@ -103,3 +103,6 @@ automation is enabled.
   migration flexibility.
 - Use the Mellanox adapter for a dedicated backup/storage path or lab testing
   after the primary bridge is stable.
+- Work through the staged ICX experiments in
+  [`brocade-projects.md`](brocade-projects.md), starting with read-only inventory
+  and telemetry.
