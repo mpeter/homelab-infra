@@ -17,15 +17,21 @@ The community uses retired ICX hardware as much more than a dense access switch:
 - an enterprise CLI and automation target with real configuration and recovery
   behavior.
 
-The management interface identifies the switch as an ICX6610-48P. The known
-live port is `1/2/2`, which is in the rear QSFP+ module. That module provides two
-native 40 GbE ports and two QSFP+ connectors used as 4x10 GbE breakout. Interface
-read-back is still required to identify the physical connector, configured mode,
-and negotiated link speed.
+The live inventory identifies the switch as an ICX6610-48P running FastIron
+08.0.30t. The rear module currently has native 40 GbE links up on `1/2/1` and
+`1/2/6`, 10 GbE breakout lanes up on `1/2/2` through `1/2/5`, and the second
+breakout group down. Port `1/3/1` is the active 10 GbE LAN uplink based on the
+downstream MAC table. The reported R720 cable is on `1/2/2`, but the server's
+interface identity has not yet been verified from both ends.
 
-## Discovery gate
+The switch also has a still-live VLAN 132: `1/1/48` is tagged and native 40 GbE
+port `1/2/6` is untagged. Do not reuse either port until that network and its
+far-end device are identified.
 
-Capture these read-only commands before selecting a project:
+## Captured baseline
+
+The initial read-only discovery and configuration backup are complete. Repeat
+these commands before a change window to detect drift:
 
 ```text
 show version
@@ -46,6 +52,18 @@ map, temperature and fan state, power supplies, licenses, optic/DAC identity,
 link speed, VLAN membership, LAGs, and stack configuration. Back up both running
 and startup configuration before writes.
 
+The 2026-09-19 baseline found:
+
+- primary image 08.0.30t and older 07.3.00 secondary image;
+- active 10G port-on-demand, advanced Layer 3, and MACsec licenses;
+- identical running and startup configurations captured outside the public repo;
+- a system clock that is not synchronized;
+- repeated PoE controller reset failures even though fans, power supplies, and
+  chassis temperature are healthy;
+- Telnet and plaintext HTTP enabled, no HTTPS or SNMP listener, and SSH limited
+  to obsolete algorithms;
+- no observed Layer 3 forwarding traffic.
+
 ## Recommended projects
 
 ### 1. Instrument the physical network
@@ -61,10 +79,11 @@ daily read-only health artifact.
 
 ### 2. Make the R720 a measured 40 GbE endpoint
 
-If `1/2/2` is a real 40 GbE data port and the Mellanox ConnectX-3 supports the
-matching Ethernet mode, connect it as a dedicated high-speed Proxmox, storage,
-or lab trunk. Keep the existing management path until link, MTU, VLAN, reboot,
-and throughput tests pass.
+Use one of the native 40 GbE ports only after identifying its current peer and
+VLAN role. Port `1/2/2` is a 10 GbE breakout lane, so it cannot be used as a
+single 40 GbE endpoint. A future 40 GbE Proxmox or storage link needs `1/2/1` or
+`1/2/6` plus a compatible NIC and cable. Keep the existing management path until
+link, MTU, VLAN, reboot, and throughput tests pass.
 
 Use `iperf3` between separate guests or a future NAS to measure the complete
 path. A single flow may be limited by guest CPU, storage, NUMA placement, or the
@@ -73,10 +92,10 @@ experiment, not a prerequisite.
 
 ### 3. Use QSFP breakout as a compact 10 GbE fan-out
 
-If the model exposes breakout-only QSFP+ ports, one cable can provide four 10
-GbE server links. This is useful for the R720, a backup target, a workstation,
-and a future node without consuming the front SFP+ bank. Confirm the exact rear
-port map first; a breakout-only port cannot become a third 40 GbE port.
+The live rear module exposes two four-lane 10 GbE breakout groups. Lanes
+`1/2/2` through `1/2/5` are up; `1/2/7` through `1/2/10` are available after
+their cabling and intended VLAN are confirmed. This provides server fan-out
+without consuming the front SFP+ bank.
 
 ### 4. Peer OpenShift with the physical network using BGP
 
@@ -163,6 +182,10 @@ single R720 highly available.
   configuration backup, and rollback have been tested.
 - `write memory` is required to make FastIron changes survive reboot. Runtime
   read-back and startup configuration must both be verified.
+- Repair time synchronization before relying on logs, certificate validation,
+  scheduled automation, or event correlation.
+- Treat the PoE controller reset loop as a hardware or firmware fault until the
+  PoE firmware and controller state are diagnosed from the serial console.
 - Model, firmware, licenses, and module population change the feature set. The
   feature matrix is authoritative after live inventory.
 - Moving routing into ICX can bypass UniFi policy and visibility.

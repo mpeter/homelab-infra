@@ -4,20 +4,60 @@ devices:
   brocade_core:
     platform: brocade_fastiron_icx
     model: ICX6610-48P
-    firmware: pending_live_inventory
+    firmware: 08.0.30tT7f3
+    boot_monitor: 10.1.00T7f5
     management_endpoint: local_inventory_only
     configuration_owner: ansible_automation_platform
+    installed_capabilities:
+      - advanced_l3
+      - macsec
+      - ten_gigabit_port_on_demand
     observed_management_services:
       ssh: legacy_algorithms_only
       telnet: enabled
       http: enabled
       https: disabled
       snmp: not_listening
+    operational_findings:
+      clock_synchronized: false
+      layer_3_forwarding_observed: false
+      poe_controller_healthy: false
+      running_matches_startup: true
+    vlans:
+      default:
+        id: 1
+      legacy_deckpin:
+        id: 132
+        tagged_ports:
+          - "1/1/48"
+        untagged_ports:
+          - "1/2/6"
     known_connections:
+      current_lan_uplink:
+        port: "1/3/1"
+        negotiated_speed: 10G
+        evidence: downstream_mac_table
       pve_primary:
         port: "1/2/2"
-        mode: access
+        status: cabling_reported_identity_unverified
+        port_type: qsfp_breakout_lane
+        negotiated_speed: 10G
+        mode: untagged
         pvid: 1
+    rear_port_state:
+      native_40g_up:
+        - "1/2/1"
+        - "1/2/6"
+      breakout_10g_up:
+        - "1/2/2"
+        - "1/2/3"
+        - "1/2/4"
+        - "1/2/5"
+      breakout_10g_down:
+        - "1/2/7"
+        - "1/2/8"
+        - "1/2/9"
+        - "1/2/10"
 
   unifi_control_plane:
     product: pending_live_inventory
@@ -28,6 +68,6 @@ devices:
 
 adoption_gates:
   brocade_write_enabled: false
-  brocade_configuration_backup_complete: false
+  brocade_configuration_backup_complete: true
   unifi_provider_selected: false
   unifi_import_complete: false
