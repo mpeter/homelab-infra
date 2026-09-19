@@ -22,6 +22,8 @@ devices:
       clock_synchronized: true
       layer_3_forwarding_observed: false
       poe_controller_healthy: false
+      poe_controller_failure_scope: shared_initialization_layer
+      poe_recovery_payload_staged: true
       running_matches_startup: true
     time_sync:
       protocol: ntp_v4

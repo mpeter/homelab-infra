@@ -186,7 +186,8 @@ single R720 highly available.
 - Keep NTP client synchronization and source selection in the health checks so
   logs and automation retain reliable timestamps.
 - Treat the PoE controller reset loop as a hardware or firmware fault until the
-  PoE firmware and controller state are diagnosed from the serial console.
+  staged firmware recovery in [the PoE RCA](brocade-poe-rca.md) has been run and
+  verified.
 - Model, firmware, licenses, and module population change the feature set. The
   feature matrix is authoritative after live inventory.
 - Moving routing into ICX can bypass UniFi policy and visibility.
