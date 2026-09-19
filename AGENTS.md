@@ -14,9 +14,10 @@ between boots.
 
 Keep ownership clear:
 
-- OpenTofu owns Proxmox resources.
-- Ansible Automation Platform configures operating systems and orchestrates
-  workflows.
+- OpenTofu owns Proxmox resources and supported UniFi resources. Proxmox and
+  UniFi use separate state backends.
+- Ansible Automation Platform configures operating systems, manages the
+  Brocade switch, captures network backups, and orchestrates workflows.
 - cloud-init or Ignition performs first-boot initialization.
 - OpenShift GitOps owns resources inside OpenShift.
 - Proxmox remains an appliance; do not install workload services on the host.
@@ -35,3 +36,8 @@ check mode where meaningful, API read-back after controller changes, OpenShift
 reconciliation status for GitOps changes, and an actual restore or boot test for
 recovery changes. A successful command is not proof that the intended runtime
 state exists.
+
+Network changes require current configuration backups and a tested rescue path.
+Adopt existing UniFi objects by import before applying desired state. Treat a
+Brocade command preview as advisory until it has been tested against the exact
+switch model and firmware in a pinned execution environment.

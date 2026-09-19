@@ -1,0 +1,26 @@
+observed_at: 2026-09-19
+
+devices:
+  brocade_core:
+    platform: brocade_fastiron_or_icx
+    model: pending_live_inventory
+    firmware: pending_live_inventory
+    management_endpoint: local_inventory_only
+    configuration_owner: ansible_automation_platform
+    known_connections:
+      pve_primary:
+        port: "1/2/2"
+        mode: access
+        pvid: 1
+
+  unifi_control_plane:
+    product: pending_live_inventory
+    version: pending_live_inventory
+    management_endpoint: local_inventory_only
+    configuration_owner: opentofu_after_import
+    operational_owner: ansible_automation_platform
+
+adoption_gates:
+  brocade_write_enabled: false
+  unifi_provider_selected: false
+  unifi_import_complete: false

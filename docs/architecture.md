@@ -13,6 +13,8 @@ Ansible Automation Platform, OpenShift, and disposable project environments.
 | Physical hardware | iDRAC and AAP OpenManage automation | Inventory, firmware, BIOS, diagnostics, power |
 | Hypervisor | Proxmox VE | VM lifecycle, local storage attachment, bridges, backups |
 | Resource provisioning | OpenTofu with the Proxmox provider | VMs, containers, disks, networks, tags, startup order |
+| UniFi control plane | OpenTofu with a compatibility-tested UniFi provider | Networks, WLANs, DHCP, DNS, firewall policy |
+| Brocade switching | AAP with a pinned network execution environment | Inventory, configuration backup, port and VLAN changes, verification |
 | First boot | cloud-init or Ignition | Identity, SSH trust, networking, guest agent bootstrap |
 | Operating systems | AAP | RHEL/Fedora configuration, packages, policy, services |
 | OpenShift cluster | OpenShift Operators and AAP bootstrap | Cluster installation and platform services |
@@ -50,8 +52,14 @@ Mirrors and RAIDZ protect against selected disk failures, not loss of the host,
 controller, rack power, switch, or site. Backups and infrastructure state must
 therefore have an independent destination.
 
-The Brocade switch, router, and R720 remain individual failure domains. A NIC
-bond protects against a port, optic, or cable failure but not switch failure.
+The Brocade switch, UniFi gateway/controller, and R720 remain individual failure
+domains. A NIC bond protects against a port, optic, or cable failure but not
+switch failure.
+
+OpenTofu state for Proxmox and UniFi is separated so a provider failure or
+incorrect plan cannot span compute and network control planes. AAP coordinates
+multi-layer work through explicit workflow stages; it does not make the stages
+one transaction.
 
 ## Explicit exclusions
 

@@ -11,7 +11,7 @@ environment is managed from this repository yet.
 
 ```mermaid
 flowchart TD
-    Git[Private Git repository] --> Tofu[OpenTofu]
+    Git[Git repository] --> Tofu[OpenTofu]
     Git --> AAP[Ansible Automation Platform]
     Git --> Argo[OpenShift GitOps / Argo CD]
 
@@ -27,6 +27,8 @@ flowchart TD
     AAP --> AAPVM
     AAP --> IdM
     AAP --> OCP
+    AAP --> Brocade[Brocade switch]
+    Tofu --> UniFi[UniFi controller]
     Argo --> OCP
 ```
 
@@ -44,6 +46,7 @@ to diagnose or rebuild the cluster.
 | `docs/implementation-plan.md` | Ordered delivery plan and completion evidence |
 | `docs/storage-plan.md` | Pool layout, boot resilience, and disk identities |
 | `docs/networking-plan.md` | Management and workload network design |
+| `network/` | Brocade and UniFi ownership, adoption, and recovery contracts |
 | `docs/backup-recovery.md` | Backup, restore, UPS, and bare-metal recovery |
 | `docs/decisions/` | Architecture Decision Records |
 | `tofu/` | Future Proxmox resource definitions |
@@ -59,8 +62,9 @@ to diagnose or rebuild the cluster.
 4. Remove stale installer media and normalize Proxmox package repositories.
 5. Build storage pools using stable device identifiers.
 6. Establish management networking, DNS, certificates, and remote access.
-7. Deploy the Fedora development VM, AAP, IdM, and OpenShift in that order.
-8. Establish independent backups, alerts, and tested recovery.
+7. Import the Brocade and UniFi configuration into reviewed management workflows.
+8. Deploy the Fedora development VM, AAP, IdM, and OpenShift in that order.
+9. Establish independent backups, alerts, and tested recovery.
 
 See [the implementation plan](docs/implementation-plan.md) for gates and
 dependencies.

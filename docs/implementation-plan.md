@@ -46,26 +46,42 @@ is active, and recovery tests succeed.
 ## Phase 3: network foundation
 
 - Select the internal domain, VLANs, subnets, reservations, and naming scheme.
-- Back up Brocade and UniFi configurations.
+- Record the Brocade model, firmware, console recovery method, and current
+  running configuration.
+- Record the UniFi controller product, version, API surface, object IDs, and a
+  controller backup.
+- Store raw Brocade and UniFi backups encrypted and off-host.
+- Prove read-only access with dedicated Brocade and UniFi automation identities.
+- Test the pinned Brocade execution environment against the live firmware; use
+  generic CLI automation if the archived ICX collection is incompatible.
+- Test current UniFi providers against the live controller and record the
+  selection in an ADR update before creating state.
 - Introduce the redundant PVE bond while preserving fallback management access.
 - Create the VLAN-aware bridge and routed/firewalled network boundaries.
 - Issue trusted certificates and establish VPN-based remote administration.
 
-Completion evidence: management survives either bonded link being disconnected,
-DNS and certificates work, and firewall rules are tested from permitted and
-denied networks.
+Completion evidence: encrypted backups and rescue procedures are restorable,
+read-only automation succeeds, management survives either bonded link being
+disconnected, DNS and certificates work, and firewall rules are tested from
+permitted and denied networks.
 
 ## Phase 4: configuration-as-code bootstrap
 
-- Select the private Git remote and protected default-branch policy.
+- Confirm the Git remote and protected default-branch policy.
 - Configure an encrypted off-host OpenTofu state backend with locking.
+- Create separate Proxmox and UniFi state backends and apply identities.
 - Create narrowly scoped PVE and iDRAC automation identities.
+- Import existing UniFi objects and reach a no-change plan before managing them.
 - Implement reusable OpenTofu VM modules and RHEL/Fedora cloud-init templates.
 - Create the base AAP execution environment with pinned collections and tools.
+- Create a separate Brocade execution environment plus audit, backup, apply,
+  verify, and rollback job templates.
 - Import any pre-existing resource before declaring it managed.
 
-Completion evidence: a reviewed plan creates and destroys a disposable VM, no
-secret or state file appears in Git, and the state can be recovered off-host.
+Completion evidence: a reviewed plan creates and destroys a disposable VM,
+UniFi produces a no-change plan after import, a Brocade audit and backup job
+succeeds without changing the switch, no secret or state file appears in Git,
+and both state backends can be recovered off-host.
 
 ## Phase 5: primary development environment
 
