@@ -17,9 +17,11 @@ The community uses retired ICX hardware as much more than a dense access switch:
 - an enterprise CLI and automation target with real configuration and recovery
   behavior.
 
-The known live port is `1/2/2`. On an ICX6610, module 2 is the rear QSFP+
-module, and two rear ports are 40 GbE while the other two are 4x10 GbE breakout
-ports. This makes an ICX6610 plausible, but the port name alone is not proof.
+The management interface identifies the switch as an ICX6610-48P. The known
+live port is `1/2/2`, which is in the rear QSFP+ module. That module provides two
+native 40 GbE ports and two QSFP+ connectors used as 4x10 GbE breakout. Interface
+read-back is still required to identify the physical connector, configured mode,
+and negotiated link speed.
 
 ## Discovery gate
 
@@ -155,6 +157,10 @@ single R720 highly available.
 - ICX6xxx management crypto is old. Put management on an isolated network and
   scope legacy SSH algorithms to a dedicated bastion or execution environment;
   do not enable them globally on administrator systems.
+- The live switch currently exposes Telnet and plaintext HTTP, provides no
+  HTTPS listener, and offers only legacy SSH key exchange and host-key
+  algorithms. Disable Telnet and HTTP only after key-based SSH, console access,
+  configuration backup, and rollback have been tested.
 - `write memory` is required to make FastIron changes survive reboot. Runtime
   read-back and startup configuration must both be verified.
 - Model, firmware, licenses, and module population change the feature set. The

@@ -2,11 +2,17 @@ observed_at: 2026-09-19
 
 devices:
   brocade_core:
-    platform: brocade_fastiron_or_icx
-    model: pending_live_inventory
+    platform: brocade_fastiron_icx
+    model: ICX6610-48P
     firmware: pending_live_inventory
     management_endpoint: local_inventory_only
     configuration_owner: ansible_automation_platform
+    observed_management_services:
+      ssh: legacy_algorithms_only
+      telnet: enabled
+      http: enabled
+      https: disabled
+      snmp: not_listening
     known_connections:
       pve_primary:
         port: "1/2/2"
@@ -22,5 +28,6 @@ devices:
 
 adoption_gates:
   brocade_write_enabled: false
+  brocade_configuration_backup_complete: false
   unifi_provider_selected: false
   unifi_import_complete: false
