@@ -57,7 +57,8 @@ The 2026-09-19 baseline found:
 - primary image 08.0.30t and older 07.3.00 secondary image;
 - active 10G port-on-demand, advanced Layer 3, and MACsec licenses;
 - identical running and startup configurations captured outside the public repo;
-- a system clock that is not synchronized;
+- NTPv4 client synchronization through VE 1 using independent Cloudflare and
+  Google sources; NTP server mode is disabled;
 - repeated PoE controller reset failures even though fans, power supplies, and
   chassis temperature are healthy;
 - Telnet and plaintext HTTP enabled, no HTTPS or SNMP listener, and SSH limited
@@ -182,8 +183,8 @@ single R720 highly available.
   configuration backup, and rollback have been tested.
 - `write memory` is required to make FastIron changes survive reboot. Runtime
   read-back and startup configuration must both be verified.
-- Repair time synchronization before relying on logs, certificate validation,
-  scheduled automation, or event correlation.
+- Keep NTP client synchronization and source selection in the health checks so
+  logs and automation retain reliable timestamps.
 - Treat the PoE controller reset loop as a hardware or firmware fault until the
   PoE firmware and controller state are diagnosed from the serial console.
 - Model, firmware, licenses, and module population change the feature set. The

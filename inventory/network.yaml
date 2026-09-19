@@ -19,10 +19,18 @@ devices:
       https: disabled
       snmp: not_listening
     operational_findings:
-      clock_synchronized: false
+      clock_synchronized: true
       layer_3_forwarding_observed: false
       poe_controller_healthy: false
       running_matches_startup: true
+    time_sync:
+      protocol: ntp_v4
+      mode: client_only
+      source_interface: ve_1
+      timezone: America/New_York
+      upstreams:
+        - cloudflare
+        - google
     vlans:
       default:
         id: 1
