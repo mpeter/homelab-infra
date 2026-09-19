@@ -1,0 +1,84 @@
+observed_at: 2026-09-19
+host:
+  name: pve
+  model: Dell PowerEdge R720
+  service_tag: local-inventory-only
+  management_address: local-inventory-only
+  operating_system: Proxmox VE 9.2.2
+  base_os: Debian 13
+  kernel: 7.0.2-6-pve
+  bios_version: 2.9.0
+  boot_mode: UEFI
+
+idrac:
+  generation: iDRAC7
+  address: local-inventory-only
+  firmware_version: 2.65.65.65
+
+cpu:
+  sockets: 2
+  model: Intel Xeon E5-2690
+  generation: v1
+  cores_per_socket: 8
+  threads_per_socket: 16
+  total_cores: 16
+  total_threads: 32
+  optional_upgrade:
+    preferred: Intel Xeon E5-2697 v2
+    result: 24 cores / 48 threads
+    note: Select E5-2695 v2 instead if following Dell's 115 W GPU configuration limit.
+
+memory:
+  installed_gib_reported: 110
+  expected_modules: 8
+  detected_modules: 7
+  module:
+    manufacturer: Samsung
+    part_number: M393B2G70QH0-YK0
+    size_gb: 16
+    type: PC3L-12800R DDR3-1600 ECC RDIMM
+    rank: 2Rx4
+  detected_slots:
+    - A1
+    - A3
+    - A4
+    - B1
+    - B2
+    - B3
+    - B4
+  suspected_unseated_slot: A2
+  purchased_upgrade:
+    modules: 8
+    size_gb_each: 16
+    target_total_gb_after_reseat: 256
+    intended_slots:
+      - A5
+      - A6
+      - A7
+      - A8
+      - B5
+      - B6
+      - B7
+      - B8
+
+network:
+  integrated:
+    model: Broadcom BCM57840
+    ports: 4
+    speed_gbps: 10
+  add_in:
+    model: Mellanox ConnectX-3
+  iommu_enabled: true
+
+storage_controllers:
+  sata_hba:
+    model: Broadcom / LSI SAS2308
+    mode: HBA / IT-style direct disk exposure
+  front_nvme_switch:
+    model: PLX PEX 8632
+    generation: PCIe Gen2
+    upstream_width: x16
+  internal_nvme_switch:
+    model: Microchip Switchtec PM8562
+    generation: PCIe Gen3
+    upstream_width: x8

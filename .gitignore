@@ -1,0 +1,40 @@
+# OpenTofu working data and state
+**/.terraform/
+**/.tofu/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Credentials and decrypted secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.kubeconfig
+secrets/*.dec.*
+inventory/local/
+
+# Ansible and local tooling
+*.retry
+.ansible/
+.cache/
+.direnv/
+.venv/
+
+# Generated artifacts
+artifacts/
+downloads/
+*.iso
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+*~

@@ -1,0 +1,80 @@
+observed_at: 2026-09-19
+warning: Linux nvme and sd names can change between boots. Resolve aliases to serial numbers from the ignored local inventory before any write.
+
+nvme:
+  front:
+    topology: PLX PEX 8632 PCIe Gen2 switch; each drive negotiates Gen2 x4
+    drives:
+      - id: front-nvme-a
+        model: INTEL SSDPEKKF512G8
+        capacity_gb: 512
+        observed_device: /dev/nvme0n1
+        state: active rpool member
+      - id: front-nvme-b
+        model: INTEL SSDPEKKF512G8
+        capacity_gb: 512
+        observed_device: /dev/nvme2n1
+        state: active rpool member
+      - id: front-nvme-c
+        model: INTEL SSDPEKKF512G8
+        capacity_gb: 512
+        observed_device: /dev/nvme4n1
+        state: old ZFS signature; do not wipe until explicitly approved
+      - id: front-nvme-d
+        model: INTEL SSDPEKKF512G8
+        capacity_gb: 512
+        observed_device: /dev/nvme5n1
+        state: blank
+  internal_pcie:
+    topology: Microchip Switchtec PM8562 PCIe Gen3 switch; each drive negotiates Gen3 x4
+    drives:
+      - id: internal-nvme-a
+        model: INTEL SSDPEKKW010T8
+        capacity_gb: 1000
+        observed_device: /dev/nvme1n1
+        state: blank
+      - id: internal-nvme-b
+        model: INTEL SSDPEKKW010T8
+        capacity_gb: 1000
+        observed_device: /dev/nvme3n1
+        state: blank
+
+sata_data:
+  model: CT1000MX500SSD1
+  capacity_gb_each: 1000
+  transport: SATA behind SAS2308 HBA
+  drives:
+    - id: sata-a
+    - id: sata-b
+    - id: sata-c
+    - id: sata-d
+    - id: sata-e
+    - id: sata-f
+    - id: sata-g
+    - id: sata-h
+  state: visible and unallocated
+
+boot:
+  id: boot-a
+  model: KINGSTON SUV400S37240G
+  capacity_gb: 240
+  observed_device: /dev/sdk
+  partitions:
+    - purpose: EFI
+      size_gb: 1
+      mountpoint: /boot/efi
+    - purpose: boot
+      size_gb: 4
+      mountpoint: /boot
+  risk: single point of failure for firmware-visible boot path
+
+removable:
+  - description: Proxmox installer USB
+    capacity_gb: 32
+    observed_device: /dev/sdi
+    label: PVE
+    action: remove after boot recovery is proven
+  - description: Internal Dual SD
+    capacity_gb: 8
+    observed_device: /dev/sdj
+    action: do not use for PVE or workload storage
