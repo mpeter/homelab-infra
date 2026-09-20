@@ -1,8 +1,7 @@
 # ICX6610 PoE controller failure RCA
 
-Observed on 2026-09-19 against the ICX6610-48P baseline in this repository.
-This document separates the evidence gathered from the repair that still needs
-a maintenance window.
+Observed and tested on 2026-09-19 against the ICX6610-48P baseline in this
+repository.
 
 ## Symptom
 
@@ -38,14 +37,13 @@ PoE. The switch allocates and consumes no PoE power.
 This evidence rules out total PSU loss, exhausted power budget, an individual
 powered-device fault, and an individual port fault.
 
-## Root cause assessment
+## Root cause
 
-The failure is at the shared controller initialization layer. The leading cause
-is obsolete or corrupt PoE controller firmware because both controller devices
-fail before endpoint detection and the installed build predates the documented
-ICX6610 firmware. A failed PoE controller or management-board power circuit
-remains the secondary hypothesis and cannot be excluded without attempting the
-supported firmware recovery.
+The failure is in the PoE controller hardware or its management-board power and
+communication path. Both controllers fail before endpoint detection and reject
+the supported firmware updater. The same failure persists on current FastIron
+08.0.30u. Healthy supplies, fans, temperatures, switching ASICs, links, and
+management eliminate the surrounding power and system software paths.
 
 ## Staged recovery payload
 
@@ -61,35 +59,42 @@ matched its published MD5 before extraction.
 The firmware binaries stay in ignored local inventory and are not committed to
 this repository.
 
-## Recovery sequence
+## Recovery results
 
-1. Reconfirm matching running/startup configuration backups and serial-console
-   access.
-2. Serve only the ICX6610 PoE image from a temporary TFTP listener restricted to
-   the switch management address.
-3. Run the documented `inline power install-firmware` command for stack unit 1.
-4. Monitor `show log` until programming finishes. Do not interrupt power or
-   reload while flash programming is active.
-5. Save configuration, then reload the switch during the approved outage.
-6. Verify firmware `02.1.0.b004`, absence of the controller reset loop, nonzero
-   PoE availability, port detection, switching, VLANs, NTP, and management.
+1. Running and startup configuration backups matched before the change.
+2. The build-004 controller image transferred successfully under FastIron
+   08.0.30t, but the controller returned `Firmware Update failed` and remained
+   on build 001.
+3. FastIron 08.0.30u was written to secondary flash, passed its integrity check,
+   and booted with the saved configuration. Primary 08.0.30t remained intact.
+4. The build-004 controller image transferred successfully again under
+   FastIron 08.0.30u. The controller again returned `Firmware Update failed`.
+5. Both controller devices continued their initialization and hard-reset loop.
+6. Layer 2 forwarding, active 1/10/40 GbE links, VLAN state, HTTP management,
+   Proxmox reachability, iDRAC reachability, and NTP synchronization passed after
+   the maintenance window.
+7. FastIron 08.0.30u is now the configured secondary boot target. Primary
+   08.0.30t remains the serial-console rollback image.
 
-The reload interrupts all traffic through the switch, including the current LAN
-uplink and attached server links. Retain the serial console throughout recovery.
+The failed controller programming is the decisive result: a software update
+cannot communicate successfully with either PoE engine. PoE remains unavailable
+on all copper ports.
 
-If the PoE update does not recover the controllers, stage FastIron 08.0.30u in
-secondary flash and test-boot it while preserving 08.0.30t in primary flash as
-the rollback image. If the error remains with 08.0.30u and PoE build 004, treat
-the PoE controller hardware as failed.
+## Recommended disposition
+
+Continue using the switch for non-PoE Layer 2, Layer 3, 10 GbE, and 40 GbE work
+if the repeated controller-reset logging is acceptable. If PoE is required,
+replace the chassis or management board rather than attempting more flash writes.
+Use external standards-compliant PoE injectors or a separate PoE access switch
+as the lower-risk interim option.
 
 ## Rollback
 
-PoE controller firmware does not have a useful in-place downgrade path. The
-configuration backup and serial console protect switch configuration and boot
-access, while the primary FastIron image remains untouched during any later
-secondary-image test. If controller programming fails, keep the switch powered,
-capture the final log, and recover through the serial console rather than
-cycling power blindly.
+Primary flash still contains 08.0.30t. From the serial console, a one-time
+`boot system flash primary` returns to the previous FastIron image. The matching
+post-maintenance running/startup backups protect the saved configuration. The
+PoE controller itself remains on its original build 001 because both update
+attempts were rejected before controller programming completed.
 
 ## References
 

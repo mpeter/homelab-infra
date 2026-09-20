@@ -4,7 +4,9 @@ devices:
   brocade_core:
     platform: brocade_fastiron_icx
     model: ICX6610-48P
-    firmware: 08.0.30tT7f3
+    firmware: 08.0.30uT7f3
+    firmware_boot_source: secondary
+    firmware_rollback: 08.0.30tT7f3_primary
     boot_monitor: 10.1.00T7f5
     management_endpoint: local_inventory_only
     configuration_owner: ansible_automation_platform
@@ -22,8 +24,8 @@ devices:
       clock_synchronized: true
       layer_3_forwarding_observed: false
       poe_controller_healthy: false
-      poe_controller_failure_scope: shared_initialization_layer
-      poe_recovery_payload_staged: true
+      poe_controller_failure_scope: hardware_confirmed_after_firmware_recovery
+      poe_firmware_update_result: controller_rejected_twice
       running_matches_startup: true
     time_sync:
       protocol: ntp_v4

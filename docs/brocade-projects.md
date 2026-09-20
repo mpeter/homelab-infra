@@ -54,13 +54,14 @@ and startup configuration before writes.
 
 The 2026-09-19 baseline found:
 
-- primary image 08.0.30t and older 07.3.00 secondary image;
+- FastIron 08.0.30u running from secondary flash with 08.0.30t preserved in
+  primary flash for rollback;
 - active 10G port-on-demand, advanced Layer 3, and MACsec licenses;
 - identical running and startup configurations captured outside the public repo;
 - NTPv4 client synchronization through VE 1 using independent Cloudflare and
   Google sources; NTP server mode is disabled;
-- repeated PoE controller reset failures even though fans, power supplies, and
-  chassis temperature are healthy;
+- confirmed PoE controller hardware failure after build-004 programming was
+  rejected under both FastIron 08.0.30t and 08.0.30u;
 - Telnet and plaintext HTTP enabled, no HTTPS or SNMP listener, and SSH limited
   to obsolete algorithms;
 - no observed Layer 3 forwarding traffic.
@@ -185,9 +186,8 @@ single R720 highly available.
   read-back and startup configuration must both be verified.
 - Keep NTP client synchronization and source selection in the health checks so
   logs and automation retain reliable timestamps.
-- Treat the PoE controller reset loop as a hardware or firmware fault until the
-  staged firmware recovery in [the PoE RCA](brocade-poe-rca.md) has been run and
-  verified.
+- Treat PoE as unavailable on this chassis; [the PoE RCA](brocade-poe-rca.md)
+  records the failed controller recovery and hardware conclusion.
 - Model, firmware, licenses, and module population change the feature set. The
   feature matrix is authoritative after live inventory.
 - Moving routing into ICX can bypass UniFi policy and visibility.
