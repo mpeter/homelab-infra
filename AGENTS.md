@@ -12,6 +12,19 @@ and Linux device names are different namespaces; use serial numbers and
 `/dev/disk/by-id` for storage changes because names such as `nvme0n1` can move
 between boots.
 
+## Agent execution
+
+Complete authorized inspection, configuration preparation, and validation;
+state consequential assumptions and continue independent work while a physical
+or disruptive step awaits the operator. Prepare the exact plan, backups, and
+recovery evidence before requesting a remaining live-action approval. Permission
+to edit repository configuration does not authorize destructive storage or
+network operations.
+
+Delegate independent inventory and configuration review with explicit ownership.
+Choose verification at the changed layer and reuse results for unchanged inputs;
+do not run live apply or recovery operations merely to verify a prose edit.
+
 Keep ownership clear:
 
 - OpenTofu owns Proxmox resources and supported UniFi resources. Proxmox and
