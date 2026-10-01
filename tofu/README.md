@@ -3,7 +3,13 @@
 This directory will contain Proxmox and UniFi provider configuration, reusable
 modules, and environment composition. VM configuration is deferred until an
 encrypted, recoverable off-host state backend and automation identity are
-established; only a plan gate and its tests are present so far.
+established; the Proxmox root currently has only pinned tooling, encryption
+configuration, a plan gate, and its tests.
+
+[ADR 0009](../docs/decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md)
+chooses encrypted local state on the laptop for bootstrap. It is not an apply
+authorization: independent key and state recovery, effective token scope, and
+the VM backup destination remain unverified or unresolved.
 
 The [R720 change-control contract](../docs/r720-change-control.md) blocks the
 first VM until state recovery, scoped identity, plan-type gating, and a
