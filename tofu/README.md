@@ -4,6 +4,11 @@ This directory will contain Proxmox and UniFi provider configuration, reusable
 modules, and environment composition. It is intentionally empty until remote
 encrypted state backends and automation identities are established.
 
+The [R720 change-control contract](../docs/r720-change-control.md) blocks the
+first VM until state recovery, scoped identity, plan-type gating, and a
+disposable-VM lifecycle test are verified. Host pools and repositories remain
+outside this state.
+
 OpenTofu will own Proxmox resources, not configuration inside guests. Plans are
 reviewed before apply, and existing resources are imported before management.
 

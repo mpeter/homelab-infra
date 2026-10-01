@@ -3,6 +3,37 @@
 Each phase leaves the environment recoverable and produces evidence before the
 next phase depends on it.
 
+Planned changes from 2026-10-01 onward follow the
+[R720 change-control cutoff](r720-change-control.md). The existing `fast-vm`
+pool is adopted through a live, serial-specific drift check; VM creation waits
+for the OpenTofu control-plane gates.
+The [first-VM implementation plan](first-vm-implementation-plan.md) gives the
+ordered work and exit evidence from this cutoff through Fedora deployment.
+
+## Staged first workload
+
+The first workload is the primary Fedora development VM. The R720's 256 GiB
+memory configuration remains the eventual capacity target, not a prerequisite
+for this VM. Verify the currently installed DIMMs with iDRAC, the operating
+system, and diagnostics before allocating memory; do not infer capacity from
+the target population or a previous boot screen.
+
+Start with a proposed 32 GiB VM allocation and reserve a later increase to
+64 GiB after the host reaches and validates 256 GiB. Finalize CPU, memory, and
+disk sizes from fresh host usage and datastore capacity before applying a VM
+plan. Keep AAP, IdM, OpenShift, and other substantial VMs deferred until their
+memory and storage budgets are measured and approved.
+
+This staging changes the order, not the safety gates: complete the Phase 0
+recovery and stable-boot evidence; establish and verify the `fast-vm` mirror
+from serial-resolved devices under the storage plan; prepare recoverable
+OpenTofu state and a tested disposable-VM workflow; and provide independent
+off-host backup before treating the Fedora VM as primary, then test its restore.
+Network automation and
+the remaining storage pools can follow separately if the VM's required
+management, DNS, and remote access already work safely on the existing
+network. No storage write or disruptive host change is implied by this plan.
+
 ## Phase 0: stabilize the installed host
 
 - Capture current PVE, iDRAC, storage, network, and boot state.
@@ -28,8 +59,10 @@ repositories, HTTPS management access, and two recorded boot validations.
 - Optionally replace both processors with a supported matched v2 pair after the
   memory change has been validated separately.
 
-Completion evidence: iDRAC and the operating system agree on DIMM inventory,
-memory diagnostics pass, and no new SEL entries appear.
+Completion evidence: iDRAC and the operating system agree on the 256 GiB DIMM
+inventory, memory diagnostics pass, and no new SEL entries appear. This
+capacity-expansion phase may finish after the first Fedora VM is deployed;
+the VM still requires a stable, verified current memory configuration.
 
 ## Phase 2: boot and storage
 

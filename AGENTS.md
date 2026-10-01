@@ -21,6 +21,11 @@ recovery evidence before requesting a remaining live-action approval. Permission
 to edit repository configuration does not authorize destructive storage or
 network operations.
 
+Since 2026-10-01, planned R720 changes follow
+[R720 change control](docs/r720-change-control.md): use versioned desired state,
+run its preflight, and verify live read-back. Direct changes are for urgent
+recovery and must be reconciled before the next planned change.
+
 Delegate independent inventory and configuration review with explicit ownership.
 Choose verification at the changed layer and reuse results for unchanged inputs;
 do not run live apply or recovery operations merely to verify a prose edit.
