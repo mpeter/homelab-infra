@@ -11,22 +11,27 @@ planned gate as already implemented or passed.
 The R720 has passed two cold boots after its host-ID repair. `rpool` is healthy.
 The two serial-identified 1 TB NVMe drives form the online `fast-vm` mirror;
 the read-only `fast-vm` baseline check passed on 2026-10-01. There are no VMs
-or containers. The Fedora Cloud Base image has been verified off-host but not
-uploaded. The machine currently reports 128 GiB; 256 GiB is a later target,
-not a prerequisite for the first VM. Recheck these volatile facts before a
+or containers. The Fedora Cloud Base image has been verified and staged in
+PVE `local:import`. The machine currently reports 128 GiB; 256 GiB is a later
+target, not a prerequisite for the first VM. Recheck these volatile facts before a
 write. The project handoff holds the detailed evidence and recovery locations.
 
-The worktree contains unrelated operator edits. Preserve them. No host
-repository correction, PVE upgrade, OpenTofu backend, automation identity, or
-VM has been completed under this plan.
+The worktree contains unrelated operator edits. Preserve them. Repository
+correction, the empty-host cold boot, the host-configuration bundle, and an
+encrypted local OpenTofu state scaffold have been completed. The PVE upgrade,
+independent state/key recovery, automation identity, and VM have not.
 
 ## 0. Resolve bootstrap dependencies
 
-Choose and record the off-host state backend and key custody, the independent
-VM-backup target, and the Fedora image-import and cloud-init paths before
-building the VM root. The laptop remains a permanent break-glass machine: it
-must retain a repository clone, PVE and iDRAC access, state-backend credentials
-and recovery key, and backup decryption material independently of the R720.
+Choose and record the off-host state backend and key custody and the Fedora
+image-import and cloud-init paths before building the VM root. The operator
+deferred the independent VM-backup target on 2026-10-01. This permits a
+disposable test VM and an initially empty, reproducible Fedora VM, but no
+unique data and no promotion to primary status until backup and restore pass.
+The laptop remains a permanent break-glass machine: it must retain a
+repository clone, PVE and iDRAC access, state-backend credentials
+and recovery key independently of the R720. Once backup is configured, keep
+its decryption material there too.
 Prove that a plan can run from it while the Fedora VM is absent. Do not make
 the managed VM the only place where its own recovery tools live.
 
@@ -42,9 +47,11 @@ unrestricted SSH path. Stage the verified image on storage that accepts its
 content type, then import the VM disk onto `fast-vm`; a qcow2 file is not a ZFS
 volume. Do not add image content to `fast-vm` merely to fit a provider example.
 
-Exit gate: these choices, locations, credential owners, and recovery tests are
-recorded without putting secret values in Git. Repository work in stage 1 can
-proceed while these choices are being resolved, but the disposable VM cannot.
+Exit gate: the state, image, and cloud-init choices, locations, credential
+owners, and recovery tests are recorded without putting secret values in Git.
+The VM-backup destination is a deferred decision, due before any
+non-reproducible data enters Fedora. Repository work in stage 1 can proceed
+while the remaining choices are being resolved, but the disposable VM cannot.
 
 ## 1. Normalize PVE package repositories
 
@@ -144,8 +151,10 @@ appliance.
    capacity. Do not reserve against the hoped-for 256 GiB configuration.
 2. Define an initially empty VM in versioned OpenTofu and review the gated plan. Apply it and
    verify the VM's live CPU, memory, disk, boot, network, and console state.
-3. Before any non-reproducible data enters the VM, use versioned `host/pve/`
-   check/apply paths to configure ZFS and SMART health and capacity alerts,
+3. Before any non-reproducible data enters the VM or it becomes the primary
+   workspace, choose the independent off-host VM-backup destination. Use
+   versioned `host/pve/` check/apply paths to configure ZFS and SMART health
+   and capacity alerts,
    backup-failure alerts, the backup storage entry, and the backup job. Verify
    their live configuration and alert delivery. Refresh and extraction-test the
    off-host host bundle. Complete a full backup of the empty VM to the
@@ -175,14 +184,17 @@ appliance.
 Exit gate: the VM boots and supports the named work; a no-change plan and live
 read-back agree; alerts reach the operator; off-host backup and full restore
 have been exercised; and measured host capacity remains healthy through the
-trial. Only then treat Fedora as the primary development machine.
+trial. Until then it is a reproducible test workspace, not the primary
+development machine; keep all unique work and its authoritative copy elsewhere.
 
 ## Order and stop conditions
 
 Each numbered stage depends on the preceding exit gate. A failed drift check,
 unrecoverable or unlocked state, excessive token privileges, unexpected plan
-resource type, or missing off-host restore path stops the next apply. Record the
-failure and reconcile source with observed state before continuing. Physical
+resource type stops the next apply. A missing off-host VM restore path stops
+unique-data migration and primary-workspace promotion, not the disposable or
+empty Fedora VM. Record the failure and reconcile source with observed state
+before continuing. Physical
 memory expansion, other storage pools, AAP, IdM, and OpenShift remain separate
 work and do not block the first Fedora VM unless fresh capacity or access checks
 show a real dependency.
