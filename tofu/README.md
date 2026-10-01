@@ -1,8 +1,9 @@
 # OpenTofu
 
 This directory will contain Proxmox and UniFi provider configuration, reusable
-modules, and environment composition. It is intentionally empty until remote
-encrypted state backends and automation identities are established.
+modules, and environment composition. VM configuration is deferred until an
+encrypted, recoverable off-host state backend and automation identity are
+established; only a plan gate and its tests are present so far.
 
 The [R720 change-control contract](../docs/r720-change-control.md) blocks the
 first VM until state recovery, scoped identity, plan-type gating, and a
@@ -19,3 +20,11 @@ live controller version and API pass the compatibility gate described in
 [the UniFi management contract](../network/unifi/README.md). Existing UniFi
 objects must produce a no-change plan after import before any desired-state edit
 is applied.
+
+The Proxmox plan gate accepts only VM resource changes and rejects deletes or
+replacements by default. Review a saved plan, then pipe `tofu show -json` into
+`bash tofu/proxmox/check-plan.sh` without writing the JSON to disk. The
+`--disposable-destroy` mode accepts only deletion of the exact disposable VM
+address during the lifecycle test. Run its behavior tests with
+`bash tofu/proxmox/tests/test-check-plan.sh`. This gate does not replace
+reviewing the saved plan or proving that the apply uses that same plan file.
