@@ -141,7 +141,9 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.before.boot_order == ["ide2", "scsi0"]) and
       ($mutations[0].change.after.vm_id == 200) and
       ($mutations[0].change.after.started == false) and
-      (($mutations[0].change.after.cdrom // []) | length == 0) and
+      (($mutations[0].change.after.cdrom // []) | length == 1) and
+      ($mutations[0].change.after.cdrom[0].file_id == "none") and
+      ($mutations[0].change.after.cdrom[0].interface == "ide2") and
       ($mutations[0].change.after.boot_order == ["scsi0"]) and
       (($mutations[0].change.before | del(.started, .cdrom, .boot_order, .ipv4_addresses, .ipv6_addresses, .network_interface_names)) ==
         ($mutations[0].change.after | del(.started, .cdrom, .boot_order, .ipv4_addresses, .ipv6_addresses, .network_interface_names))) and
@@ -173,7 +175,9 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.after.network_device | length == 1) and
       ($mutations[0].change.after.disk | length == 1) and
       ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
-      (($mutations[0].change.after.cdrom // []) | length == 0) and
+      (($mutations[0].change.after.cdrom // []) | length == 1) and
+      ($mutations[0].change.after.cdrom[0].file_id == "none") and
+      ($mutations[0].change.after.cdrom[0].interface == "ide2") and
       ($mutations[0].change.after.boot_order == ["scsi0"]) and
       ($mutations[0].change.after.hostpci | map(with_entries(select(.value != null and .value != "" and .value != false)))) == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}] and
       ($mutations[0].change.after.on_boot == false) and
