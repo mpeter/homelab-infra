@@ -1,6 +1,6 @@
 ## Context
 
-The R720 is a single-host Proxmox lab intended to become a Fedora development platform and a Red Hat automation/OpenShift learning environment. Phase 0 recovery and cold-boot checks and the `fast-vm` mirror have documented success as of 2026-10-01, but all live facts must be refreshed before writes. The machine is currently planned around a verified 128 GiB configuration; 256 GiB is a later hardware target. There are no production VMs yet. The repository's [implementation plan](../../../docs/implementation-plan.md), [first-VM plan](../../../docs/first-vm-implementation-plan.md), [NAS plan](../../../docs/nas-implementation-plan.md), and ADRs remain the detailed source for per-stage procedures.
+The R720 is a single-host Proxmox lab intended to become a Fedora development platform and a Red Hat automation/OpenShift learning environment. Phase 0 recovery and cold-boot checks and the `fast-vm` mirror have documented success as of 2026-10-01, but all live facts must be refreshed before writes. The host has eight 16 GB DIMMs (128 GB nominal); 256 GB is a later hardware target. The reproducible Fedora development VM is deployed, but it holds no unique data and no production VMs are in service. The repository's [implementation plan](../../../docs/implementation-plan.md), [first-VM plan](../../../docs/first-vm-implementation-plan.md), [NAS plan](../../../docs/nas-implementation-plan.md), and ADRs remain the detailed source for per-stage procedures.
 
 ## Goals / Non-Goals
 

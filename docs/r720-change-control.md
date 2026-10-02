@@ -10,6 +10,8 @@ read-back. An observed inventory entry alone is not desired state.
 | --- | --- | --- |
 | Boot, ZFS pools, PVE storage registration, repositories, host networking | `host/pve/` workstation-runnable maintenance code | Read-only drift/preflight, recovery evidence, bounded apply, live read-back |
 | VMs, containers, virtual disks, supported PVE resource objects | Proxmox OpenTofu root in `tofu/` | Locked off-host state, scoped token, reviewed and type-gated plan |
+| NAS HBA passthrough | `host/pve/` for host binding; Proxmox OpenTofu for VM PCI assignment | Serial and IOMMU preflight, reviewed host change, guest disk read-back |
+| NAS pool, datasets, snapshots, shares | NAS guest configuration and exported appliance settings | Guest read-back, backup, and restore test before unique data |
 | Guest first boot and configuration | `cloud-init/`, then `ansible/` | Image/test-boot and Ansible check/read-back |
 | Physical repair | iDRAC plus documented procedure | Serial/slot confirmation, power and recovery plan, observed inventory refresh |
 
@@ -35,6 +37,10 @@ read-back. An observed inventory entry alone is not desired state.
    apply jobs. Do not put state, credentials, decrypted secrets, or host backups
    in Git. An off-host backup and an actual restore test are required before
    the Fedora VM becomes primary.
+5. The NAS VM owns the eight SATA disks behind the passed-through SAS2308.
+   Proxmox must not import the guest pool or store VM boot disks on NAS exports.
+   The NAS can be built empty before off-site backup is configured; unique data
+   waits for an encrypted rsync.net copy and a tested restore.
 
 A backup-restore test may create one temporary, non-managed VM through a
 versioned `host/pve/` procedure because OpenTofu cannot restore a vzdump archive
@@ -53,5 +59,6 @@ checks. An exception is not a parallel long-lived configuration channel.
 
 The host-ID repair, two cold boots, and creation of `fast-vm` are pre-cutoff
 bootstrap history. `fast-vm` is retained because its live mirror was verified
-by serial and its desired properties are checked in code. No VM has been
-created outside OpenTofu.
+by serial and its desired properties are checked in code. At the time of the
+2026-10-01 cutoff, no VM had been created outside OpenTofu; the Fedora VM was
+subsequently created and remains OpenTofu-managed.

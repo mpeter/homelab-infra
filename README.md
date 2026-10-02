@@ -1,11 +1,15 @@
 # Homelab Infrastructure
 
 Configuration, architecture, and recovery material for a Dell PowerEdge R720.
-The host runs Proxmox VE and provides the primary Fedora development
-environment, RHEL systems, Ansible Automation Platform, and an OpenShift lab.
+The host runs Proxmox VE. The Fedora development VM is now managed through the
+versioned OpenTofu and Ansible configuration; RHEL systems, Ansible Automation
+Platform, and OpenShift remain planned.
 
-This repository is currently a **planning scaffold**. No resource in the live
-environment is managed from this repository yet.
+This repository holds the target architecture and versioned host-maintenance
+procedures. The NAS has not yet been deployed.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branch, review, and verification
+practice.
 
 ## Target architecture
 
@@ -21,6 +25,10 @@ flowchart TD
     PVE --> IdM[RHEL IdM VM]
     PVE --> OCP[Single Node OpenShift VM]
     PVE --> Lab[Disposable RHEL and lab VMs]
+    PVE --> NAS[NAS VM]
+    HBA[SAS2308 HBA and eight SATA SSDs] --> NAS
+    NAS --> Shares[Local file shares]
+    NAS --> Remote[Encrypted off-site copy at rsync.net]
 
     AAP --> PVE
     AAP --> Dev
@@ -37,35 +45,46 @@ the workload layer: RHEL, Fedora, AAP, IdM, Podman, Image Builder or `bootc`,
 and OpenShift. AAP runs on a RHEL VM outside OpenShift so it remains available
 to diagnose or rebuild the cluster.
 
+The NAS VM boots from Proxmox's `fast-vm` mirror and owns the complete SATA HBA
+and its RAIDZ2 pool. It is local primary storage, not the off-site backup.
+Other VMs do not boot from storage exported by this NAS. See the
+[storage plan](docs/storage-plan.md) and [NAS decision](docs/decisions/0010-run-the-bulk-nas-as-a-vm-with-hba-passthrough.md).
+
 ## Repository map
 
 | Path | Purpose |
 |---|---|
+| `CONTRIBUTING.md` | Branch, review, and verification process |
 | `inventory/` | Observed physical and logical inventory without credentials |
 | `docs/architecture.md` | Component boundaries and failure domains |
 | `docs/implementation-plan.md` | Ordered delivery plan and completion evidence |
 | `docs/storage-plan.md` | Pool layout, boot resilience, and disk identities |
+| `docs/nas-implementation-plan.md` | NAS passthrough, guest pool, shares, and off-site recovery gates |
 | `docs/networking-plan.md` | Management and workload network design |
 | `docs/brocade-projects.md` | Prioritized ICX experiments and community patterns |
 | `network/` | Brocade and UniFi ownership, adoption, and recovery contracts |
 | `docs/backup-recovery.md` | Backup, restore, UPS, and bare-metal recovery |
 | `docs/decisions/` | Architecture Decision Records |
-| `tofu/` | Future Proxmox resource definitions |
-| `ansible/` | Future AAP projects, roles, rulebooks, and execution environments |
+| `host/pve/` | Workstation-runnable Proxmox host checks and maintenance |
+| `tofu/` | Proxmox VM resource definitions and plan safeguards |
+| `ansible/` | Guest configuration and future AAP projects and execution environments |
 | `cloud-init/` | Future guest bootstrap data |
 | `openshift/` | Future installation and GitOps configuration |
+| `openspec/` | Staged infrastructure change proposals and task gates |
 
-## Current priorities
+## Delivery map
 
-1. Correct the ZFS host-ID warning and prove repeatable unattended boots.
-2. Reseat DIMM A2, install the purchased memory, and refresh inventory.
-3. Make the SATA EFI and `/boot` path redundant.
-4. Remove stale installer media and normalize Proxmox package repositories.
-5. Build storage pools using stable device identifiers.
-6. Establish management networking, DNS, certificates, and remote access.
-7. Import the Brocade and UniFi configuration into reviewed management workflows.
-8. Deploy the Fedora development VM, AAP, IdM, and OpenShift in that order.
-9. Establish independent backups, alerts, and tested recovery.
+1. Keep PVE recovery and boot evidence current; complete boot redundancy and
+   the verified memory expansion as separate maintenance work.
+2. Establish recoverable OpenTofu state, scoped PVE access, and a disposable VM
+   lifecycle test.
+3. Keep the reproducible Fedora VM empty of unique data; deploy the NAS VM on
+   `fast-vm` and reserve the SATA HBA and its eight SSDs for the NAS guest.
+   Do not create a host `bulk` pool.
+4. Configure and restore-test encrypted rsync.net backups before either guest
+   holds unique data or Fedora becomes the primary workspace.
+5. Expand management networking and deploy AAP, IdM, and OpenShift under their
+   separate ownership and recovery gates.
 
 See [the implementation plan](docs/implementation-plan.md) for gates and
 dependencies.

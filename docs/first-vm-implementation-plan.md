@@ -6,34 +6,49 @@ history. Follow the [R720 change-control contract](r720-change-control.md) and
 the broader [implementation plan](implementation-plan.md). Do not treat a
 planned gate as already implemented or passed.
 
+## Current status
+
+As of 2026-10-01, the host baseline, OpenTofu control plane, disposable VM
+lifecycle, and reproducible Fedora VM are verified. OpenSpec groups 1–3 are
+complete. VM 100 is empty of unique development data. The independent VM
+backup/restore, alert-delivery, and 14-day work-trial gates remain before
+primary-workspace promotion.
+
 ## Starting point
 
 The R720 has passed two cold boots after its host-ID repair. `rpool` is healthy.
 The two serial-identified 1 TB NVMe drives form the online `fast-vm` mirror;
-the read-only `fast-vm` baseline check passed on 2026-10-01. There are no VMs
-or containers. The Fedora Cloud Base image has been verified and staged in
-PVE `local:import`. The machine currently reports 128 GiB; 256 GiB is a later
-target, not a prerequisite for the first VM. Recheck these volatile facts before a
-write. The project handoff holds the detailed evidence and recovery locations.
+the read-only `fast-vm` baseline check passed on 2026-10-01. VM 100,
+`fedora-dev`, is managed by OpenTofu and running Fedora 44 with 8 vCPU, 32 GiB
+RAM, and a 300 GiB boot disk. The guest agent reports DHCP address
+`192.168.0.114`; Ansible check/apply and guest read-back passed. The host has
+eight 16 GB DIMMs (128 GB nominal); the 256 GiB target is deferred. Refresh
+these volatile facts before a write.
 
-The worktree contains unrelated operator edits. Preserve them. Repository
-correction, the empty-host cold boot, the host-configuration bundle, and an
-encrypted local OpenTofu state scaffold have been completed. The PVE upgrade,
-independent state/key recovery, automation identity, and VM have not.
+The laptop-local encrypted OpenTofu state, independent Drive recovery copy and
+passphrase, scoped PVE identity, and disposable VM lifecycle test are verified.
+The PVE package upgrade remains deferred. The empty Fedora VM is reproducible,
+not the primary workspace: unique data, backup promotion, and the 14-day work
+trial remain gated on independent backup and restore evidence.
 
 ## 0. Resolve bootstrap dependencies
 
-Choose and record the off-host state backend and key custody and the Fedora
-image-import and cloud-init paths before building the VM root. The operator
-deferred the independent VM-backup target on 2026-10-01. This permits a
-disposable test VM and an initially empty, reproducible Fedora VM, but no
-unique data and no promotion to primary status until backup and restore pass.
+Complete the encrypted laptop-local Proxmox state bootstrap and independent
+second-copy/key recovery required by [ADR 0009](decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md),
+and choose the Fedora image-import and cloud-init paths before building the VM
+root. A locked remote backend may replace local state later through a tested
+migration; it is not a first-VM prerequisite. The operator
+deferred setup of the independent VM-backup target on 2026-10-01. rsync.net is
+now the planned off-site destination, with transfer method and restore still
+unproven. This permits a disposable test VM and an initially empty,
+reproducible Fedora VM. Unique data and promotion to primary status wait until
+backup and restore pass.
 The laptop remains a permanent break-glass machine: it must retain a
-repository clone, PVE and iDRAC access, state-backend credentials
-and recovery key independently of the R720. Once backup is configured, keep
-its decryption material there too.
-Prove that a plan can run from it while the Fedora VM is absent. Do not make
-the managed VM the only place where its own recovery tools live.
+repository clone, PVE and iDRAC access, state-backend credentials, and a
+recovery key independently of the R720. Once backup is configured, keep its
+decryption material there too. Prove that a plan can run from it while the
+Fedora VM is absent. Do not make the managed VM the only place where its own
+recovery tools live.
 
 Host maintenance code owns image staging and checksum read-back on the
 appropriate source storage. If the provider instead performs the upload,
@@ -49,9 +64,9 @@ volume. Do not add image content to `fast-vm` merely to fit a provider example.
 
 Exit gate: the state, image, and cloud-init choices, locations, credential
 owners, and recovery tests are recorded without putting secret values in Git.
-The VM-backup destination is a deferred decision, due before any
-non-reproducible data enters Fedora. Repository work in stage 1 can proceed
-while the remaining choices are being resolved, but the disposable VM cannot.
+The rsync.net backup method, credentials, retention, and restore test are due
+before any non-reproducible data enters Fedora or it becomes the primary
+workspace. Those choices do not block an empty, reproducible VM.
 
 ## 1. Normalize PVE package repositories
 
@@ -75,7 +90,7 @@ repository configuration only; package upgrades are a separate change.
 5. Decide explicitly whether to upgrade PVE before the first VM or defer it.
    An upgrade is a separate reviewed change with package-removal review, both
    ESPs checked, a maintenance window, and a verified cold boot afterward.
-   Whether upgraded or deferred, cold-boot the currently empty host once and
+   Whether upgraded or deferred, cold-boot the host before the first VM and
    confirm `fast-vm` imports, its drift check passes, and PVE storage is active.
    Refresh the off-host host-configuration bundle and test extraction, including
    boot, network, PVE cluster/storage configuration, and ZFS import metadata.
@@ -90,10 +105,12 @@ recovery bundle is not considered tested merely because it decrypts.
 
 Owner: the Proxmox OpenTofu root. Keep it separate from the future UniFi root.
 
-1. Select and document an encrypted off-host backend that provides locking and
-   an independently tested state restore. It must remain usable when the R720
-   and its future AAP VM are down. Do not place state or backend credentials in
-   Git or on `fast-vm` as their sole copy.
+1. Complete ADR 0009's encrypted laptop-local Proxmox state bootstrap and
+   local lock-contention test. Recover a second encrypted state copy and its
+   passphrase from a separate location, with the R720 and future AAP VM
+   unavailable. Local locking does not coordinate other machines. Do not put
+   state or credentials in Git or on `fast-vm` as their sole copy; a later
+   remote-backend migration must preserve and test the state.
 2. Create a dedicated PVE automation identity with only the VM permissions
    needed by the selected provider and storage workflow. Verify the token
    cannot administer the host, create a storage entry, or create a pool. Record
@@ -112,8 +129,8 @@ Owner: the Proxmox OpenTofu root. Keep it separate from the future UniFi root.
    in the OpenTofu configuration. Run the live `fast-vm` drift check before any
    plan using that storage.
 
-Exit gate: backend lock contention and off-host state recovery are tested from
-the laptop;
+Exit gate: local lock contention and independent second-copy/key recovery are
+tested from the laptop;
 credential scope is demonstrated through permitted and denied API operations;
 the plan gate has positive and negative tests; source and state scans find no
 secrets committed to Git. A `tofu plan` alone is not this gate.
@@ -149,10 +166,12 @@ appliance.
    is LAN-only until a separately tested VPN exists. Start from the
    proposed 8 vCPU, 32 GiB RAM, 300 GiB disk, then adjust only from measured
    capacity. Do not reserve against the hoped-for 256 GiB configuration.
-2. Define an initially empty VM in versioned OpenTofu and review the gated plan. Apply it and
-   verify the VM's live CPU, memory, disk, boot, network, and console state.
+2. Define an initially empty VM in versioned OpenTofu and review the gated
+   plan. Apply it and verify the VM's live CPU, memory, disk, boot, network,
+   and console state. This step is complete for VM 100; repeat the same gates
+   for later VM changes.
 3. Before any non-reproducible data enters the VM or it becomes the primary
-   workspace, choose the independent off-host VM-backup destination. Use
+   workspace, configure and test the independent rsync.net backup path. Use
    versioned `host/pve/` check/apply paths to configure ZFS and SMART health
    and capacity alerts,
    backup-failure alerts, the backup storage entry, and the backup job. Verify
