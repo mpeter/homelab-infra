@@ -71,8 +71,12 @@ nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
   {format_version:"1.2",resource_changes:[$resource]}
 ')
 expect_status 0 "$nas_install_complete" --nas-install-complete
+expect_status 0 "$(jq -c '.resource_changes[0].change.before.cdrom = []' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 0 "$(jq -c '.resource_changes[0].change.before.boot_order = ["scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.boot_order = ["ide2"]' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.boot_order = ["ide2","scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.cdrom[0].file_id = "cdrom"' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.cdrom = [{file_id:"other.iso",interface:"ide2"}]' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci[0].mapping = "other-hba"' <<< "$nas_install_complete")" --nas-install-complete
 nas_start=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]

@@ -16,12 +16,15 @@ storage_role=OpenTofuStorage
 network_role=OpenTofuNetwork
 mapping_role=OpenTofuMappingUse
 read_role=OpenTofuRead
+nas_vm_role=OpenTofuNASVM
 mapping_id=nas-hba
+nas_vmid=200
 vm_privs='VM.Allocate VM.Audit VM.Config.CPU VM.Config.Memory VM.Config.Disk VM.Config.Network VM.Config.Options VM.Config.Cloudinit VM.Config.HWType VM.GuestAgent.Audit VM.PowerMgmt Pool.Audit'
 storage_privs='Datastore.AllocateSpace Datastore.Audit'
 network_privs='SDN.Audit SDN.Use'
 mapping_privs='Mapping.Use'
 read_privs='Sys.Audit'
+nas_vm_privs='Sys.Audit VM.Config.CDROM'
 
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 export SSHPASS
@@ -39,11 +42,13 @@ if [[ $mode == check ]]; then
   pve "pveum role list --output-format json" | jq -e --arg role "$network_role" --arg privs "$network_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'network role privileges differ'
   pve "pveum role list --output-format json" | jq -e --arg role "$mapping_role" --arg privs "$mapping_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'PCI mapping role privileges differ'
   pve "pveum role list --output-format json" | jq -e --arg role "$read_role" --arg privs "$read_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'read role privileges differ'
+  pve "pveum role list --output-format json" | jq -e --arg role "$nas_vm_role" --arg privs "$nas_vm_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'NAS VM role privileges differ'
   acls=$(pve 'pveum acl list --output-format json')
   require_acl() {
-    local path=$1 role=$2 type=$3 principal=$4
+    local path=$1 role=$2 type=$3 principal=$4 propagate=${5:-1}
     jq -e --arg path "$path" --arg role "$role" --arg type "$type" --arg principal "$principal" \
-      'any(.[]; .path == $path and .roleid == $role and .type == $type and .ugid == $principal and .propagate == 1)' \
+      --argjson propagate "$propagate" \
+      'any(.[]; .path == $path and .roleid == $role and .type == $type and .ugid == $principal and .propagate == $propagate)' \
       <<< "$acls" >/dev/null || fail "missing $type ACL at $path for $role"
   }
   require_acl "/pool/$pool_id" "$role_id" user "$pve_user"
@@ -58,10 +63,15 @@ if [[ $mode == check ]]; then
   require_acl "/mapping/pci/$mapping_id" "$mapping_role" token "$pve_user!$token_id"
   require_acl / "$read_role" user "$pve_user"
   require_acl / "$read_role" token "$pve_user!$token_id"
+  require_acl "/vms/$nas_vmid" "$nas_vm_role" user "$pve_user" 0
+  require_acl "/vms/$nas_vmid" "$nas_vm_role" token "$pve_user!$token_id" 0
   permissions=$(pve "pveum user token permissions $pve_user $token_id --output-format json")
   jq -e 'all(.[]; (has("Pool.Allocate") | not) and (has("Datastore.Allocate") | not) and (has("Sys.Modify") | not) and (has("Sys.PowerMgmt") | not))' \
     <<< "$permissions" >/dev/null || fail 'token has a forbidden pool, storage, or host privilege'
   jq -e 'all(.[]; has("Mapping.Modify") | not)' <<< "$permissions" >/dev/null || fail 'token has PCI mapping administration privilege'
+  jq -e --arg vm_path "/vms/$nas_vmid" \
+    '(. ["/"] | has("Sys.Console") | not) and .[$vm_path]["Sys.Audit"] == 1 and .[$vm_path]["VM.Config.CDROM"] == 1' \
+    <<< "$permissions" >/dev/null || fail 'token has unsafe node console access or lacks NAS VM audit/CD-ROM access'
   printf 'PVE OpenTofu identity check PASS\n'
   exit 0
 fi
@@ -90,6 +100,7 @@ set_role "$storage_role" "$storage_privs"
 set_role "$network_role" "$network_privs"
 set_role "$mapping_role" "$mapping_privs"
 set_role "$read_role" "$read_privs"
+set_role "$nas_vm_role" "$nas_vm_privs"
 
 tokens=$(pve "pveum user token list $pve_user --output-format json")
 if ! jq -e --arg token "$token_id" 'any(.[]; .tokenid == $token)' <<< "$tokens" >/dev/null; then
@@ -111,5 +122,7 @@ pve "pveum acl modify /mapping/pci/$mapping_id --users $pve_user --roles $mappin
 pve "pveum acl modify /mapping/pci/$mapping_id --tokens $pve_user!$token_id --roles $mapping_role"
 pve "pveum acl modify / --users $pve_user --roles $read_role"
 pve "pveum acl modify / --tokens $pve_user!$token_id --roles $read_role"
+pve "pveum acl modify /vms/$nas_vmid --users $pve_user --roles $nas_vm_role --propagate 0"
+pve "pveum acl modify /vms/$nas_vmid --tokens $pve_user!$token_id --roles $nas_vm_role --propagate 0"
 
 bash "$0" check

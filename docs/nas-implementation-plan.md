@@ -59,6 +59,10 @@ includes a host-required device.
    group; create a host-configuration backup; and verify PVE's mapping
    diagnostics. Grant the OpenTofu user and privilege-separated token only
    `Mapping.Use` at `/mapping/pci/nas-hba`; do not grant `Mapping.Modify`.
+   The one-time installer-ISO removal also needs `VM.Config.CDROM` for VMID
+   200. Grant it with the VM-scoped role in `host/pve/manage-tofu-identity.sh`;
+   retain `Sys.Audit` at that exact path and disable ACL propagation. Do not
+   grant node-wide `Sys.Console`.
 3. Add separate OpenTofu plan gates for attaching the mapping to stopped VMID
    200 and for starting the VM. Keep `on_boot=false` and `started=false` until
    the console and recovery path are proven. The attach plan must contain only
