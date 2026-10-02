@@ -16,8 +16,11 @@ At the latest capacity read-back, the host reported 125 GiB RAM total and 98
 GiB available; `fast-vm` had 962,530,536 KiB available. These are observed
 headroom figures, not fixed reservations for later guests. Re-measure and
 budget IdM, AAP, and OpenShift when their versions and recovery prerequisites
-are selected. NAS reset and remaining recovery checks are still open, and
-unique data remains gated on the independent backup and restore milestone. See
+are selected. A host cold boot with VM 200 stopped and the NAS guest's managed
+start/stop/reset checks have passed. HBA detach rollback remains open, the guest
+pool remains gated on off-target GPT and ZFS-label captures plus the reviewed
+pool plan, and unique data remains gated on the independent backup and restore
+milestone. See
 the [implementation plan](../docs/implementation-plan.md) and [R720
 change-control contract](../docs/r720-change-control.md) for current gates.
 
@@ -47,4 +50,6 @@ rejects deletes or replacements by default. Review each saved plan, then pipe
 JSON to disk. The `--disposable-destroy` mode accepts only deletion of the exact
 disposable VM address during the lifecycle test. Run gate behavior tests with
 `bash tofu/proxmox/tests/test-check-plan.sh`; the gate does not replace review
-or prove that an apply uses the same saved plan file.
+or prove that an apply uses the same saved plan file. The `--nas-detach` mode
+accepts only removal of the exact `nas-hba` mapping from stopped VM 200 while
+preserving its other configuration.
