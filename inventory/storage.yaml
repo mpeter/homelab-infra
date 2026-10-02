@@ -76,6 +76,11 @@ sata_data:
   capacity_gb_each: 1000
   transport: SATA behind SAS2308 HBA
   operator_disposition: Existing contents may be discarded; approved for NAS reuse on 2026-10-01. Exact serial verification and pre-clear header captures remain required before writes.
+  partition_table_readback: >-
+    sgdisk reads the valid GPT entries, though it reports a corrupt protective
+    MBR; PVE currently exposes no partition device nodes. All eight partition-2
+    ZFS labels were read through temporary read-only loop mappings and matched
+    pool array UUID 403860994760048568.
   drives:
     - id: sata-a
       serial: 2108E4FA8118
@@ -125,13 +130,15 @@ sata_data:
       by_id: ata-CT1000MX500SSD1_2108E4FA80B6
       state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
       smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
-  state: not imported or mounted; all eight devices contain valid GPT and ZFS member labels; serial-specific capture and cleanup plan remain pending
+  state: not imported or mounted; fresh serial, SMART, signature, and by-id checks match the approved set; off-target header captures and reviewed cleanup plan remain pending
 
 boot:
   observed_at: 2026-10-01
   id: boot-a
   model: KINGSTON SUV400S37240G
   capacity_gb: 240
+  serial: 50026B7767031A82
+  by_id: ata-KINGSTON_SUV400S37240G_50026B7767031A82
   observed_device: /dev/sdk
   partitions:
     - purpose: EFI
