@@ -70,7 +70,7 @@ if [[ $mode == check ]]; then
     <<< "$permissions" >/dev/null || fail 'token has a forbidden pool, storage, or host privilege'
   jq -e 'all(.[]; has("Mapping.Modify") | not)' <<< "$permissions" >/dev/null || fail 'token has PCI mapping administration privilege'
   jq -e --arg vm_path "/vms/$nas_vmid" \
-    '(. ["/"] | has("Sys.Console") | not) and .[$vm_path]["Sys.Audit"] == 1 and .[$vm_path]["VM.Config.CDROM"] == 1' \
+    '(. ["/"] | has("Sys.Console") | not) and (.[$vm_path] | has("Sys.Audit")) and (.[$vm_path] | has("VM.Config.CDROM"))' \
     <<< "$permissions" >/dev/null || fail 'token has unsafe node console access or lacks NAS VM audit/CD-ROM access'
   printf 'PVE OpenTofu identity check PASS\n'
   exit 0
