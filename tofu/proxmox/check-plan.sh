@@ -96,39 +96,45 @@ if ! jq -e --arg mode "$mode" '
       ($changes[0].change.after.started == true) and
       ($changes[0].change.after.stop_on_destroy == true)
     elif $mode == "--nas-create" then
-      ($changes | length == 1) and
-      ($changes[0].address == "module.nas[0].proxmox_virtual_environment_vm.this") and
-      ($changes[0].type == "proxmox_virtual_environment_vm") and
-      ($changes[0].change.actions == ["create"]) and
-      ($changes[0].change.after.vm_id == 200) and
-      ($changes[0].change.after.name == "nas") and
-      ($changes[0].change.after.node_name == "pve") and
-      ($changes[0].change.after.pool_id == "tofu-vms") and
-      ($changes[0].change.after.machine == "q35") and
-      ($changes[0].change.after.description == "TrueNAS NAS; HBA and pool remain gated") and
-      ($changes[0].change.after.cpu[0].cores == 4) and
-      ($changes[0].change.after.cpu[0].type == "host") and
-      ($changes[0].change.after.memory[0].dedicated == 16384) and
-      ($changes[0].change.after.memory[0].floating == 0) and
-      ($changes[0].change.after.network_device | length == 1) and
-      ($changes[0].change.after.network_device[0].bridge == "vmbr0") and
-      ($changes[0].change.after.network_device[0].model == "virtio") and
-      ($changes[0].change.after.disk | length == 1) and
-      ($changes[0].change.after.disk[0].datastore_id == "fast-vm") and
-      ($changes[0].change.after.disk[0].file_format == "raw") and
-      ($changes[0].change.after.disk[0].interface == "scsi0") and
-      ($changes[0].change.after.disk[0].size == 32) and
-      ($changes[0].change.after.cdrom | length == 1) and
-      ($changes[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
-      ($changes[0].change.after.cdrom[0].interface == "ide2") and
-      ($changes[0].change.after.boot_order == ["ide2", "scsi0"]) and
-      ($changes[0].change.after.hostpci | length == 0) and
-      ($changes[0].change.after.initialization | length == 0) and
-      ($changes[0].change.after.agent | length == 0) and
-      ($changes[0].change.after.on_boot == false) and
-      ($changes[0].change.after.protection == true) and
-      ($changes[0].change.after.started == false) and
-      ($changes[0].change.after.stop_on_destroy == true)
+      ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
+      all($changes[];
+        (.address == "module.fedora[0].proxmox_virtual_environment_vm.this" or .address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+        .type == "proxmox_virtual_environment_vm" and
+        (.change.actions == ["no-op"] or (.address == "module.nas[0].proxmox_virtual_environment_vm.this" and .change.actions == ["create"]))
+      ) and
+      ($mutations | length == 1) and
+      ($mutations[0].address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+      ($mutations[0].type == "proxmox_virtual_environment_vm") and
+      ($mutations[0].change.actions == ["create"]) and
+      ($mutations[0].change.after.vm_id == 200) and
+      ($mutations[0].change.after.name == "nas") and
+      ($mutations[0].change.after.node_name == "pve") and
+      ($mutations[0].change.after.pool_id == "tofu-vms") and
+      ($mutations[0].change.after.machine == "q35") and
+      ($mutations[0].change.after.description == "TrueNAS NAS; HBA and pool remain gated") and
+      ($mutations[0].change.after.cpu[0].cores == 4) and
+      ($mutations[0].change.after.cpu[0].type == "host") and
+      ($mutations[0].change.after.memory[0].dedicated == 16384) and
+      ($mutations[0].change.after.memory[0].floating == 0) and
+      ($mutations[0].change.after.network_device | length == 1) and
+      ($mutations[0].change.after.network_device[0].bridge == "vmbr0") and
+      ($mutations[0].change.after.network_device[0].model == "virtio") and
+      ($mutations[0].change.after.disk | length == 1) and
+      ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
+      ($mutations[0].change.after.disk[0].file_format == "raw") and
+      ($mutations[0].change.after.disk[0].interface == "scsi0") and
+      ($mutations[0].change.after.disk[0].size == 32) and
+      ($mutations[0].change.after.cdrom | length == 1) and
+      ($mutations[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
+      ($mutations[0].change.after.cdrom[0].interface == "ide2") and
+      ($mutations[0].change.after.boot_order == ["ide2", "scsi0"]) and
+      ($mutations[0].change.after.hostpci | length == 0) and
+      ($mutations[0].change.after.initialization | length == 0) and
+      ($mutations[0].change.after.agent | length == 0) and
+      ($mutations[0].change.after.on_boot == false) and
+      ($mutations[0].change.after.protection == true) and
+      ($mutations[0].change.after.started == false) and
+      ($mutations[0].change.after.stop_on_destroy == true)
     else
       all($changes[];
         (.address == "module.disposable[0].proxmox_virtual_environment_vm.this" or .address == "module.fedora[0].proxmox_virtual_environment_vm.this" or .address == "module.nas[0].proxmox_virtual_environment_vm.this") and
