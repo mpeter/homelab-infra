@@ -72,6 +72,8 @@ nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
 ')
 expect_status 0 "$nas_install_complete" --nas-install-complete
 expect_status 0 "$(jq -c '.resource_changes[0].change.before.cdrom = []' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 0 "$(jq -c '.resource_changes[0].change.before.boot_order = ["scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.boot_order = ["ide2"]' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.boot_order = ["ide2","scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.cdrom[0].file_id = "cdrom"' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.before.cdrom = [{file_id:"other.iso",interface:"ide2"}]' <<< "$nas_install_complete")" --nas-install-complete

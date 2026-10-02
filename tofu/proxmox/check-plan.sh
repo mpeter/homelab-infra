@@ -143,7 +143,10 @@ if ! jq -e --arg mode "$mode" '
         ($before_cdrom | length == 1 and
           .[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso" and .[0].interface == "ide2")
       ) and
-      ($mutations[0].change.before.boot_order == ["ide2", "scsi0"]) and
+      (
+        $mutations[0].change.before.boot_order == ["ide2", "scsi0"] or
+        $mutations[0].change.before.boot_order == ["scsi0"]
+      ) and
       ($mutations[0].change.after.vm_id == 200) and
       ($mutations[0].change.after.started == false) and
       (($mutations[0].change.after.cdrom // []) | length == 1) and
