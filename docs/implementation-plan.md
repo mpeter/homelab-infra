@@ -123,9 +123,10 @@ permitted and denied networks.
 - Create narrowly scoped PVE and iDRAC automation identities.
 - Import existing UniFi objects and reach a no-change plan before managing them.
 - Implement reusable OpenTofu VM modules and RHEL/Fedora cloud-init templates.
-- After the disposable VM lifecycle passes, create a NAS VM booting from
-  `fast-vm` with the complete SAS2308 passed through. Select the NAS OS and
-  image before writing its VM definition. Verify repeated VM
+- After the disposable VM lifecycle passes, create a TrueNAS Community Edition
+  25.10.7 NAS VM booting from `fast-vm` with the complete SAS2308 passed
+  through. Keep initial VM creation HBA-free and stopped; verify the recovery
+  console before installation. Verify repeated VM
   start/stop/reset cycles, guest disk serials, host disk exclusion, and the
   recovery path before creating its eight-disk RAIDZ2 pool and file shares.
   Start with a measured RAM allocation within the verified 128 GiB host,
