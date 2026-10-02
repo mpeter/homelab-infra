@@ -52,6 +52,7 @@ expect_status 0 "$nas_attach" --nas-attach
 expect_status 1 "${nas_attach/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}" --nas-attach
 expect_status 1 "${nas_attach/\"started\":false/\"started\":true}" --nas-attach
 expect_status 1 "${nas_attach/\"id\":\"\"/\"id\":\"0000:03:00.0\"}" --nas-attach
+expect_status 1 "$nas_attach" --nas-reattach
 nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
     | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
@@ -115,6 +116,39 @@ expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci = [{device:"
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.cpu[0].cores = 8' <<< "$nas_detach")" --nas-detach
 expect_status 1 "$(jq -c '.resource_changes[0].change.before.started = true' <<< "$nas_detach")" --nas-detach
 expect_status 1 "$(jq -c '.resource_changes += [{address:"other",type:"proxmox_virtual_environment_vm",change:{actions:["delete"]}}]' <<< "$nas_detach")" --nas-detach
+nas_reattach=$(jq -nc --argjson plan "$nas_detach" '
+  ($plan.resource_changes[0]
+    | .change.before.hostpci = []
+    | .change.after = .change.before
+    | .change.after.network_device[0].mac_address = "BC:24:11:87:F2:2B"
+    | .change.before.network_device[0].mac_address = "BC:24:11:87:F2:2B"
+    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
+    | .change.actions = ["update"]
+  ) as $resource |
+  {format_version:"1.2",resource_changes:[$resource]}
+')
+expect_status 0 "$nas_reattach" --nas-reattach
+expect_status 1 "$nas_reattach" --nas-attach
+expect_status 1 "$nas_reattach" --nas-detach
+expect_status 1 "$nas_reattach"
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.cdrom[0].file_id = "local:iso/TrueNAS-SCALE-25.10.7.iso"' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.boot_order = ["ide2","scsi0"]' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.cdrom[0].file_id = "other"' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.boot_order = ["ide2","scsi0"]' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.started = true' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.started = true' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true}]' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci[0].mapping = "other-hba"' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci[0].id = "0000:03:00.0"' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci += [{device:"hostpci1",mapping:"nas-hba",pcie:true}]' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.cpu[0].cores = 8' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.memory[0].floating = 512' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.network_device[0].bridge = "other"' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.disk[0].size = 64' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.agent = [{enabled:true}]' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.on_boot = true' <<< "$nas_reattach")" --nas-reattach
+expect_status 1 "$(jq -c '.resource_changes[0].change.actions = ["delete","create"]' <<< "$nas_reattach")" --nas-reattach
+expect_status 0 "$(jq -c '.resource_changes += [{address:"module.fedora[0].proxmox_virtual_environment_vm.this",type:"proxmox_virtual_environment_vm",change:{actions:["no-op"]}}]' <<< "$nas_reattach")" --nas-reattach
 nas_stop=$(jq -nc --argjson plan "$nas_start" '
   ($plan.resource_changes[0]
     | .change.before.started = true

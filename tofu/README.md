@@ -52,4 +52,7 @@ disposable VM address during the lifecycle test. Run gate behavior tests with
 `bash tofu/proxmox/tests/test-check-plan.sh`; the gate does not replace review
 or prove that an apply uses the same saved plan file. The `--nas-detach` mode
 accepts only removal of the exact `nas-hba` mapping from stopped VM 200 while
-preserving its other configuration.
+preserving its other configuration. `--nas-attach` accepts the installer
+state, while `--nas-reattach` accepts only the installed-guest state with the
+installer ISO detached and `scsi0` first; both require the VM to stay stopped
+and preserve every other VM property.
