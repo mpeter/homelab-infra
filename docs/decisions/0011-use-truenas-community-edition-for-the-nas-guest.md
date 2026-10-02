@@ -9,18 +9,20 @@ Accepted
 ## Context
 
 [ADR 0010](0010-run-the-bulk-nas-as-a-vm-with-hba-passthrough.md) assigns the
-whole SAS2308 HBA and its eight SATA SSDs to a NAS VM. The operator prefers
-TrueNAS as a home-lab software product and accepts that this is an enthusiast
-deployment rather than a supported production appliance. The cited
-`r/HomeServer` discussion compares NAS software generally; it is anecdotal and
-does not establish virtualization behavior.
+whole SAS2308 HBA and its eight SATA SSDs to a NAS VM. This is a home lab, not
+a production business dependency. The operator prefers TrueNAS as a software
+product and accepts managing it as a virtualized home-lab appliance. Community
+experience is useful when comparing products; the cited `r/HomeServer`
+discussion compares NAS software generally and does not establish
+virtualization behavior.
 
-TrueNAS's hardware guidance says its developers virtualize for development,
-but does not recommend ordinary virtualized deployments for production or
-critical data. It calls for direct disk or whole-controller passthrough where
-possible. The lab can accept the support and maintenance tradeoff, while
-requiring verified HBA isolation, independent backups, and a tested restore
-before unique data relies on this NAS.
+TrueNAS's hardware guidance says its developers virtualize for development and
+recommends direct disk or whole-controller passthrough where possible. This
+home lab deliberately uses a separate boot disk and passes the complete HBA
+through to the guest. The official guidance remains a support and maintenance
+tradeoff, not a reason to block the operator's home-lab choice. Require verified
+HBA isolation, independent backups, and a tested restore before unique data
+relies on this NAS.
 
 ## Decision
 
