@@ -159,12 +159,20 @@ server and SMTP delivery is disabled, so alerts are not currently delivered
 off the appliance. Keep delivery testing with the later alert and recovery
 milestone, after a recipient and delivery service are configured.
 
-The guest currently uses DHCP address `192.168.0.186` on `vmbr0` and reaches
-its gateway. No DHCP reservation or final network/access boundary is recorded.
-The current self-signed certificate identifies `localhost`, so browser access
-by IP does not validate the certificate identity. Do not expose SMB/NFS shares
-until the NAS address/name, certificate, and allowed/denied client policy are
-settled under network task 7.1.
+The guest currently uses DHCP address `192.168.0.186` on `vmbr0`, has a default
+route through `192.168.0.1`, and reaches both the gateway and the authorized
+workstation. Temporary setup shares are exposed for validation only: SMB share
+`setup-test` and NFS export `/mnt/tank/nfs_test` are limited to workstation
+`192.168.0.183`; SMB authentication is required, and the NFS export maps
+requests to the test account. Their datasets have explicit ACLs and 5 GiB
+quotas. They contain no unique data. The reproducible I/O file was removed after
+guest- and host-restart checks.
+
+No DHCP reservation or final network/access boundary is recorded, and the
+self-signed certificate identifies `localhost`. Keep these test shares limited
+to setup validation. Before adding real clients or unique data, settle the NAS
+address/name, certificate, and allowed/denied client policy under network task
+7.1, and complete the backup/recovery gates in task group 5.
 
 ## 3. Make unique NAS data recoverable off-site
 
