@@ -72,6 +72,16 @@ expect_status 1 "${nas_start/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}"
 expect_status 1 "${nas_start/\"rom_file\":\"\"/\"rom_file\":\"file.rom\"}" --nas-start
 expect_status 1 "${nas_start/\"network_interface_names\":true/\"network_interface_names\":true,\"vm_id\":true}" --nas-start
 expect_status 1 "${nas_start/\"cores\":4/\"cores\":8}" --nas-start
+nas_stop=$(jq -nc --argjson plan "$nas_start" '
+  ($plan.resource_changes[0]
+    | .change.before.started = true
+    | .change.after.started = false
+    | .change.actions = ["update"]
+  ) as $resource |
+  {format_version:"1.2",resource_changes:[$resource]}
+')
+expect_status 0 "$nas_stop" --nas-stop
+expect_status 1 "${nas_stop/\"started\":false/\"started\":true}" --nas-stop
 fedora_noop='{"address":"module.fedora[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}'
 nas_with_fedora_noop=$(jq -nc --argjson plan "$nas_create" --argjson noop "$fedora_noop" '($plan | .resource_changes += [$noop])')
 expect_status 0 "$nas_with_fedora_noop" --nas-create

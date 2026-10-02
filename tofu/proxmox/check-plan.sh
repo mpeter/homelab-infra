@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Pipe `tofu show -json saved.tfplan` here; never save the JSON containing secrets.
 mode=${1:-}
-[[ -z $mode || $mode == --disposable-create || $mode == --disposable-destroy || $mode == --fedora-create || $mode == --fedora-start || $mode == --nas-create || $mode == --nas-attach || $mode == --nas-start ]] || {
-  echo 'usage: check-plan.sh [--disposable-create|--disposable-destroy|--fedora-create|--fedora-start|--nas-create|--nas-attach|--nas-start] < plan.json' >&2
+[[ -z $mode || $mode == --disposable-create || $mode == --disposable-destroy || $mode == --fedora-create || $mode == --fedora-start || $mode == --nas-create || $mode == --nas-attach || $mode == --nas-start || $mode == --nas-stop ]] || {
+  echo 'usage: check-plan.sh [--disposable-create|--disposable-destroy|--fedora-create|--fedora-start|--nas-create|--nas-attach|--nas-start|--nas-stop] < plan.json' >&2
   exit 2
 }
 
@@ -125,7 +125,7 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.after.on_boot == false) and
       ($mutations[0].change.after.protection == true) and
       ($mutations[0].change.after.started == false)
-    elif $mode == "--nas-start" then
+    elif $mode == "--nas-start" or $mode == "--nas-stop" then
       ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
       all($changes[];
         (.address == "module.fedora[0].proxmox_virtual_environment_vm.this" or .address == "module.nas[0].proxmox_virtual_environment_vm.this") and
@@ -135,7 +135,7 @@ if ! jq -e --arg mode "$mode" '
       ($mutations | length == 1) and
       ($mutations[0].address == "module.nas[0].proxmox_virtual_environment_vm.this") and
       ($mutations[0].change.before.vm_id == 200) and
-      ($mutations[0].change.before.started == false) and
+      ($mutations[0].change.before.started == ($mode == "--nas-stop")) and
       ($mutations[0].change.actions == ["update"]) and
       (($mutations[0].change.before | del(.started, .ipv4_addresses, .ipv6_addresses, .network_interface_names)) ==
         ($mutations[0].change.after | del(.started, .ipv4_addresses, .ipv6_addresses, .network_interface_names))) and
@@ -156,7 +156,7 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.after.hostpci | map(with_entries(select(.value != null and .value != "" and .value != false)))) == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}] and
       ($mutations[0].change.after.on_boot == false) and
       ($mutations[0].change.after.protection == true) and
-      ($mutations[0].change.after.started == true)
+      ($mutations[0].change.after.started == ($mode == "--nas-start"))
     elif $mode == "--nas-create" then
       ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
       all($changes[];
