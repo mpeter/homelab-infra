@@ -9,8 +9,9 @@ Accepted
 ## Context
 
 Recovery work and the first `fast-vm` pool were performed directly on the only
-Proxmox host. The first VM has not been created. Continuing with ad hoc host and
-VM changes would make the repository an incomplete account of a machine that
+Proxmox host. At the time of this decision, the first VM had not been created.
+Continuing with ad hoc host and VM changes would make the repository an
+incomplete account of a machine that
 must be rebuildable after a single-host failure. OpenTofu state and the future
 AAP controller cannot be the only means of repairing the host they depend on.
 
