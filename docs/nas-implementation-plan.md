@@ -68,6 +68,9 @@ includes a host-required device.
    the console and recovery path are proven. The attach plan must contain only
    the exact HBA mapping; the start plan must preserve that mapping and change
    only the stopped state.
+   After installation, use the separate `--nas-reattach` gate for the stopped
+   guest with its installer ISO detached and `scsi0` first. Keep the installer
+   `--nas-attach` gate pinned to ISO-first installation state.
 4. Use Proxmox's on-demand PCI resource mapping for HBA driver handoff; do not
    add a post-stop rebind hook or boot-time VFIO binding. The versioned mapping
    helper provides preview/check/apply/rollback, and the separate
