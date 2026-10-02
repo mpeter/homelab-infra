@@ -64,19 +64,22 @@ includes a host-required device.
    the console and recovery path are proven. The attach plan must contain only
    the exact HBA mapping; the start plan must preserve that mapping and change
    only the stopped state.
-4. Add versioned host-maintenance code for HBA driver binding with `preview`,
-   `check`, `apply`, and rollback. Review the exact PCI target, boot impact,
-   current backups, and rescue path before its first live apply. Do not add
-   boot-time VFIO binding until on-demand binding and rollback have been tested.
+4. Use Proxmox's on-demand PCI resource mapping for HBA driver handoff; do not
+   add a post-stop rebind hook or boot-time VFIO binding. The versioned mapping
+   helper provides preview/check/apply/rollback, and the separate
+   `host/pve/check-nas-passthrough.sh` validates the live VM/driver state. A
+   gated start moved the HBA to `vfio-pci` and a gated stop left it there; after
+   a cold host boot with the VM stopped, `mpt3sas` may bind. See [ADR
+   0012](decisions/0012-keep-nas-hba-on-demand-vfio.md).
 5. Define the NAS VM in OpenTofu with a boot disk on `fast-vm`, a persistent
    network identity, and a memory allocation based on the verified 128 GiB
    host. Do not assume the future 256 GiB upgrade. Keep host-side mapping
    administration outside the routine OpenTofu token.
 6. Apply the reviewed, type-gated plans. Inside the guest, verify that all eight
    expected serials and SMART data are visible and that the host no longer
-   binds the HBA or sees its disks. Exercise repeated VM start, clean stop,
-   and reset. Cold-boot the
-   host and verify `rpool`, `fast-vm`, NAS VM, HBA assignment, and disk serials.
+   binds the HBA or sees its disks while the VM runs. Exercise repeated VM
+   start, clean stop, and reset. Cold-boot the host and verify `rpool`,
+   `fast-vm`, NAS VM, HBA assignment, and guest disk serials.
 
 Exit gate: the guest controls the whole HBA consistently across starts and a
 host cold boot; the host's own boot/storage path remains independent. Do not
