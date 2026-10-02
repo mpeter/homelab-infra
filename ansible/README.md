@@ -25,3 +25,20 @@ execution environment. A Brocade-only image may pin it after a compatibility
 test against the exact switch firmware. Prefer SSH keys, AAP credential types,
 approval nodes for disruptive jobs, and artifacts that expose commands without
 exposing credentials.
+
+## Fedora development VM
+
+`fedora-dev.yml` is laptop-runnable and keeps the guest reproducible before
+unique development data is approved. Obtain the VM's DHCP address from the PVE
+guest agent, then run a check before applying:
+
+```sh
+ansible-playbook -i '192.0.2.10,' ansible/fedora-dev.yml \
+  --user mpeter --private-key ~/.ssh/id_ed25519 --become --check --diff
+ansible-playbook -i '192.0.2.10,' ansible/fedora-dev.yml \
+  --user mpeter --private-key ~/.ssh/id_ed25519 --become
+```
+
+Replace the example address with the live DHCP address. The playbook installs
+and starts `qemu-guest-agent` and checks the service state. Keep unique data off
+the VM until the group 5 remote-backup and restore gates pass.

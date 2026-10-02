@@ -1,4 +1,4 @@
-observed_at: 2026-09-19
+observed_at: 2026-10-01
 host:
   name: pve
   model: Dell PowerEdge R720
@@ -29,9 +29,13 @@ cpu:
     note: Select E5-2695 v2 instead if following Dell's 115 W GPU configuration limit.
 
 memory:
-  installed_gib_reported: 110
+  observed_at: 2026-09-30
+  source: Proxmox node status and dmidecode after boot
+  installed_gib_reported: 125
+  nominal_module_total_gb: 128
+  operating_system_total_bytes: 135095894016
   expected_modules: 8
-  detected_modules: 7
+  detected_modules: 8
   module:
     manufacturer: Samsung
     part_number: M393B2G70QH0-YK0
@@ -40,13 +44,23 @@ memory:
     rank: 2Rx4
   detected_slots:
     - A1
+    - A2
     - A3
     - A4
     - B1
     - B2
     - B3
     - B4
-  suspected_unseated_slot: A2
+  detected_dimm_serials:
+    A1: 14C3C020
+    A2: 14FB759A
+    A3: 148B1F56
+    A4: 148B2FA9
+    B1: 148B190B
+    B2: 153D70BD
+    B3: 14F8A90F
+    B4: 14FB761D
+  validation: OS and iDRAC enumerate matching eight DIMM serials in A1-A4/B1-B4; current-boot EDAC corrected and uncorrected counters are zero; iDRAC aggregate system health remains Critical and its reported DIMM capacity differs from OS/DMI
   purchased_upgrade:
     modules: 8
     size_gb_each: 16

@@ -1,43 +1,74 @@
-observed_at: 2026-09-19
+observed_at: 2026-10-01
 warning: Linux nvme and sd names can change between boots. Resolve aliases to serial numbers from the ignored local inventory before any write.
+
+rpool:
+  observed_at: 2026-10-01
+  state: ONLINE; no read, write, checksum, or known data errors
+  hostid: 5002b2ea
+  hostid_source: /etc/hostid, installed initramfs, and both pool labels agree after a guarded host-file correction
+  status_warning: none after two verified cold boots on 2026-10-01
+
+fast_vm:
+  observed_at: 2026-10-01
+  pool: fast-vm
+  state: ONLINE mirror; no read, write, checksum, or known data errors
+  members:
+    - PHHH829001A91P0E
+    - PHHH828600761P0E
+  ashift: 12
+  dataset: fast-vm/data
+  compression: lz4
+  atime: off
+  proxmox_storage: fast-vm; active zfspool for images and rootdir, sparse provisioning
 
 nvme:
   front:
+    observed_at: 2026-10-01
     topology: PLX PEX 8632 PCIe Gen2 switch; each drive negotiates Gen2 x4
     drives:
       - id: front-nvme-a
         model: INTEL SSDPEKKF512G8
         capacity_gb: 512
-        observed_device: /dev/nvme0n1
+        serial: BTHH95021LD4512D
+        observed_device: /dev/nvme1n1
         state: active rpool member
       - id: front-nvme-b
         model: INTEL SSDPEKKF512G8
         capacity_gb: 512
-        observed_device: /dev/nvme2n1
+        serial: BTHH8122061E512D
+        observed_device: /dev/nvme3n1
         state: active rpool member
       - id: front-nvme-c
         model: INTEL SSDPEKKF512G8
         capacity_gb: 512
+        serial: PHHH8505034Q512H
         observed_device: /dev/nvme4n1
         state: old ZFS signature; do not wipe until explicitly approved
       - id: front-nvme-d
         model: INTEL SSDPEKKF512G8
         capacity_gb: 512
+        serial: BTHH8244042V512D
         observed_device: /dev/nvme5n1
         state: blank
   internal_pcie:
     topology: Microchip Switchtec PM8562 PCIe Gen3 switch; each drive negotiates Gen3 x4
+    observed_at: 2026-10-01
+    source: Proxmox serial and by-id read-back, SMART, zpool status, and pvesm status
+    identity_basis: serial number; physical slot mapping not verified
+    prior_state: Both disks had GPT signatures and were operator-classified as disposable. Header regions were backed up off-host before the old layouts were cleared on 2026-10-01; the header snapshots are not full data backups.
     drives:
       - id: internal-nvme-a
         model: INTEL SSDPEKKW010T8
         capacity_gb: 1000
-        observed_device: /dev/nvme1n1
-        state: blank
+        serial: PHHH829001A91P0E
+        observed_device: /dev/nvme0n1
+        state: active fast-vm mirror member; prior GPT cleared, old XFS data not securely erased
       - id: internal-nvme-b
         model: INTEL SSDPEKKW010T8
         capacity_gb: 1000
-        observed_device: /dev/nvme3n1
-        state: blank
+        observed_device: /dev/nvme2n1
+        serial: PHHH828600761P0E
+        state: active fast-vm mirror member; prior GPT cleared, old VMFS data not securely erased
 
 sata_data:
   model: CT1000MX500SSD1
@@ -55,6 +86,7 @@ sata_data:
   state: visible and unallocated
 
 boot:
+  observed_at: 2026-10-01
   id: boot-a
   model: KINGSTON SUV400S37240G
   capacity_gb: 240

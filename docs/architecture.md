@@ -13,6 +13,7 @@ Ansible Automation Platform, OpenShift, and disposable project environments.
 | Physical hardware | iDRAC and AAP OpenManage automation | Inventory, firmware, BIOS, diagnostics, power |
 | Hypervisor | Proxmox VE | VM lifecycle, local storage attachment, bridges, backups |
 | Resource provisioning | OpenTofu with the Proxmox provider | VMs, containers, disks, networks, tags, startup order |
+| NAS storage | NAS VM with the SAS2308 HBA passed through | SATA pool, datasets, snapshots, disk health, SMB/NFS shares |
 | UniFi control plane | OpenTofu with a compatibility-tested UniFi provider | Networks, WLANs, DHCP, DNS, firewall policy |
 | Brocade switching | AAP with a pinned network execution environment | Inventory, configuration backup, port and VLAN changes, verification |
 | First boot | cloud-init or Ignition | Identity, SSH trust, networking, guest agent bootstrap |
@@ -23,6 +24,12 @@ Ansible Automation Platform, OpenShift, and disposable project environments.
 
 No layer should silently manage a resource owned by another. Emergency GUI
 changes are reconciled into the appropriate source after service is restored.
+
+The NAS VM boots from `fast-vm`. Its eight SATA SSDs and RAIDZ2 pool belong to
+the guest, not to Proxmox. The host owns the HBA passthrough boundary; OpenTofu
+owns the VM and PCI assignment; guest configuration owns shares and storage
+services. Other VMs do not boot from storage exported by this same-host NAS.
+See [ADR 0010](decisions/0010-run-the-bulk-nas-as-a-vm-with-hba-passthrough.md).
 
 ## Red Hat lab profile
 
@@ -51,6 +58,11 @@ All guests, pools, networking adapters, and local replicas remain in one R720.
 Mirrors and RAIDZ protect against selected disk failures, not loss of the host,
 controller, rack power, switch, or site. Backups and infrastructure state must
 therefore have an independent destination.
+
+The NAS is a local source of data, not an off-host backup. Encrypted copies to
+rsync.net are the planned independent NAS recovery path; transfer method,
+retention, key custody, and a tested restore remain implementation gates before
+unique data depends on it.
 
 The Brocade switch, UniFi gateway/controller, and R720 remain individual failure
 domains. A NIC bond protects against a port, optic, or cable failure but not
