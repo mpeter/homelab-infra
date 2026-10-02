@@ -20,7 +20,7 @@
 
 ## 4. Deploy the NAS without conflating VM and disk gates
 
-- [ ] 4.1 Refresh all eight SATA serials, signatures, SMART data, by-id paths, HBA/IOMMU membership, host boot path, and recovery console evidence. The operator has authorized disposal of the existing contents on all eight SSDs; preserve that decision and verify each exact serial before any destructive action. Stop if a disk identity is uncertain or the IOMMU group includes a host-required device.
+- [x] 4.1 Refresh all eight SATA serials, signatures, SMART data, by-id paths, HBA/IOMMU membership, host boot path, and recovery console evidence. The operator has authorized disposal of the existing contents on all eight SSDs; preserve that decision and verify each exact serial before any destructive action. Stop if a disk identity is uncertain or the IOMMU group includes a host-required device.
 - [ ] 4.2 Select and verify the NAS OS/release and image; implement reviewed HBA binding preview/check/apply/rollback in versioned host maintenance code. Test whether the scoped PVE identity can assign PCI through a resource mapping or needs a separate privileged host step; do not widen routine token scope.
 - [ ] 4.3 Budget pinned NAS RAM and `fast-vm` capacity alongside Fedora and later important VMs; define the NAS VM with whole-HBA passthrough, apply a gated plan, and verify guest serials/SMART, host exclusion, and denied mapping-administration operations for the routine identity.
 - [ ] 4.4 Test NAS VM start/stop/reset and host cold boot; verify `rpool`, `fast-vm`, HBA assignment, guest serials, and rollback without writing SATA data. Test that the host check fails closed on incorrect HBA binding; repeat binding and host-import checks after a kernel change.

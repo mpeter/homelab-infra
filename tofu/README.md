@@ -9,10 +9,11 @@ milestone. See the [implementation plan](../docs/implementation-plan.md) and
 [ADR 0009](../docs/decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md)
 chooses encrypted local state on the laptop for bootstrap. An independent
 encrypted state copy and its recovery passphrase are stored in separate private
-Google Drive folders. The latest state upload was confirmed by object metadata;
-that ciphertext has not yet been fetched back and byte-compared. The live plan
-gate, scoped identity, and disposable-VM lifecycle test have passed; VM backup
-recovery remains a gate before unique data is introduced.
+Google Drive folders. The current Drive ciphertext was fetched, byte-compared
+with the local state, restored into an isolated scratch backend, decrypted, and
+used to list the managed Fedora and NAS VMs. The live plan gate, scoped
+identity, and disposable-VM lifecycle test have passed; VM backup recovery
+remains a gate before unique data is introduced.
 
 OpenTofu owns Proxmox resources, not configuration inside guests. Plans are
 reviewed before apply, and existing resources are imported before management.
