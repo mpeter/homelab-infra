@@ -71,19 +71,61 @@ nvme:
         state: active fast-vm mirror member; prior GPT cleared, old VMFS data not securely erased
 
 sata_data:
+  observed_at: 2026-10-01
   model: CT1000MX500SSD1
   capacity_gb_each: 1000
   transport: SATA behind SAS2308 HBA
+  operator_disposition: Existing contents may be discarded; approved for NAS reuse on 2026-10-01. Exact serial verification and pre-clear header captures remain required before writes.
   drives:
     - id: sata-a
+      serial: 2108E4FA8118
+      observed_device: /dev/sda
+      by_id: ata-CT1000MX500SSD1_2108E4FA8118
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-b
+      serial: 2108E4FA82BD
+      observed_device: /dev/sdb
+      by_id: ata-CT1000MX500SSD1_2108E4FA82BD
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-c
+      serial: 2108E4FA8283
+      observed_device: /dev/sdc
+      by_id: ata-CT1000MX500SSD1_2108E4FA8283
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-d
+      serial: 2108E4FA82C7
+      observed_device: /dev/sdd
+      by_id: ata-CT1000MX500SSD1_2108E4FA82C7
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-e
+      serial: 2108E4FA8085
+      observed_device: /dev/sde
+      by_id: ata-CT1000MX500SSD1_2108E4FA8085
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-f
+      serial: 2108E4FA8267
+      observed_device: /dev/sdf
+      by_id: ata-CT1000MX500SSD1_2108E4FA8267
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-g
+      serial: 2108E4FA8084
+      observed_device: /dev/sdg
+      by_id: ata-CT1000MX500SSD1_2108E4FA8084
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
     - id: sata-h
-  state: visible and unallocated
+      serial: 2108E4FA80B6
+      observed_device: /dev/sdh
+      by_id: ata-CT1000MX500SSD1_2108E4FA80B6
+      state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
+      smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
+  state: not imported or mounted; all eight devices contain valid GPT and ZFS member labels; serial-specific capture and cleanup plan remain pending
 
 boot:
   observed_at: 2026-10-01

@@ -9,7 +9,7 @@ read-back. An observed inventory entry alone is not desired state.
 | Scope | Versioned owner | Apply boundary |
 | --- | --- | --- |
 | Boot, ZFS pools, PVE storage registration, repositories, host networking | `host/pve/` workstation-runnable maintenance code | Read-only drift/preflight, recovery evidence, bounded apply, live read-back |
-| VMs, containers, virtual disks, supported PVE resource objects | Proxmox OpenTofu root in `tofu/` | Locked off-host state, scoped token, reviewed and type-gated plan |
+| VMs, containers, virtual disks, supported PVE resource objects | Proxmox OpenTofu root in `tofu/` | Encrypted state off the R720 with tested independent recovery, scoped token, reviewed and type-gated plan |
 | NAS HBA passthrough | `host/pve/` for host binding; Proxmox OpenTofu for VM PCI assignment | Serial and IOMMU preflight, reviewed host change, guest disk read-back |
 | NAS pool, datasets, snapshots, shares | NAS guest configuration and exported appliance settings | Guest read-back, backup, and restore test before unique data |
 | Guest first boot and configuration | `cloud-init/`, then `ansible/` | Image/test-boot and Ansible check/read-back |
@@ -27,12 +27,13 @@ read-back. An observed inventory entry alone is not desired state.
    `host/pve/check-fast-vm.sh` before a VM plan uses it. A drift failure blocks
    a planned VM apply; the check never repairs or destroys a pool.
 3. No GUI, `qm`, `pct`, or direct API creation or modification of managed VMs.
-   Before the first disposable VM, verify encrypted off-host OpenTofu state,
-   locking and state recovery; a dedicated token without host/storage-admin
-   privileges; and a plan-JSON resource-type allow-list. Test that the token
-   cannot create a pool or storage entry. Apply the reviewed plan, prove a
-   no-change plan, destroy the disposable VM through OpenTofu, and check for
-   orphan disks. The Fedora VM follows this test, not a manual prototype.
+   Before the first disposable VM, verify encrypted laptop-local OpenTofu
+   state, local locking, and independent off-host recovery; a dedicated token
+   without host/storage-admin privileges; and a plan-JSON resource-type
+   allow-list. Test that the token cannot create a pool or storage entry.
+   Apply the reviewed plan, prove a no-change plan, destroy the disposable VM
+   through OpenTofu, and check for orphan disks. The Fedora VM follows this
+   test, not a manual prototype.
 4. Keep Proxmox and UniFi in separate OpenTofu roots, state, credentials, and
    apply jobs. Do not put state, credentials, decrypted secrets, or host backups
    in Git. An off-host backup and an actual restore test are required before

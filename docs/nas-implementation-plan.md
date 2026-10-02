@@ -48,8 +48,9 @@ a host-required device or any SATA disk contains unclassified data.
 
 1. Complete the Proxmox OpenTofu control-plane and disposable-VM gates in the
    [first-VM plan](first-vm-implementation-plan.md). Select the NAS OS and
-   image; TrueNAS SCALE is the initial candidate, with its virtualized-storage
-   support warning and exact release reviewed before deployment.
+   image; OpenMediaVault 8 on Debian 13 is the current candidate. Verify the
+   supported installation path, exact release, and ZFS plugin behavior in an
+   isolated rehearsal before connecting the HBA.
 2. Add versioned host-maintenance code for HBA driver binding with `preview`,
    `check`, `apply`, and rollback. Review the exact PCI target, boot impact,
    current backups, and rescue path before its first live apply.
