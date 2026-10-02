@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Pipe `tofu show -json saved.tfplan` here; never save the JSON containing secrets.
 mode=${1:-}
-[[ -z $mode || $mode == --disposable-create || $mode == --disposable-destroy || $mode == --fedora-create || $mode == --fedora-start || $mode == --nas-create ]] || {
-  echo 'usage: check-plan.sh [--disposable-create|--disposable-destroy|--fedora-create|--fedora-start|--nas-create] < plan.json' >&2
+[[ -z $mode || $mode == --disposable-create || $mode == --disposable-destroy || $mode == --fedora-create || $mode == --fedora-start || $mode == --nas-create || $mode == --nas-attach || $mode == --nas-start ]] || {
+  echo 'usage: check-plan.sh [--disposable-create|--disposable-destroy|--fedora-create|--fedora-start|--nas-create|--nas-attach|--nas-start] < plan.json' >&2
   exit 2
 }
 
@@ -95,6 +95,65 @@ if ! jq -e --arg mode "$mode" '
       ($changes[0].change.after.protection == true) and
       ($changes[0].change.after.started == true) and
       ($changes[0].change.after.stop_on_destroy == true)
+    elif $mode == "--nas-attach" then
+      ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
+      all($changes[];
+        (.address == "module.fedora[0].proxmox_virtual_environment_vm.this" or .address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+        .type == "proxmox_virtual_environment_vm" and
+        (.change.actions == ["no-op"] or (.address == "module.nas[0].proxmox_virtual_environment_vm.this" and .change.actions == ["update"]))
+      ) and
+      ($mutations | length == 1) and
+      ($mutations[0].address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+      ($mutations[0].change.before.vm_id == 200) and
+      ($mutations[0].change.before.started == false) and
+      (($mutations[0].change.before.hostpci // []) | length == 0) and
+      ($mutations[0].change.actions == ["update"]) and
+      (($mutations[0].change.before | del(.hostpci)) == ($mutations[0].change.after | del(.hostpci))) and
+      ($mutations[0].change.after.vm_id == 200) and
+      ($mutations[0].change.after.name == "nas") and
+      ($mutations[0].change.after.node_name == "pve") and
+      ($mutations[0].change.after.pool_id == "tofu-vms") and
+      ($mutations[0].change.after.machine == "q35") and
+      ($mutations[0].change.after.cpu[0].cores == 4) and
+      ($mutations[0].change.after.memory[0].dedicated == 16384) and
+      ($mutations[0].change.after.network_device | length == 1) and
+      ($mutations[0].change.after.disk | length == 1) and
+      ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
+      ($mutations[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
+      ($mutations[0].change.after.boot_order == ["ide2", "scsi0"]) and
+      ($mutations[0].change.after.hostpci == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}]) and
+      ($mutations[0].change.after.on_boot == false) and
+      ($mutations[0].change.after.protection == true) and
+      ($mutations[0].change.after.started == false)
+    elif $mode == "--nas-start" then
+      ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
+      all($changes[];
+        (.address == "module.fedora[0].proxmox_virtual_environment_vm.this" or .address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+        .type == "proxmox_virtual_environment_vm" and
+        (.change.actions == ["no-op"] or (.address == "module.nas[0].proxmox_virtual_environment_vm.this" and .change.actions == ["update"]))
+      ) and
+      ($mutations | length == 1) and
+      ($mutations[0].address == "module.nas[0].proxmox_virtual_environment_vm.this") and
+      ($mutations[0].change.before.vm_id == 200) and
+      ($mutations[0].change.before.started == false) and
+      ($mutations[0].change.actions == ["update"]) and
+      (($mutations[0].change.before | del(.started)) == ($mutations[0].change.after | del(.started))) and
+      ($mutations[0].change.after.vm_id == 200) and
+      ($mutations[0].change.after.name == "nas") and
+      ($mutations[0].change.after.node_name == "pve") and
+      ($mutations[0].change.after.pool_id == "tofu-vms") and
+      ($mutations[0].change.after.machine == "q35") and
+      ($mutations[0].change.after.cpu[0].cores == 4) and
+      ($mutations[0].change.after.memory[0].dedicated == 16384) and
+      ($mutations[0].change.after.network_device | length == 1) and
+      ($mutations[0].change.after.disk | length == 1) and
+      ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
+      ($mutations[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
+      ($mutations[0].change.after.boot_order == ["ide2", "scsi0"]) and
+      ($mutations[0].change.after.hostpci == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}]) and
+      ($mutations[0].change.after.on_boot == false) and
+      ($mutations[0].change.after.protection == true) and
+      ($mutations[0].change.after.started == true)
     elif $mode == "--nas-create" then
       ($changes | map(select(.change.actions != ["no-op"]))) as $mutations |
       all($changes[];

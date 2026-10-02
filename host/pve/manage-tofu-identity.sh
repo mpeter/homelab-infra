@@ -14,10 +14,13 @@ pool_id=tofu-vms
 role_id=OpenTofuVM
 storage_role=OpenTofuStorage
 network_role=OpenTofuNetwork
+mapping_role=OpenTofuMappingUse
 read_role=OpenTofuRead
+mapping_id=nas-hba
 vm_privs='VM.Allocate VM.Audit VM.Config.CPU VM.Config.Memory VM.Config.Disk VM.Config.Network VM.Config.Options VM.Config.Cloudinit VM.Config.HWType VM.GuestAgent.Audit VM.PowerMgmt Pool.Audit'
 storage_privs='Datastore.AllocateSpace Datastore.Audit'
 network_privs='SDN.Audit SDN.Use'
+mapping_privs='Mapping.Use'
 read_privs='Sys.Audit'
 
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
@@ -34,6 +37,7 @@ if [[ $mode == check ]]; then
   pve "pveum role list --output-format json" | jq -e --arg role "$role_id" --arg privs "$vm_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'VM role privileges differ'
   pve "pveum role list --output-format json" | jq -e --arg role "$storage_role" --arg privs "$storage_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'storage role privileges differ'
   pve "pveum role list --output-format json" | jq -e --arg role "$network_role" --arg privs "$network_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'network role privileges differ'
+  pve "pveum role list --output-format json" | jq -e --arg role "$mapping_role" --arg privs "$mapping_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'PCI mapping role privileges differ'
   pve "pveum role list --output-format json" | jq -e --arg role "$read_role" --arg privs "$read_privs" 'any(.[]; .roleid == $role and ((.privs | split(",") | sort) == ($privs | split(" ") | sort)))' >/dev/null || fail 'read role privileges differ'
   acls=$(pve 'pveum acl list --output-format json')
   require_acl() {
@@ -50,11 +54,14 @@ if [[ $mode == check ]]; then
   require_acl /storage/local "$storage_role" token "$pve_user!$token_id"
   require_acl /sdn/zones/localnetwork/vmbr0 "$network_role" user "$pve_user"
   require_acl /sdn/zones/localnetwork/vmbr0 "$network_role" token "$pve_user!$token_id"
+  require_acl "/mapping/pci/$mapping_id" "$mapping_role" user "$pve_user"
+  require_acl "/mapping/pci/$mapping_id" "$mapping_role" token "$pve_user!$token_id"
   require_acl / "$read_role" user "$pve_user"
   require_acl / "$read_role" token "$pve_user!$token_id"
   permissions=$(pve "pveum user token permissions $pve_user $token_id --output-format json")
   jq -e 'all(.[]; (has("Pool.Allocate") | not) and (has("Datastore.Allocate") | not) and (has("Sys.Modify") | not) and (has("Sys.PowerMgmt") | not))' \
     <<< "$permissions" >/dev/null || fail 'token has a forbidden pool, storage, or host privilege'
+  jq -e 'all(.[]; has("Mapping.Modify") | not)' <<< "$permissions" >/dev/null || fail 'token has PCI mapping administration privilege'
   printf 'PVE OpenTofu identity check PASS\n'
   exit 0
 fi
@@ -81,6 +88,7 @@ set_role() {
 set_role "$role_id" "$vm_privs"
 set_role "$storage_role" "$storage_privs"
 set_role "$network_role" "$network_privs"
+set_role "$mapping_role" "$mapping_privs"
 set_role "$read_role" "$read_privs"
 
 tokens=$(pve "pveum user token list $pve_user --output-format json")
@@ -99,6 +107,8 @@ pve "pveum acl modify /storage/local --users $pve_user --roles $storage_role"
 pve "pveum acl modify /storage/local --tokens $pve_user!$token_id --roles $storage_role"
 pve "pveum acl modify /sdn/zones/localnetwork/vmbr0 --users $pve_user --roles $network_role"
 pve "pveum acl modify /sdn/zones/localnetwork/vmbr0 --tokens $pve_user!$token_id --roles $network_role"
+pve "pveum acl modify /mapping/pci/$mapping_id --users $pve_user --roles $mapping_role"
+pve "pveum acl modify /mapping/pci/$mapping_id --tokens $pve_user!$token_id --roles $mapping_role"
 pve "pveum acl modify / --users $pve_user --roles $read_role"
 pve "pveum acl modify / --tokens $pve_user!$token_id --roles $read_role"
 

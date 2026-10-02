@@ -58,15 +58,17 @@ module "nas" {
   memory_floating_mib  = 0
   disk_size_gib        = 32
   on_boot              = false
-  started              = false
+  started              = var.nas_started
   protection           = true
   wait_for_ip_disabled = true
   machine_type         = "q35"
-  hostpci              = []
-  cloud_init           = false
-  agent_enabled        = false
-  cdrom_file_id        = "local:iso/TrueNAS-SCALE-25.10.7.iso"
-  boot_order           = ["ide2", "scsi0"]
+  hostpci = var.nas_hba_attached ? [
+    { device = "hostpci0", mapping = "nas-hba", pcie = true }
+  ] : []
+  cloud_init    = false
+  agent_enabled = false
+  cdrom_file_id = "local:iso/TrueNAS-SCALE-25.10.7.iso"
+  boot_order    = ["ide2", "scsi0"]
 }
 
 variable "disposable_enabled" {
@@ -80,6 +82,16 @@ variable "fedora_enabled" {
 }
 
 variable "nas_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "nas_hba_attached" {
+  type    = bool
+  default = false
+}
+
+variable "nas_started" {
   type    = bool
   default = false
 }

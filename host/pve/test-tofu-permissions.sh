@@ -36,6 +36,31 @@ def request(method, path, params=None):
 if request("GET", "/version") != 200:
     raise SystemExit("API token could not read PVE version")
 
+if request("GET", "/cluster/mapping/pci/nas-hba") != 200:
+    raise SystemExit("API token cannot read the NAS HBA mapping")
+
+url = f"{base}/access/permissions?{urllib.parse.urlencode({'path': '/mapping/pci/nas-hba'})}"
+req = urllib.request.Request(url, headers=headers)
+try:
+    with urllib.request.urlopen(req, context=context, timeout=15) as response:
+        mapping_permissions = json.load(response)
+except urllib.error.HTTPError as error:
+    raise SystemExit(f"API token cannot inspect NAS mapping permissions: HTTP {error.code}")
+mapping_privileges = mapping_permissions.get("/mapping/pci/nas-hba", {})
+if mapping_privileges.get("Mapping.Use") != 1 or "Mapping.Modify" in mapping_privileges:
+    raise SystemExit("API token does not have only Mapping.Use on the NAS HBA mapping")
+
+if request(
+    "POST",
+    "/cluster/mapping/pci",
+    {
+        "id": "nas-hba",
+        "description": "permission-denial probe; existing ID prevents creation",
+        "map": "node=pve,path=0000:02:00.0,id=1000:0087,subsystem-id=1028:1f38,iommugroup=32",
+    },
+) != 403:
+    raise SystemExit("API token was not denied PCI mapping administration")
+
 probes = [
     ("POST", "/pools", {"poolid": "tofu-denied-probe-20261001"}),
     (

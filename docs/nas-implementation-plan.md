@@ -54,16 +54,25 @@ includes a host-required device.
    0011](decisions/0011-use-truenas-community-edition-for-the-nas-guest.md).
    Recheck release status before upgrades. Keep the VM stopped until a usable
    console path is verified; do not attach the HBA during initial installation.
-2. Add versioned host-maintenance code for HBA driver binding with `preview`,
+2. Add the root-created `nas-hba` PCI resource mapping in versioned
+   `host/pve/` maintenance code. Pin the live device, subsystem ID, and IOMMU
+   group; create a host-configuration backup; and verify PVE's mapping
+   diagnostics. Grant the OpenTofu user and privilege-separated token only
+   `Mapping.Use` at `/mapping/pci/nas-hba`; do not grant `Mapping.Modify`.
+3. Add separate OpenTofu plan gates for attaching the mapping to stopped VMID
+   200 and for starting the VM. Keep `on_boot=false` and `started=false` until
+   the console and recovery path are proven. The attach plan must contain only
+   the exact HBA mapping; the start plan must preserve that mapping and change
+   only the stopped state.
+4. Add versioned host-maintenance code for HBA driver binding with `preview`,
    `check`, `apply`, and rollback. Review the exact PCI target, boot impact,
-   current backups, and rescue path before its first live apply.
-3. Define the NAS VM in OpenTofu with a boot disk on `fast-vm`, a reviewed PCI
-   assignment, a persistent network identity, and a memory allocation based
-   on the verified 128 GiB host. Do not assume the future 256 GiB upgrade.
-   Prove the scoped PVE identity can make the intended VM change without
-   host/storage-admin privileges; if passthrough needs a separate privileged
-   host step, keep it in versioned host maintenance code.
-4. Apply the reviewed, type-gated plan. Inside the guest, verify that all eight
+   current backups, and rescue path before its first live apply. Do not add
+   boot-time VFIO binding until on-demand binding and rollback have been tested.
+5. Define the NAS VM in OpenTofu with a boot disk on `fast-vm`, a persistent
+   network identity, and a memory allocation based on the verified 128 GiB
+   host. Do not assume the future 256 GiB upgrade. Keep host-side mapping
+   administration outside the routine OpenTofu token.
+6. Apply the reviewed, type-gated plans. Inside the guest, verify that all eight
    expected serials and SMART data are visible and that the host no longer
    binds the HBA or sees its disks. Exercise repeated VM start, clean stop,
    and reset. Cold-boot the
