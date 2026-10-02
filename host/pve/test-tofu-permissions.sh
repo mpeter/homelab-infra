@@ -46,7 +46,7 @@ try:
         mapping_permissions = json.load(response)
 except urllib.error.HTTPError as error:
     raise SystemExit(f"API token cannot inspect NAS mapping permissions: HTTP {error.code}")
-mapping_privileges = mapping_permissions.get("/mapping/pci/nas-hba", {})
+mapping_privileges = mapping_permissions.get("data", {}).get("/mapping/pci/nas-hba", {})
 if mapping_privileges.get("Mapping.Use") != 1 or "Mapping.Modify" in mapping_privileges:
     raise SystemExit("API token does not have only Mapping.Use on the NAS HBA mapping")
 

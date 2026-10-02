@@ -41,7 +41,7 @@ mapping_matches() {
   jq -e --arg id "$mapping_id" --arg node "$node" --arg path "$device_path" \
     --arg pci_id "$device_id" --arg subsystem "$subsystem_id" \
     --argjson group "$iommu_group" --arg description "$description" '
-    def fields: split(",") | map(split("=")) | from_entries;
+    def fields: split(",") | map(split("=") as $part | {($part[0]): $part[1]}) | add;
     [.[] | select(.id == $id)] as $matches |
     ($matches | length == 1) and
     ($matches[0].description == $description) and
