@@ -42,7 +42,7 @@ expect_status 0 "$nas_create" --nas-create
 expect_status 1 "${nas_create/\"hostpci\":\[\]/\"hostpci\":[{\"device\":\"hostpci0\",\"mapping\":\"nas-hba\"}]}" --nas-create
 nas_attach=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
-    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:null,mdev:null,rom_file:null,rombar:null,xvga:null}]
+    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
     | .change.before = (.change.after | .started = false | .hostpci = [])
     | .change.actions = ["update"]
   ) as $resource |
@@ -51,12 +51,17 @@ nas_attach=$(jq -nc --argjson plan "$nas_create" '
 expect_status 0 "$nas_attach" --nas-attach
 expect_status 1 "${nas_attach/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}" --nas-attach
 expect_status 1 "${nas_attach/\"started\":false/\"started\":true}" --nas-attach
-expect_status 1 "${nas_attach/\"id\":null/\"id\":\"0000:03:00.0\"}" --nas-attach
+expect_status 1 "${nas_attach/\"id\":\"\"/\"id\":\"0000:03:00.0\"}" --nas-attach
 nas_start=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
-    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:null,mdev:null,rom_file:null,rombar:null,xvga:null}]
-    | .change.before = (.change.after | .started = false | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:null,mdev:null,rom_file:null,rombar:null,xvga:null}])
+    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
+    | .change.before = (.change.after | .started = false | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}])
     | .change.after.started = true
+    | .change.before.ipv4_addresses = []
+    | .change.before.ipv6_addresses = []
+    | .change.before.network_interface_names = []
+    | del(.change.after.ipv4_addresses, .change.after.ipv6_addresses, .change.after.network_interface_names)
+    | .change.after_unknown = {ipv4_addresses:true,ipv6_addresses:true,network_interface_names:true}
     | .change.actions = ["update"]
   ) as $resource |
   {format_version:"1.2",resource_changes:[$resource]}
@@ -64,7 +69,9 @@ nas_start=$(jq -nc --argjson plan "$nas_create" '
 expect_status 0 "$nas_start" --nas-start
 expect_status 1 "${nas_start/\"on_boot\":false/\"on_boot\":true}" --nas-start
 expect_status 1 "${nas_start/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}" --nas-start
-expect_status 1 "${nas_start/\"rom_file\":null/\"rom_file\":\"file.rom\"}" --nas-start
+expect_status 1 "${nas_start/\"rom_file\":\"\"/\"rom_file\":\"file.rom\"}" --nas-start
+expect_status 1 "${nas_start/\"network_interface_names\":true/\"network_interface_names\":true,\"vm_id\":true}" --nas-start
+expect_status 1 "${nas_start/\"cores\":4/\"cores\":8}" --nas-start
 fedora_noop='{"address":"module.fedora[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}'
 nas_with_fedora_noop=$(jq -nc --argjson plan "$nas_create" --argjson noop "$fedora_noop" '($plan | .resource_changes += [$noop])')
 expect_status 0 "$nas_with_fedora_noop" --nas-create
