@@ -1,14 +1,25 @@
 # OpenTofu
 
-The Proxmox root manages the disposable lifecycle-test VM and Fedora development
-VM. Fedora VM 100 is deployed and protected; it currently has no unique data.
-TrueNAS SCALE 25.10.7 is installed on NAS VM 200 boot disk `sda`; its eight
-data SSDs remain untouched. The installer ISO is still attached, and the VM must
-be stopped through a reviewed `--nas-install-complete` plan that sets the IDE2
-media to `none` and boot order to `scsi0`. Guest verification and recovery
-checks remain open, and unique data remains gated on the backup and restore
-milestone. See the [implementation plan](../docs/implementation-plan.md) and
-[R720 change-control contract](../docs/r720-change-control.md) for current gates.
+The Proxmox root manages the disposable lifecycle-test VM, Fedora development
+VM, and TrueNAS NAS VM. Fedora VM 100 uses 8 vCPU, 32 GiB RAM, and a 300 GiB
+boot disk; it currently has no unique data. TrueNAS Community Edition 25.10.7
+is installed on NAS VM 200's 32 GiB boot disk. The installer ISO is detached,
+and the VM boots from `scsi0`. NAS VM 200 uses 4 vCPU and 16 GiB fixed RAM.
+
+All eight intended Crucial MX500 SSD serials are visible in the guest, and
+read-only SMART overall-health checks passed for each. The VM is running with
+the `nas-hba` mapping on the SAS2308; the live host check confirms the HBA is on
+`vfio-pci` and the Proxmox pools do not include the existing `array` pool. The
+existing SATA contents remain unchanged; the guest pool has not been created.
+
+At the latest capacity read-back, the host reported 125 GiB RAM total and 98
+GiB available; `fast-vm` had 962,530,536 KiB available. These are observed
+headroom figures, not fixed reservations for later guests. Re-measure and
+budget IdM, AAP, and OpenShift when their versions and recovery prerequisites
+are selected. NAS reset and remaining recovery checks are still open, and
+unique data remains gated on the independent backup and restore milestone. See
+the [implementation plan](../docs/implementation-plan.md) and [R720
+change-control contract](../docs/r720-change-control.md) for current gates.
 
 [ADR 0009](../docs/decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md)
 chooses encrypted local state on the laptop for bootstrap. An independent
