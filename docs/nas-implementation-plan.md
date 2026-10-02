@@ -116,25 +116,55 @@ named restarts. Keep only reproducible test data until the off-site gate passes.
 
 ### Reviewed initial pool layout — 2026-10-02
 
-The initial pool will be named `tank` to distinguish it from the existing
-`array` labels being retired. Use one eight-disk RAIDZ2 vdev with `ashift=12`.
+The initial pool is named `tank` to distinguish it from the existing
+`array` labels being retired. Use one eight-disk RAIDZ2 vdev, with pool-level
+encryption disabled so later dataset encryption can be chosen with its own
+recovery-key plan.
 The exact guest `/dev/disk/by-id` targets are the eight
 `ata-CT1000MX500SSD1_<serial>` paths in `inventory/storage.yaml`:
 `2108E4FA8118`, `2108E4FA82BD`, `2108E4FA8283`, `2108E4FA82C7`,
 `2108E4FA8085`, `2108E4FA8267`, `2108E4FA8084`, and `2108E4FA80B6`.
 The live TrueNAS map confirmed each stable path resolves to the matching serial.
 Exclude the separate 32 GiB TrueNAS boot device (`/dev/sda`, QEMU boot disk).
-At final review, the TrueNAS pool-creation screen must show exactly these eight
-MX500 serials and no boot device. Abort if the set differs or the eight-disk
-RAIDZ2 layout and 4 KiB alignment (`ashift=12`) cannot be selected and read
-back. Let TrueNAS initialize the selected drives as part of pool creation;
-do not separately run `wipefs`, `sgdisk --zap-all`, or `zpool create`.
+At review, the TrueNAS pool-creation plan contained exactly these eight MX500
+serials and no boot device. The TrueNAS API does not expose an `ashift` create
+option, so it derived alignment from device geometry; the vdev reports
+`ashift=12`. TrueNAS initialized the selected drives through the middleware;
+no separate `wipefs`, `sgdisk --zap-all`, or `zpool create` was run.
 
 Before this review, all eight disk serials and SMART health were rechecked in
 the guest. GPT and ZFS-label metadata captures are stored off-target and
 verified against guest-generated SHA-256 values; these are metadata only, not
-backups. The eight old `array` labels remain unimported. Pool creation is the
-first authorized operation that may replace those labels.
+backups. The eight old `array` labels were replaced by the pool creation.
+
+### Deployed pool and protection tasks — 2026-10-02
+
+TrueNAS created `tank` from the eight listed MX500 devices as one RAIDZ2 data
+vdev. The pool is `ONLINE`, has about 5 TiB usable, and is mounted at
+`/mnt/tank`. The first middleware-managed scrub completed with no repairs or
+errors; the existing weekly scrub task remains enabled for Sunday 00:00.
+Proxmox `rpool` and `fast-vm` remain healthy, and the host does not import or
+register `tank`.
+
+TrueNAS middleware schedules short SMART tests weekly on Wednesday at 01:00
+and long tests on the 15th of each month at 03:00 for all
+`ata-CT1000MX500SSD1_*` devices. A manually started short test completed
+without error. A recursive daily snapshot task covers `tank` at 23:00 and
+retains seven days; a one-time recursive snapshot named
+`setup-validation-2026-10-02` confirmed creation. The task also snapshots
+TrueNAS system datasets beneath `tank`; account for this when adding datasets.
+
+The active alert list is empty. TrueNAS mail configuration has no outgoing
+server and SMTP delivery is disabled, so alerts are not currently delivered
+off the appliance. Keep delivery testing with the later alert and recovery
+milestone, after a recipient and delivery service are configured.
+
+The guest currently uses DHCP address `192.168.0.186` on `vmbr0` and reaches
+its gateway. No DHCP reservation or final network/access boundary is recorded.
+The current self-signed certificate identifies `localhost`, so browser access
+by IP does not validate the certificate identity. Do not expose SMB/NFS shares
+until the NAS address/name, certificate, and allowed/denied client policy are
+settled under network task 7.1.
 
 ## 3. Make unique NAS data recoverable off-site
 
