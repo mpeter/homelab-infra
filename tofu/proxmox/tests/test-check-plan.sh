@@ -52,9 +52,30 @@ expect_status 0 "$nas_attach" --nas-attach
 expect_status 1 "${nas_attach/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}" --nas-attach
 expect_status 1 "${nas_attach/\"started\":false/\"started\":true}" --nas-attach
 expect_status 1 "${nas_attach/\"id\":\"\"/\"id\":\"0000:03:00.0\"}" --nas-attach
+nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
+  ($plan.resource_changes[0]
+    | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
+    | .change.before = (.change.after | .started = true | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}])
+    | .change.after.cdrom = []
+    | .change.after.boot_order = ["scsi0"]
+    | .change.after.started = false
+    | .change.before.ipv4_addresses = []
+    | .change.before.ipv6_addresses = []
+    | .change.before.network_interface_names = []
+    | del(.change.after.ipv4_addresses, .change.after.ipv6_addresses, .change.after.network_interface_names)
+    | .change.after_unknown = {ipv4_addresses:true,ipv6_addresses:true,network_interface_names:true}
+    | .change.actions = ["update"]
+  ) as $resource |
+  {format_version:"1.2",resource_changes:[$resource]}
+')
+expect_status 0 "$nas_install_complete" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.boot_order = ["ide2","scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci[0].mapping = "other-hba"' <<< "$nas_install_complete")" --nas-install-complete
 nas_start=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
     | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
+    | .change.after.cdrom = []
+    | .change.after.boot_order = ["scsi0"]
     | .change.before = (.change.after | .started = false | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}])
     | .change.after.started = true
     | .change.before.ipv4_addresses = []

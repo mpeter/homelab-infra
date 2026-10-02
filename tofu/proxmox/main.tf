@@ -67,8 +67,8 @@ module "nas" {
   ] : []
   cloud_init    = false
   agent_enabled = false
-  cdrom_file_id = "local:iso/TrueNAS-SCALE-25.10.7.iso"
-  boot_order    = ["ide2", "scsi0"]
+  cdrom_file_id = var.nas_install_iso_attached ? "local:iso/TrueNAS-SCALE-25.10.7.iso" : null
+  boot_order    = var.nas_install_iso_attached ? ["ide2", "scsi0"] : ["scsi0"]
 }
 
 variable "disposable_enabled" {
@@ -94,4 +94,10 @@ variable "nas_hba_attached" {
 variable "nas_started" {
   type    = bool
   default = false
+}
+
+variable "nas_install_iso_attached" {
+  type        = bool
+  default     = false
+  description = "Attach the pinned TrueNAS installer ISO only for installation or recovery."
 }

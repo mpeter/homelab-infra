@@ -2,8 +2,12 @@
 
 The Proxmox root manages the disposable lifecycle-test VM and Fedora development
 VM. Fedora VM 100 is deployed and protected; it currently has no unique data.
-The NAS is not deployed, and unique data remains gated on the backup and restore
-milestone. See the [implementation plan](../docs/implementation-plan.md) and
+TrueNAS SCALE 25.10.7 is installed on NAS VM 200 boot disk `sda`; its eight
+data SSDs remain untouched. The installer ISO is still attached, and the VM must
+be stopped through a reviewed `--nas-install-complete` plan before booting from
+`scsi0`. Guest verification and recovery checks remain open, and unique data
+remains gated on the backup and restore milestone. See the
+[implementation plan](../docs/implementation-plan.md) and
 [R720 change-control contract](../docs/r720-change-control.md) for current gates.
 
 [ADR 0009](../docs/decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md)
