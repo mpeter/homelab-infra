@@ -100,6 +100,21 @@ expect_status 1 "${nas_start/\"mapping\":\"nas-hba\"/\"mapping\":\"other-hba\"}"
 expect_status 1 "${nas_start/\"rom_file\":\"\"/\"rom_file\":\"file.rom\"}" --nas-start
 expect_status 1 "${nas_start/\"network_interface_names\":true/\"network_interface_names\":true,\"vm_id\":true}" --nas-start
 expect_status 1 "${nas_start/\"cores\":4/\"cores\":8}" --nas-start
+nas_detach=$(jq -nc --argjson plan "$nas_start" '
+  ($plan.resource_changes[0]
+    | .change.after = .change.before
+    | .change.after.hostpci = []
+    | .change.actions = ["update"]
+  ) as $resource |
+  {format_version:"1.2",resource_changes:[$resource]}
+')
+expect_status 0 "$nas_detach" --nas-detach
+expect_status 1 "$nas_detach"
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.hostpci[0].mapping = "other-hba"' <<< "$nas_detach")" --nas-detach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true}]' <<< "$nas_detach")" --nas-detach
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.cpu[0].cores = 8' <<< "$nas_detach")" --nas-detach
+expect_status 1 "$(jq -c '.resource_changes[0].change.before.started = true' <<< "$nas_detach")" --nas-detach
+expect_status 1 "$(jq -c '.resource_changes += [{address:"other",type:"proxmox_virtual_environment_vm",change:{actions:["delete"]}}]' <<< "$nas_detach")" --nas-detach
 nas_stop=$(jq -nc --argjson plan "$nas_start" '
   ($plan.resource_changes[0]
     | .change.before.started = true
@@ -113,5 +128,7 @@ expect_status 1 "${nas_stop/\"started\":false/\"started\":true}" --nas-stop
 fedora_noop='{"address":"module.fedora[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}'
 nas_with_fedora_noop=$(jq -nc --argjson plan "$nas_create" --argjson noop "$fedora_noop" '($plan | .resource_changes += [$noop])')
 expect_status 0 "$nas_with_fedora_noop" --nas-create
+nas_detach_with_fedora_noop=$(jq -nc --argjson plan "$nas_detach" --argjson noop "$fedora_noop" '($plan | .resource_changes += [$noop])')
+expect_status 0 "$nas_detach_with_fedora_noop" --nas-detach
 expect_status 0 '{"format_version":"1.2","resource_changes":[{"address":"module.nas[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}]}'
 printf 'plan gate tests PASS\n'
