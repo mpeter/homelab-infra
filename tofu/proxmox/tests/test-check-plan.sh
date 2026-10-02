@@ -40,5 +40,8 @@ expect_status 1 '{"format_version":"1.2","resource_changes":[{"address":"module.
 nas_create='{"format_version":"1.2","resource_changes":[{"address":"module.nas[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["create"],"after":{"vm_id":200,"name":"nas","node_name":"pve","pool_id":"tofu-vms","machine":"q35","description":"TrueNAS NAS; HBA and pool remain gated","cpu":[{"cores":4,"type":"host"}],"memory":[{"dedicated":16384,"floating":0}],"network_device":[{"bridge":"vmbr0","model":"virtio"}],"disk":[{"datastore_id":"fast-vm","file_format":"raw","interface":"scsi0","size":32}],"cdrom":[{"file_id":"local:iso/TrueNAS-SCALE-25.10.7.iso","interface":"ide2"}],"boot_order":["ide2","scsi0"],"hostpci":[],"initialization":[],"agent":[],"on_boot":false,"protection":true,"started":false,"stop_on_destroy":true}}}]}'
 expect_status 0 "$nas_create" --nas-create
 expect_status 1 "${nas_create/\"hostpci\":\[\]/\"hostpci\":[{\"device\":\"hostpci0\",\"mapping\":\"nas-hba\"}]}" --nas-create
+fedora_noop='{"address":"module.fedora[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}'
+nas_with_fedora_noop=$(jq -nc --argjson plan "$nas_create" --argjson noop "$fedora_noop" '($plan | .resource_changes += [$noop])')
+expect_status 0 "$nas_with_fedora_noop" --nas-create
 expect_status 0 '{"format_version":"1.2","resource_changes":[{"address":"module.nas[0].proxmox_virtual_environment_vm.this","type":"proxmox_virtual_environment_vm","change":{"actions":["no-op"]}}]}'
 printf 'plan gate tests PASS\n'
