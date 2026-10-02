@@ -40,6 +40,35 @@ module "fedora" {
   wait_for_ip_disabled = true
 }
 
+module "nas" {
+  count  = var.nas_enabled ? 1 : 0
+  source = "./modules/vm"
+
+  name                 = "nas"
+  vm_id                = 200
+  node_name            = var.node_name
+  pool_id              = "tofu-vms"
+  bridge               = "vmbr0"
+  datastore_id         = "fast-vm"
+  import_from          = null
+  ssh_public_key       = null
+  description          = "TrueNAS NAS; HBA and pool remain gated"
+  cpu_cores            = 4
+  memory_mib           = 16384
+  memory_floating_mib  = 0
+  disk_size_gib        = 32
+  on_boot              = false
+  started              = false
+  protection           = true
+  wait_for_ip_disabled = true
+  machine_type         = "q35"
+  hostpci              = []
+  cloud_init           = false
+  agent_enabled        = false
+  cdrom_file_id        = "local:iso/TrueNAS-SCALE-25.10.7.iso"
+  boot_order           = ["ide2", "scsi0"]
+}
+
 variable "disposable_enabled" {
   type    = bool
   default = false
@@ -48,4 +77,9 @@ variable "disposable_enabled" {
 variable "fedora_enabled" {
   type    = bool
   default = true
+}
+
+variable "nas_enabled" {
+  type    = bool
+  default = false
 }

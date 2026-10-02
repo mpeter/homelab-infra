@@ -29,9 +29,10 @@ preflight and recovery path.
    eight SATA drives.
 2. Resolve all eight SATA disks by serial and `/dev/disk/by-id`; record size,
    SMART health, signatures, controller path, and their physical slot mapping
-   where possible. Preserve any existing data unless each exact serial has
-   been separately classified disposable. Header snapshots are not full data
-   backups.
+   where possible. The operator has authorized disposal of the existing
+   contents on all eight intended SSDs. Verify that the live serial set still
+   matches the recorded set before any clearing. Header snapshots are not full
+   data backups.
 3. Recheck the SAS2308 PCI identity and IOMMU group, including every group
    member. On 2026-10-01 it appeared alone at `02:00.0` in group 32, and the
    Kingston PVE boot SSD was attached to the separate chipset SATA controller.
@@ -40,17 +41,19 @@ preflight and recovery path.
    Prepare a tested way to undo HBA binding if the host does not boot or the
    guest cannot claim the controller.
 
-Exit gate: disk ownership, PCI isolation, data disposition, and rescue path
-are documented from current read-only evidence. Stop if the HBA group includes
-a host-required device or any SATA disk contains unclassified data.
+Exit gate: disk ownership, PCI isolation, the approved contents-disposal scope,
+and rescue path are documented from current read-only evidence. Stop if the
+live serial set differs from the approved eight drives or the HBA group
+includes a host-required device.
 
 ## 1. Prove VM and HBA passthrough without changing SATA data
 
 1. Complete the Proxmox OpenTofu control-plane and disposable-VM gates in the
-   [first-VM plan](first-vm-implementation-plan.md). Select the NAS OS and
-   image; OpenMediaVault 8 on Debian 13 is the current candidate. Verify the
-   supported installation path, exact release, and ZFS plugin behavior in an
-   isolated rehearsal before connecting the HBA.
+   [first-VM plan](first-vm-implementation-plan.md). Install TrueNAS Community
+   Edition 25.10.7 from the official SHA-256-pinned ISO selected in [ADR
+   0011](decisions/0011-use-truenas-community-edition-for-the-nas-guest.md).
+   Recheck release status before upgrades. Keep the VM stopped until a usable
+   console path is verified; do not attach the HBA during initial installation.
 2. Add versioned host-maintenance code for HBA driver binding with `preview`,
    `check`, `apply`, and rollback. Review the exact PCI target, boot impact,
    current backups, and rescue path before its first live apply.
@@ -72,10 +75,11 @@ create the SATA pool if passthrough is unstable.
 
 ## 2. Build NAS storage and shares
 
-1. Confirm each exact serial is disposable and review a pool-creation plan
-   before clearing signatures or partitions. Use guest stable disk identifiers,
-   not changing Linux `/dev/sd*` names. Create the eight-disk RAIDZ2 pool in
-   the NAS guest only.
+1. Reconfirm the approved eight serials and review the exact pool-creation plan
+   before clearing signatures or partitions. The existing contents are
+   disposable by operator decision. Use guest stable disk identifiers, not
+   changing Linux `/dev/sd*` names. Create the eight-disk RAIDZ2 pool in the
+   NAS guest only.
 2. Read back topology, usable capacity, ashift, health, and mountpoints. Test
    a scrub, SMART self-test scheduling, capacity thresholds, notifications,
    and snapshots. Confirm whether discard reaches the SATA SSDs; host-side
@@ -111,8 +115,8 @@ guest/pool recovery and host-loss recovery separately.
 
 ## Stop conditions
 
-Stop before a write on uncertain serials, existing unclassified data, shared
-IOMMU ownership, inaccessible rescue console, unexpected OpenTofu plan
+Stop before a write on uncertain serials, shared IOMMU ownership, inaccessible
+rescue console, unexpected OpenTofu plan
 resources, unrecoverable state, or new disk/memory errors. Preserve the current
 state for diagnosis; do not force a pool import or bypass the plan gate merely
 to complete a milestone.

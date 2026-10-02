@@ -28,8 +28,12 @@ changes are reconciled into the appropriate source after service is restored.
 The NAS VM boots from `fast-vm`. Its eight SATA SSDs and RAIDZ2 pool belong to
 the guest, not to Proxmox. The host owns the HBA passthrough boundary; OpenTofu
 owns the VM and PCI assignment; guest configuration owns shares and storage
-services. Other VMs do not boot from storage exported by this same-host NAS.
-See [ADR 0010](decisions/0010-run-the-bulk-nas-as-a-vm-with-hba-passthrough.md).
+services. The guest OS is TrueNAS Community Edition 25.10.7. Other VMs do not
+boot from storage exported by this same-host NAS. See [ADR
+0010](decisions/0010-run-the-bulk-nas-as-a-vm-with-hba-passthrough.md) for the
+storage boundary and [ADR
+0011](decisions/0011-use-truenas-community-edition-for-the-nas-guest.md) for
+the guest OS.
 
 ## Red Hat lab profile
 
