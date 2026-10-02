@@ -71,7 +71,7 @@ nvme:
         state: active fast-vm mirror member; prior GPT cleared, old VMFS data not securely erased
 
 sata_data:
-  observed_at: 2026-10-01
+  observed_at: 2026-10-02
   model: CT1000MX500SSD1
   capacity_gb_each: 1000
   transport: SATA behind SAS2308 HBA
@@ -130,7 +130,7 @@ sata_data:
       by_id: ata-CT1000MX500SSD1_2108E4FA80B6
       state: GPT valid; ZFS member of pool `array` (UUID 403860994760048568); contents approved for disposal and NAS reuse
       smart: PASSED; 0 reallocated, pending, offline-uncorrectable, or UDMA CRC errors
-  state: not imported or mounted; fresh serial, SMART, signature, and by-id checks match the approved set; off-target header captures and reviewed cleanup plan remain pending
+  state: not imported or mounted; fresh guest serial, SMART, signature, and by-id checks match the approved set; off-target GPT and ZFS-label metadata captures are hash-verified; reviewed initial pool plan is in docs/nas-implementation-plan.md
 
 boot:
   observed_at: 2026-10-01

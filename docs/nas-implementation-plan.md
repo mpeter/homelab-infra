@@ -114,6 +114,28 @@ create the SATA pool if passthrough is unstable.
 Exit gate: pool and share behavior match the reviewed source and survive the
 named restarts. Keep only reproducible test data until the off-site gate passes.
 
+### Reviewed initial pool layout — 2026-10-02
+
+The initial pool will be named `tank` to distinguish it from the existing
+`array` labels being retired. Use one eight-disk RAIDZ2 vdev with `ashift=12`.
+The exact guest `/dev/disk/by-id` targets are the eight
+`ata-CT1000MX500SSD1_<serial>` paths in `inventory/storage.yaml`:
+`2108E4FA8118`, `2108E4FA82BD`, `2108E4FA8283`, `2108E4FA82C7`,
+`2108E4FA8085`, `2108E4FA8267`, `2108E4FA8084`, and `2108E4FA80B6`.
+The live TrueNAS map confirmed each stable path resolves to the matching serial.
+Exclude the separate 32 GiB TrueNAS boot device (`/dev/sda`, QEMU boot disk).
+At final review, the TrueNAS pool-creation screen must show exactly these eight
+MX500 serials and no boot device. Abort if the set differs or the eight-disk
+RAIDZ2 layout and 4 KiB alignment (`ashift=12`) cannot be selected and read
+back. Let TrueNAS initialize the selected drives as part of pool creation;
+do not separately run `wipefs`, `sgdisk --zap-all`, or `zpool create`.
+
+Before this review, all eight disk serials and SMART health were rechecked in
+the guest. GPT and ZFS-label metadata captures are stored off-target and
+verified against guest-generated SHA-256 values; these are metadata only, not
+backups. The eight old `array` labels remain unimported. Pool creation is the
+first authorized operation that may replace those labels.
+
 ## 3. Make unique NAS data recoverable off-site
 
 1. Select the rsync.net account and transfer format deliberately. A standard
