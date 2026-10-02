@@ -11,6 +11,7 @@ override.tf.json
 *_override.tf.json
 
 # Credentials and decrypted secrets
+/secrets/
 .env
 .env.*
 !.env.example
@@ -19,6 +20,7 @@ override.tf.json
 *.p12
 *.kubeconfig
 secrets/*.dec.*
+secrets/pve-password
 inventory/local/
 
 # Ansible and local tooling
