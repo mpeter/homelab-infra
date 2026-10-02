@@ -121,7 +121,7 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
       ($mutations[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
       ($mutations[0].change.after.boot_order == ["ide2", "scsi0"]) and
-      ($mutations[0].change.after.hostpci == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}]) and
+      ($mutations[0].change.after.hostpci | map(with_entries(select(.value != null)))) == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}] and
       ($mutations[0].change.after.on_boot == false) and
       ($mutations[0].change.after.protection == true) and
       ($mutations[0].change.after.started == false)
@@ -150,7 +150,7 @@ if ! jq -e --arg mode "$mode" '
       ($mutations[0].change.after.disk[0].datastore_id == "fast-vm") and
       ($mutations[0].change.after.cdrom[0].file_id == "local:iso/TrueNAS-SCALE-25.10.7.iso") and
       ($mutations[0].change.after.boot_order == ["ide2", "scsi0"]) and
-      ($mutations[0].change.after.hostpci == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}]) and
+      ($mutations[0].change.after.hostpci | map(with_entries(select(.value != null)))) == [{"device":"hostpci0","mapping":"nas-hba","pcie":true}] and
       ($mutations[0].change.after.on_boot == false) and
       ($mutations[0].change.after.protection == true) and
       ($mutations[0].change.after.started == true)
