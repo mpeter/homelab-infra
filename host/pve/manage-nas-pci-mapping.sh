@@ -78,7 +78,7 @@ if [[ $mode == apply ]]; then
   [[ $vm_status == *'status: stopped'* ]] || fail 'NAS VM must be stopped'
   [[ $vm_config != *hostpci* ]] || fail 'NAS VM already has a PCI device configured'
   if [[ $mapping_count == 0 ]]; then
-    "$repo_root/host/pve/backup-host-config.sh"
+    bash "$repo_root/host/pve/backup-host-config.sh"
     pve "pvesh create /cluster/mapping/pci --id $mapping_id --description '$description' --map 'node=$node,path=$device_path,id=$device_id,subsystem-id=$subsystem_id,iommugroup=$iommu_group,description=SAS2308'"
   else
     mapping_matches || fail 'mapping ID already exists with different content'
@@ -91,7 +91,7 @@ fi
 [[ $mapping_count == 1 ]] && mapping_matches || fail 'refusing to remove a missing or changed mapping'
 [[ $vm_status == *'status: stopped'* ]] || fail 'NAS VM must be stopped before mapping rollback'
 [[ $vm_config != *hostpci* ]] || fail 'remove the NAS VM PCI assignment through its gated OpenTofu plan first'
-"$repo_root/host/pve/backup-host-config.sh"
+bash "$repo_root/host/pve/backup-host-config.sh"
 pve "pveum acl delete /mapping/pci/$mapping_id --roles OpenTofuMappingUse --users tofu@pve"
 pve "pveum acl delete /mapping/pci/$mapping_id --roles OpenTofuMappingUse --tokens tofu@pve!opentofu"
 pve "pvesh delete /cluster/mapping/pci/$mapping_id"
