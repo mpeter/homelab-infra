@@ -14,8 +14,8 @@ PoE Error: Device 1 failed to start on PoE module.
 Resetting module in slot 1 again to recover from dev fault
 ```
 
-All 48 copper ports remain administratively enabled but operationally off for
-PoE. The switch allocates and consumes no PoE power.
+All 48 copper ports were initially administratively enabled but operationally
+off for PoE. The switch allocated and consumed no PoE power.
 
 ## Evidence
 
@@ -75,10 +75,27 @@ this repository.
    the maintenance window.
 7. FastIron 08.0.30u is now the configured secondary boot target. Primary
    08.0.30t remains the serial-console rollback image.
+8. `no inline power` was applied to the complete `1/1/1` through `1/1/48`
+   range and saved. It disables endpoint power administration but did not stop
+   either controller from failing initialization and entering its hard-reset
+   loop.
 
 The failed controller programming is the decisive result: a software update
 cannot communicate successfully with either PoE engine. PoE remains unavailable
 on all copper ports.
+
+## Port-level disable result
+
+FastIron documents `no inline power` as an interface or interface-range
+setting. It was useful to ensure the broken chassis cannot unexpectedly power
+an endpoint if it recovers intermittently, but it is not a controller-disable
+setting. The switch continues trying to initialize the two PoE engines before
+port-level policy can matter, so the console errors continue.
+
+There is no documented ICX6610 configuration command that disables PoE
+controller initialization globally. Suppressing console logging would only hide
+the messages and would also hide unrelated console diagnostics; it does not
+stop the failed reset attempts.
 
 ## Recommended disposition
 
@@ -101,3 +118,4 @@ attempts were rejected before controller programming completed.
 - [Fohdeesha FCX and ICX6610 setup](https://fohdeesha.com/docs/fcx.html)
 - [Ruckus community response for the exact controller error](https://community.ruckuswireless.com/discussion/38807/icx6610-48p-poe-error-device-0-1-failed-to-start-on-poe-module)
 - [FastIron 08.0.30u release notes](https://fohdeesha.com/data/other/brocade/08030u_ReleaseNotes_v1.pdf)
+- [FastIron inline-power command reference](https://www.manualslib.com/manual/1126762/Brocade-Communications-Systems-Fastiron.html?page=351)
