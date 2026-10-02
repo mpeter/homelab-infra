@@ -56,9 +56,11 @@ nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
     | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
     | .change.before = (.change.after | .started = true | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}])
-    | .change.after.cdrom = []
+    | .change.after.cdrom = [{file_id:"none",interface:"ide2"}]
     | .change.after.boot_order = ["scsi0"]
     | .change.after.started = false
+    | .change.before.cdrom = [{file_id:"local:iso/TrueNAS-SCALE-25.10.7.iso",interface:"ide2"}]
+    | .change.before.boot_order = ["ide2","scsi0"]
     | .change.before.ipv4_addresses = []
     | .change.before.ipv6_addresses = []
     | .change.before.network_interface_names = []
@@ -70,11 +72,12 @@ nas_install_complete=$(jq -nc --argjson plan "$nas_create" '
 ')
 expect_status 0 "$nas_install_complete" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.boot_order = ["ide2","scsi0"]' <<< "$nas_install_complete")" --nas-install-complete
+expect_status 1 "$(jq -c '.resource_changes[0].change.after.cdrom[0].file_id = "cdrom"' <<< "$nas_install_complete")" --nas-install-complete
 expect_status 1 "$(jq -c '.resource_changes[0].change.after.hostpci[0].mapping = "other-hba"' <<< "$nas_install_complete")" --nas-install-complete
 nas_start=$(jq -nc --argjson plan "$nas_create" '
   ($plan.resource_changes[0]
     | .change.after.hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}]
-    | .change.after.cdrom = []
+    | .change.after.cdrom = [{file_id:"none",interface:"ide2"}]
     | .change.after.boot_order = ["scsi0"]
     | .change.before = (.change.after | .started = false | .hostpci = [{device:"hostpci0",mapping:"nas-hba",pcie:true,id:"",mdev:"",rom_file:"",rombar:false,xvga:false}])
     | .change.after.started = true

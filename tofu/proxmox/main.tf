@@ -67,7 +67,7 @@ module "nas" {
   ] : []
   cloud_init    = false
   agent_enabled = false
-  cdrom_file_id = var.nas_install_iso_attached ? "local:iso/TrueNAS-SCALE-25.10.7.iso" : null
+  cdrom_file_id = var.nas_install_iso_attached ? "local:iso/TrueNAS-SCALE-25.10.7.iso" : "none"
   boot_order    = var.nas_install_iso_attached ? ["ide2", "scsi0"] : ["scsi0"]
 }
 
