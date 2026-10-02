@@ -26,6 +26,8 @@ devices:
       poe_controller_healthy: false
       poe_controller_failure_scope: hardware_confirmed_after_firmware_recovery
       poe_firmware_update_result: controller_rejected_twice
+      poe_port_admin_state: disabled_all_48_ports
+      poe_controller_reset_loop: persists_when_ports_disabled
       running_matches_startup: true
     time_sync:
       protocol: ntp_v4
