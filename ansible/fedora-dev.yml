@@ -1,0 +1,28 @@
+---
+- name: Configure the reproducible Fedora development VM
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Ensure QEMU guest agent is installed
+      ansible.builtin.dnf:
+        name: qemu-guest-agent
+        state: present
+
+    - name: Ensure QEMU guest agent is enabled and running
+      ansible.builtin.service:
+        name: qemu-guest-agent
+        enabled: true
+        state: started
+
+    - name: Read QEMU guest agent service state
+      ansible.builtin.command: systemctl is-active qemu-guest-agent
+      register: qemu_guest_agent_state
+      changed_when: false
+      check_mode: false
+
+    - name: Verify QEMU guest agent service state
+      ansible.builtin.assert:
+        that:
+          - qemu_guest_agent_state.stdout == "active"
