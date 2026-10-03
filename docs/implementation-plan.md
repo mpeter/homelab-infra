@@ -133,7 +133,7 @@ permitted and denied networks.
   leaving headroom for Fedora; 256 GiB is not a NAS prerequisite.
   Follow the NAS plan's separate serial, passthrough, guest-pool, and recovery
   gates; do not treat VM creation as permission to clear the SATA disks.
-- Before unique data enters the NAS, configure its encrypted rsync.net copy
+- Before unique data enters the NAS, configure its encrypted second-site copy
   and restore a representative file and appliance configuration from off-site.
 - Create the base AAP execution environment with pinned collections and tools.
 - Create a separate Brocade execution environment plus audit, backup, apply,
@@ -190,11 +190,11 @@ documented rebuild from Git are exercised.
 
 ## Phase 8: independent recovery and operations
 
-- Extend the earlier rsync.net NAS and Fedora recovery paths to the remaining
+- Extend the earlier independent NAS and Fedora recovery paths to the remaining
   important VMs and infrastructure artifacts. Keep encrypted copies, retention,
   and alerting verified against the remote destination, not only local NAS
-  snapshots. Native ZFS receive requires the appropriate account; a standard
-  SSH-compatible backup workflow remains an option.
+  snapshots. Confirm the receiver supports the selected transfer methods and
+  required retention model.
 - Integrate UPS shutdown behavior.
 - Centralize alerts for ZFS, disks, backups, thermals, power, certificates,
   PVE, AAP, IdM, and OpenShift.

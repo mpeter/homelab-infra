@@ -41,7 +41,8 @@ read-back. An observed inventory entry alone is not desired state.
 5. The NAS VM owns the eight SATA disks behind the passed-through SAS2308.
    Proxmox must not import the guest pool or store VM boot disks on NAS exports.
    The NAS can be built empty before off-site backup is configured; unique data
-   waits for an encrypted rsync.net copy and a tested restore.
+   waits for an encrypted copy to the selected independent destination and a
+   tested restore.
 
 A backup-restore test may create one temporary, non-managed VM through a
 versioned `host/pve/` procedure because OpenTofu cannot restore a vzdump archive

@@ -18,9 +18,9 @@ preflight and recovery path.
   monitoring, and SMB/NFS shares.
 - Other R720 VMs do not boot from NAS exports. NAS loss must not prevent PVE
   or the NAS VM itself from starting.
-- Encrypted off-site copies to rsync.net, independent key custody, and a
-  restore test precede unique data. An empty NAS may be built and tested
-  before the off-site account is ready.
+- Encrypted copies to an independent second-site ZFS receiver, independent key
+  custody, and a restore test precede unique data. An empty NAS may be built
+  and tested before the receiver is ready.
 
 ## 0. Refresh hardware and recovery evidence
 
@@ -187,10 +187,10 @@ network task 7.1. Complete the backup/recovery gates in task group 5 as well.
 
 ## 3. Make unique NAS data recoverable off-site
 
-1. Select the rsync.net account and transfer format deliberately. A standard
-   SSH-compatible account can hold client-encrypted file backups; native ZFS
-   send/receive needs an account that supports that feature. Record cost,
-   retention, bandwidth, and expected restore method before automation.
+1. Identify and verify the operator-selected second-site ZFS receiver. Define
+   the NAS replication and full-VM archive formats, local staging capacity,
+   encryption, seed bandwidth, retention, and expected restore method before
+   automation.
 2. Store credentials and encryption keys outside Git and outside the NAS as
    their sole copy. Back up NAS datasets and configuration exports. Back up
    important VM recovery artifacts through a separately verified path; NAS

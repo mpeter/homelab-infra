@@ -30,7 +30,7 @@
 
 ## 5. Prove off-host recovery before unique data
 
-- [ ] 5.1 Select the rsync.net account and NAS transfer format and decide the full-VM backup method, including off-host destination, local staging budget, encryption, first-seed time/bandwidth, retention, and restore steps. Keep credentials and decryption material recoverable from a second location outside both the R720 and laptop's sole disk.
+- [ ] 5.1 Identify and verify the operator-selected local ZFS receiver at another site; decide NAS replication and full-VM backup methods, including local staging budget, encryption, first-seed time/bandwidth, retention, and restore steps. Keep credentials and decryption material recoverable from a second location outside both the R720 and laptop's sole disk.
 - [ ] 5.2 Configure NAS dataset and appliance-configuration backups; verify the destination copy and restore a file and NAS configuration from an independent recovery host using only the remote copy and separately held keys.
 - [ ] 5.3 Configure a full Fedora VM backup and verify its archive at the independent destination. Through the versioned restore-test exception, restore to a scratch ID outside OpenTofu's range with no NIC or a link-down NIC; boot and inspect it, then remove it and verify no orphans. Record that this same-host test does not prove host-loss recovery.
 - [ ] 5.4 Configure versioned host ZFS/SMART/capacity and backup-failure alerts, plus NAS missed-job/stale-copy/capacity alerts; verify live configuration and delivered test alerts, and refresh and extraction-test the off-host host bundle before unique data migration.

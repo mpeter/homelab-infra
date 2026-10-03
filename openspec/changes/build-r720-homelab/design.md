@@ -14,7 +14,7 @@ The R720 is a single-host Proxmox lab intended to become a Fedora development pl
 **Non-Goals:**
 
 - Claim high availability from a single R720, a mirror, or the local NAS.
-- Choose the rsync.net transfer product, UniFi provider, internal domain, or final VM sizes without the required compatibility and live-capacity evidence.
+- Choose a transfer product, UniFi provider, internal domain, or final VM sizes without the required compatibility and live-capacity evidence.
 - Treat this planning change as approval for a disk wipe, HBA binding, host reboot, or network cutover.
 
 ## Decisions
@@ -24,7 +24,7 @@ The R720 is a single-host Proxmox lab intended to become a Fedora development pl
 3. **Separate local availability from independent recovery.** `fast-vm` remains a host-owned mirror. The NAS VM boots there, receives the complete SAS2308 HBA, and builds RAIDZ2 inside the guest only after serial-specific disposition and passthrough tests. Neither mirror nor RAIDZ2 substitutes for an encrypted off-host restore. Other VMs must not boot from the same-host NAS export. A host-managed SATA pool was considered and rejected by ADR 0010 because it blurs disk and share ownership.
 4. **Use TrueNAS Community Edition 25.10.7 for the NAS guest.** The operator accepts the home-lab support tradeoff described in ADR 0011. Keep the VM stopped and without HBA access during initial creation; require verified console access before installation and retain the independent-backup gate for unique data.
 5. **Keep the break-glass control path independent.** [ADR 0009](../../../docs/decisions/0009-bootstrap-proxmox-state-on-break-glass-workstation.md) selects encrypted local Proxmox state on the laptop for bootstrap, with local locking and an independently recoverable second state copy and passphrase; it does not select a remote backend yet. The laptop retains a repository clone and access, while a separate recoverable location holds the second state/key and backup decryption material so laptop loss does not destroy recovery. Local locking does not coordinate other machines. A disposable VM proves the provider, identity, image, state, and lifecycle path before Fedora or NAS is relied upon. Proxmox and UniFi state and identities remain separate; migration to a locked remote backend is a later tested decision.
-6. **Stage promotion, not just creation.** An empty Fedora VM can be used for reproducible work and an empty NAS can be tested before rsync.net exists. Unique data or primary-workspace status requires a remote copy verified at its destination and a restore using independently held material; an on-host VM restore alone proves format and procedure, not host-loss recovery. Later IdM/AAP/OpenShift require measured capacity, network/DNS prerequisites, and their own recovery paths.
+6. **Stage promotion, not just creation.** An empty Fedora VM can be used for reproducible work and an empty NAS can be tested before the second-site ZFS receiver is ready. Unique data or primary-workspace status requires a remote copy verified at its destination and a restore using independently held material; an on-host VM restore alone proves format and procedure, not host-loss recovery. Later IdM/AAP/OpenShift require measured capacity, network/DNS prerequisites, and their own recovery paths.
 
 ## Risks / Trade-offs
 
@@ -34,7 +34,7 @@ The R720 is a single-host Proxmox lab intended to become a Fedora development pl
 - **A provider may require more privilege for PCI assignment than for ordinary VM changes** → Test effective permissions and the provider path; use a narrowly scoped mapping if supported or a separate versioned host step, never broaden the routine VM identity to host administration merely to pass a plan.
 - **Broad automation permissions or state loss can amplify a mistake** → Scope effective API permissions, test denied operations and state recovery, gate plans by allowed resource/action, and verify no-change read-back.
 - **The current single firmware-visible boot SSD can fail before boot redundancy is installed** → Retain tested recovery media, the off-host host bundle, and reconstruction procedure; schedule the second boot device as separate maintenance. This risk is temporarily accepted for empty/reproducible VMs and must be revisited before declaring the full platform resilient.
-- **Off-site account and transfer method are not yet selected** → Continue empty/reproducible services only; do not promote unique data until remote restore succeeds.
+- **Second-site receiver and transfer method are not yet ready** → Continue empty/reproducible services only; do not promote unique data until remote restore succeeds.
 - **One umbrella change is large** → Treat each task group as a separately verifiable milestone. Do not mark the whole change complete from an early VM or NAS success.
 
 ## Migration Plan
@@ -49,5 +49,5 @@ Rollback is stage-specific: use saved host configuration and console recovery fo
 
 ## Open Questions
 
-- Which rsync.net account/transfer format, retention, and full-VM backup method will be used? The VM method must account for staging capacity, encryption, first-seed time, and a destination-verified restore.
+- Which second-site ZFS receiver, NAS replication format, retention, and full-VM backup method will be used? The VM method must account for staging capacity, encryption, first-seed time, and a destination-verified restore.
 - What live memory/SEL state, final VM allocations, internal domain/VLAN plan, UniFi provider, and OpenShift entitlement are confirmed at their respective gates?

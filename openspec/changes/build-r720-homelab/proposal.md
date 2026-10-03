@@ -28,4 +28,4 @@ None; this repository has no existing OpenSpec capability specs.
 
 ## Impact
 
-This change spans versioned `host/pve/` maintenance, separate Proxmox and UniFi OpenTofu roots, guest bootstrap and AAP automation, NAS guest configuration, OpenShift GitOps, inventories, ADRs, and recovery documentation. It affects the live R720, iDRAC, Brocade, UniFi, and rsync.net only through later reviewed implementation stages. This proposal itself authorizes no disk clearing, host reboot, network cutover, or placement of unique data.
+This change spans versioned `host/pve/` maintenance, separate Proxmox and UniFi OpenTofu roots, guest bootstrap and AAP automation, NAS guest configuration, OpenShift GitOps, inventories, ADRs, and recovery documentation. It affects the live R720, iDRAC, Brocade, UniFi, and an independent backup destination only through later reviewed implementation stages. This proposal itself authorizes no disk clearing, host reboot, network cutover, or placement of unique data.
