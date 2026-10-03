@@ -30,6 +30,10 @@
 
 ## 5. Prove off-host recovery before unique data
 
+The interim same-R720 TrueNAS backup scope described in
+[`docs/backup-recovery.md`](../../../docs/backup-recovery.md) do not close any
+Group 5 task or authorize unique-data migration.
+
 - [ ] 5.1 (blocked: the operator confirmed on 2026-10-03 that no second-site ZFS receiver exists) Name the separate physical site and any available host, then provision and verify the receiver. Complete the [task 5.1 receiver readiness checklist](../../../docs/backup-recovery.md#receiver-readiness-checklist), including NAS replication and full-VM archive methods, staging budget, encryption and key recovery, first-seed time/bandwidth, retention, destination-side checks, and documented restore procedures. Task 5.1 does not include actual restore acceptance; those tests remain in tasks 5.2 and 5.3. Keep this task and tasks 5.2–5.5 incomplete until their applicable gates pass.
 - [ ] 5.2 Configure NAS dataset and appliance-configuration backups; verify the destination copy and restore a file and NAS configuration from an independent recovery host using only the remote copy and separately held keys.
 - [ ] 5.3 Configure a full Fedora VM backup and verify its archive at the independent destination. Through the versioned restore-test exception, restore to a scratch ID outside OpenTofu's range with no NIC or a link-down NIC; boot and inspect it, then remove it and verify no orphans. Record that this same-host test does not prove host-loss recovery.
