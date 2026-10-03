@@ -8,14 +8,15 @@ its pools, AAP, and OpenShift are all unavailable.
 
 ## Backup destination
 
-Use rsync.net as the planned off-site destination for encrypted copies of NAS
-data and selected infrastructure recovery artifacts. Choose the transfer
-method and account type before writing backup automation: ordinary SSH-based
-file backup and native ZFS receive are distinct products. Keep the encryption
-key and account recovery material independently recoverable from the R720.
-The NAS VM and its RAIDZ2 pool remain on the R720 and do not satisfy the
-host-loss requirement. If local Proxmox VM backup staging is added, it is an
-intermediate copy, not the sole backup destination.
+Use a local ZFS receiver at another site for encrypted copies of NAS data and
+selected infrastructure recovery artifacts. The operator selected this
+destination design; the receiver host and site are not yet identified. Decide
+the replication and full-VM archive methods, encryption, access boundaries,
+and independently recoverable keys before writing backup automation. Keep the
+encryption key and recovery material recoverable outside the R720 and the
+receiver. The NAS VM and its RAIDZ2 pool remain on the R720 and do not satisfy
+the host-loss requirement. If local Proxmox VM backup staging is added, it is
+an intermediate copy, not the sole backup destination.
 
 Initial retention target:
 
@@ -59,7 +60,7 @@ reproducible scratch workloads do not need the same retention as unique data.
 ## Power protection
 
 Place the R720, active switch path, and router on an appropriately sized UPS.
-The rsync.net destination is off-site and does not depend on this UPS; local
+The second-site ZFS receiver is off-site and does not depend on this UPS; local
 backup staging, if added, does. Integrate NUT or the vendor network agent so
 the NAS and other guests stop cleanly before PVE. Test the shutdown sequence
 without relying on an actual extended outage.

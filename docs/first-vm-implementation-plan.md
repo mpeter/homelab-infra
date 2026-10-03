@@ -38,11 +38,11 @@ second-copy/key recovery required by [ADR 0009](decisions/0009-bootstrap-proxmox
 and choose the Fedora image-import and cloud-init paths before building the VM
 root. A locked remote backend may replace local state later through a tested
 migration; it is not a first-VM prerequisite. The operator
-deferred setup of the independent VM-backup target on 2026-10-01. rsync.net is
-now the planned off-site destination, with transfer method and restore still
-unproven. This permits a disposable test VM and an initially empty,
-reproducible Fedora VM. Unique data and promotion to primary status wait until
-backup and restore pass.
+deferred setup of the independent VM-backup target on 2026-10-01. A local ZFS
+receiver at another site is the operator-selected destination design, but the
+receiver and restore method remain unproven. This permits a disposable test VM
+and an initially empty, reproducible Fedora VM. Unique data and promotion to
+primary status wait until backup and restore pass.
 The laptop remains a permanent break-glass machine: it must retain a
 repository clone, PVE and iDRAC access, state-backend credentials, and a
 recovery key independently of the R720. Once backup is configured, keep its
@@ -64,7 +64,7 @@ volume. Do not add image content to `fast-vm` merely to fit a provider example.
 
 Exit gate: the state, image, and cloud-init choices, locations, credential
 owners, and recovery tests are recorded without putting secret values in Git.
-The rsync.net backup method, credentials, retention, and restore test are due
+The remote backup method, credentials, retention, and restore test are due
 before any non-reproducible data enters Fedora or it becomes the primary
 workspace. Those choices do not block an empty, reproducible VM.
 
@@ -171,7 +171,7 @@ appliance.
    and console state. This step is complete for VM 100; repeat the same gates
    for later VM changes.
 3. Before any non-reproducible data enters the VM or it becomes the primary
-   workspace, configure and test the independent rsync.net backup path. Use
+   workspace, configure and test the independent off-site backup path. Use
    versioned `host/pve/` check/apply paths to configure ZFS and SMART health
    and capacity alerts,
    backup-failure alerts, the backup storage entry, and the backup job. Verify

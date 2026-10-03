@@ -5,7 +5,7 @@ Unique NAS and Fedora data, infrastructure state, recovery keys, and important c
 
 #### Scenario: Unique data promotion
 - **WHEN** unique data is to be placed on the NAS or Fedora becomes the primary workspace
-- **THEN** the selected rsync.net or other independent destination is configured, the remote copy is verified at the destination, and a representative restore is performed from an independent recovery host using the remote copy and separately held credentials and keys
+- **THEN** the selected independent destination is configured, the remote copy is verified at the destination, and a representative restore is performed from an independent recovery host using the remote copy and separately held credentials and keys
 
 ### Requirement: Layer-specific recovery tests
 Recovery evidence SHALL include file, VM, configuration, and eventual bare-metal exercises appropriate to the layer rather than treating a successful backup job or local mirror as proof of recovery.

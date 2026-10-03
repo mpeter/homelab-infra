@@ -63,10 +63,10 @@ Mirrors and RAIDZ protect against selected disk failures, not loss of the host,
 controller, rack power, switch, or site. Backups and infrastructure state must
 therefore have an independent destination.
 
-The NAS is a local source of data, not an off-host backup. Encrypted copies to
-rsync.net are the planned independent NAS recovery path; transfer method,
-retention, key custody, and a tested restore remain implementation gates before
-unique data depends on it.
+The NAS is a local source of data, not an off-host backup. A local ZFS receiver
+at another site is the operator-selected independent recovery design. The
+receiver and site, transfer method, retention, key custody, and tested restore
+remain implementation gates before unique data depends on it.
 
 The Brocade switch, UniFi gateway/controller, and R720 remain individual failure
 domains. A NIC bond protects against a port, optic, or cable failure but not
