@@ -1,15 +1,26 @@
+# File-level date is the original inventory baseline; refreshed components below carry their own dates.
 observed_at: 2026-10-01
 warning: Linux nvme and sd names can change between boots. Resolve aliases to serial numbers from the ignored local inventory before any write.
 
 rpool:
-  observed_at: 2026-10-01
-  state: ONLINE; no read, write, checksum, or known data errors
+  observed_at: 2026-10-03
+  state: ONLINE mirror; no read, write, checksum, or known data errors
   hostid: 5002b2ea
   hostid_source: /etc/hostid, installed initramfs, and both pool labels agree after a guarded host-file correction
   status_warning: none after two verified cold boots on 2026-10-01
+  capacity_readback_bytes:
+    size: 506806140928
+    allocated: 6827282432
+    free: 499978858496
+    zpool_percent_allocated: 1
+  members_smart_readback:
+    - serial: BTHH95021LD4512D
+      result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0
+    - serial: BTHH8122061E512D
+      result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0
 
 fast_vm:
-  observed_at: 2026-10-01
+  observed_at: 2026-10-03
   pool: fast-vm
   state: ONLINE mirror; no read, write, checksum, or known data errors
   members:
@@ -20,6 +31,40 @@ fast_vm:
   compression: lz4
   atime: off
   proxmox_storage: fast-vm; active zfspool for images and rootdir, sparse provisioning
+  capacity_readback_bytes:
+    size: 1022202216448
+    allocated: 5947244544
+    free: 1016254971904
+    zpool_percent_allocated: 0
+    proxmox_percent_used: 0.60
+  dataset_quota_readback: quota and refquota are none on fast-vm and fast-vm/data
+  members_smart_readback:
+    - serial: PHHH829001A91P0E
+      result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0
+    - serial: PHHH828600761P0E
+      result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0
+
+pve_storage_monitoring:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T08:03:37-04:00"
+  provenance: authenticated read-only SSH to PVE; pveversion, zpool list/status/get, zfs list/get, pvesm status, systemctl list-timers, smartctl, /etc/cron.d/zfsutils-linux
+  pve_manager: 9.2.2; kernel 7.0.2-6-pve
+  pve_storage_usage_percent:
+    fast-vm: 0.60
+    local: 0.94
+    local-zfs: 0.00
+  rpool_dataset_quota_readback: quota and refquota are none on recursively inspected datasets
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    command: /usr/lib/zfs-linux/scrub; scrubs healthy pools unless org.debian:periodic-scrub is disabled
+    pool_policy: default auto (-) for rpool and fast-vm
+    status: zpool status -v showed no scan entry for rpool or fast-vm on observation
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no schedule on the active DEVICESCAN line
+    boot_ssd: KINGSTON SUV400S37240G serial 50026B7767031A82; PASSED; reallocated, pending, and UDMA CRC counters all 0
+  capacity_alerts: no configured host-pool threshold was verified; fast-vm promotion requires at least 20% free
 
 nvme:
   front:
