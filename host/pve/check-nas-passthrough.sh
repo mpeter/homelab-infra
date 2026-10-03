@@ -20,9 +20,11 @@ check_state() {
     *) fail "unexpected NAS VM state: $vm_status" ;;
   esac
 
-  if grep -Fxq array <<< "$pools"; then
-    fail 'guest pool array is imported by the Proxmox host'
-  fi
+  for pool in tank array; do
+    if grep -Fxq "$pool" <<< "$pools"; then
+      fail "guest pool $pool is imported by the Proxmox host"
+    fi
+  done
 }
 
 if [[ ${1:-} == validate ]]; then
@@ -44,4 +46,4 @@ driver=$(pve "basename \$(readlink -f /sys/bus/pci/devices/$device_path/driver)"
 pools=$(pve 'zpool list -H -o name')
 check_state "$vm_status" "$driver" "$pools"
 
-printf 'NAS passthrough check PASS: VM 200 %s, HBA driver %s, PVE pools exclude array\n' "$vm_status" "$driver"
+printf 'NAS passthrough check PASS: VM 200 %s, HBA driver %s, PVE pools exclude guest-owned tank/array\n' "$vm_status" "$driver"
