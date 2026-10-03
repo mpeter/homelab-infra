@@ -25,20 +25,21 @@
 - [x] 4.3 Budget pinned NAS RAM and `fast-vm` capacity alongside Fedora and later important VMs; define the NAS VM with whole-HBA passthrough, apply a gated plan, and verify guest serials/SMART, host exclusion, and denied mapping-administration operations for the routine identity.
 - [x] 4.4 Test NAS VM start/stop/reset and host cold boot; verify `rpool`, `fast-vm`, HBA assignment, guest serials, and rollback without writing SATA data. The host check fails closed on incorrect HBA binding; post-cold-boot binding and host-import checks pass, with no kernel change since that test.
 - [x] 4.5 Reconfirm every exact SATA serial, save and hash-check off-target GPT and ZFS-label metadata captures, and review the destructive guest pool plan. These captures are metadata evidence, not full data backups; see `docs/nas-implementation-plan.md` and the private capture record.
-- [x] 4.6 Create the eight-disk RAIDZ2 pool in the guest; verify topology, health, mountpoints, usable capacity, scrubs, SMART scheduling, snapshots, and alert behavior. Confirm the host does not import or register the guest pool. `tank` is ONLINE with `ashift=12`; the initial scrub and short SMART test passed, scheduled SMART and snapshot tasks were created and read back, and Proxmox does not import the guest pool. Alert UI state is clear; TrueNAS SMTP delivery remains disabled pending trusted certificate-identity verification. PVE email delivery is recorded in task 5.4.
+- [x] 4.6 Create the eight-disk RAIDZ2 pool in the guest; verify topology, health, mountpoints, usable capacity, scrubs, SMART scheduling, snapshots, and alert behavior. Confirm the host does not import or register the guest pool. `tank` is ONLINE with `ashift=12`; the initial scrub and short SMART test passed, scheduled SMART and snapshot tasks were created and read back, and Proxmox does not import the guest pool. Alert UI state is clear; TrueNAS SMTP delivery remains disabled pending trusted certificate-identity verification. PVE email delivery is recorded in task 9.3.
 - [x] 4.7 Define `tank/smb_test` and `tank/nfs_test` with explicit ACLs and 5 GiB quotas; expose SMB/NFS test shares to the authorized workstation only; verify authenticated and denied access, 64 MiB I/O, and matching data after guest and PVE host restarts. Remove the reproducible test file afterward. The DHCP address, trusted certificate identity, and final client boundary remain open under task 7.1; these test shares carry no unique data.
 
-## 5. Prove off-host recovery before unique data
+## 5. Prepare a backup implementation plan within current constraints
 
-The interim same-R720 TrueNAS backup scope described in
-[`docs/backup-recovery.md`](../../../docs/backup-recovery.md) do not close any
-Group 5 task or authorize unique-data migration.
+No second-site receiver exists. This group prepares an executable plan for
+on-demand same-R720 copies of the reproducible Fedora VM and encrypted PVE host
+bundle; it does not run a backup or satisfy host-loss recovery. The
+[deferred independent-recovery backlog item](../../../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md)
+owns receiver provisioning, remote copies and restores, wider coverage, and
+unique-data promotion. Until that work passes, Fedora and NAS hold only
+reproducible/test data.
 
-- [ ] 5.1 (blocked: the operator confirmed on 2026-10-03 that no second-site ZFS receiver exists) Name the separate physical site and any available host, then provision and verify the receiver. Complete the [task 5.1 receiver readiness checklist](../../../docs/backup-recovery.md#receiver-readiness-checklist), including NAS replication and full-VM archive methods, staging budget, encryption and key recovery, first-seed time/bandwidth, retention, destination-side checks, and documented restore procedures. Task 5.1 does not include actual restore acceptance; those tests remain in tasks 5.2 and 5.3. Keep this task and tasks 5.2–5.5 incomplete until their applicable gates pass.
-- [ ] 5.2 Configure NAS dataset and appliance-configuration backups; verify the destination copy and restore a file and NAS configuration from an independent recovery host using only the remote copy and separately held keys.
-- [ ] 5.3 Configure a full Fedora VM backup and verify its archive at the independent destination. Through the versioned restore-test exception, restore to a scratch ID outside OpenTofu's range with no NIC or a link-down NIC; boot and inspect it, then remove it and verify no orphans. Record that this same-host test does not prove host-loss recovery.
-- [ ] 5.4 Configure versioned host ZFS/SMART/capacity and backup-failure alerts, plus NAS missed-job/stale-copy/capacity alerts; verify live configuration and delivered test alerts, and refresh and extraction-test the off-host host bundle before unique data migration. PVE partial: the versioned Cloudflare SMTP target was applied and read back; Cloudflare token verification passed; the endpoint test notification was found in the recipient inbox from `pve-alerts@alerts.kcd.one` with body naming `cloudflare-email`. Cloudflare's Activity log remained empty. TrueNAS alerts and the host/off-host bundle checks remain incomplete.
-- [ ] 5.5 Migrate unique data incrementally only after the respective remote-copy and restore gates, retaining an authoritative copy elsewhere throughout the trial. Exercise Fedora repositories, container build, and remote access for at least 14 days; require successful scheduled backups, no new OOM/ZFS/SMART/SEL memory errors, `fast-vm` at least 20% free, and CPU/drive temperatures below iDRAC warning thresholds. Investigate sustained swap or available host memory below 16 GiB before primary-workspace promotion.
+- [x] 5.1 Finish the [interim backup implementation plan](../../../docs/backup-recovery.md#interim-same-host-truenas-backup-plan--2026-10-03) for VM 100 and the encrypted PVE bundle. Specify current constraints, versioned owners, trusted endpoint and dedicated-target prerequisites, capacity and key custody, ordered implementation steps, preflight/stop behavior, ciphertext verification, isolated local restore acceptance, rollback, and the remaining host-loss limitation. Reviewed as a plan only on 2026-10-03; no backup or live change was performed.
+- [x] 5.2 Record the full second-site backup and restore implementation in the backlog, reconcile the active proposal, design, specs, tasks, and project plans to that scope, and retain the explicit no-unique-data promotion gate. OpenSpec strict validation, backlog schema check, local link targets, and diff check passed on 2026-10-03; no remote backup or restore was marked complete.
 
 ## 6. Expand and test physical resilience
 
@@ -59,6 +60,10 @@ Group 5 task or authorize unique-data migration.
 
 ## 8. Add Red Hat platform services
 
+Build these as reproducible lab services only. Do not make them authoritative
+for unique state or dependent operations until their deferred independent
+recovery paths have been implemented and tested.
+
 - [ ] 8.1 Verify current capacity and recovery prerequisites, then provision RHEL templates and `idm01` with versioned first boot and guest configuration.
 - [ ] 8.2 Bootstrap containerized AAP on a dedicated RHEL VM from the laptop; manage its inventories, credentials definitions, execution environments, templates, and workflows as code.
 - [ ] 8.3 Prove an audited AAP workflow can provision, configure, verify, and remove a disposable VM; add OpenManage inventory/configuration export before iDRAC writes.
@@ -67,7 +72,7 @@ Group 5 task or authorize unique-data migration.
 
 ## 9. Complete independent operations
 
-- [ ] 9.1 Extend encrypted off-host backup and destination-side freshness checks to important VMs, AAP, IdM, OpenShift, network exports, state, recovery keys, bootloader reconstruction instructions, and rescue media.
+- [ ] 9.1 Inventory the configuration, state, keys, and recovery order for important VMs, AAP, IdM, OpenShift, network exports, bootloader reconstruction, and rescue media. Keep the actual encrypted off-host copies and destination-side checks in the deferred independent-recovery backlog item.
 - [ ] 9.2 Integrate UPS signaling and test orderly guest/NAS/PVE shutdown without an extended power outage.
-- [ ] 9.3 Verify alert delivery for disks, ZFS, memory/SEL, backups, capacity, thermals, power, certificates, and platform services.
-- [ ] 9.4 Exercise file, representative VM, NAS, AAP, IdM, and OpenShift recovery. Rehearse bare-metal boot and pool import against a reviewed non-destructive target with live data devices protected; record pass criteria, recovery order, and measured capacity before declaring the overall build complete.
+- [ ] 9.3 Verify alert delivery for implemented disks, ZFS, memory/SEL, capacity, thermals, power, certificates, and platform services. PVE system-mail delivery through the versioned Cloudflare target was verified; TrueNAS delivery remains gated on trusted endpoint identity. Backup-job and remote-copy alerts belong to the deferred implementation once those jobs exist.
+- [ ] 9.4 Document recovery order, non-destructive targets, isolation, and pass criteria for the implemented reproducible services. Keep file/VM/NAS/AAP/IdM/OpenShift remote-copy restores and bare-metal host-loss exercises in the deferred independent-recovery backlog item; do not declare the platform independently recoverable from this planning task.

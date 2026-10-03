@@ -49,3 +49,11 @@ the required restores pass using separately recoverable credentials and keys.
   accepted NAS VM and HBA ownership decision. Its initial rsync.net planning
   note records the earlier direction and is superseded for destination choice
   by this ADR.
+
+## Implementation tracking — 2026-10-03
+
+The operator confirmed that no receiver exists yet. The receiver, remote-copy,
+and restore gates originally assigned to OpenSpec Group 5 now belong to the
+[independent-recovery backlog item](../../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md).
+Group 5 currently prepares an interim same-host backup implementation plan;
+this does not change the destination decision or the unique-data gate above.

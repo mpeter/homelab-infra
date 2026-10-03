@@ -170,7 +170,9 @@ appliance.
    plan. Apply it and verify the VM's live CPU, memory, disk, boot, network,
    and console state. This step is complete for VM 100; repeat the same gates
    for later VM changes.
-3. Before any non-reproducible data enters the VM or it becomes the primary
+3. Deferred to the
+   [second-site backup and restore backlog item](../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md):
+   before any non-reproducible data enters the VM or it becomes the primary
    workspace, configure and test the independent off-site backup path. Use
    versioned `host/pve/` check/apply paths to configure ZFS and SMART health
    and capacity alerts,
@@ -187,10 +189,13 @@ appliance.
    procedure, not host-loss recovery.
 4. Configure the guest through a minimal versioned Ansible role runnable from
    the laptop, with check mode and live read-back; AAP can adopt it later.
-   Restore development configuration and migrate unique data incrementally,
+   Restore reproducible development configuration. The unique-data migration
+   portion of this step is deferred with step 3; migrate unique data
+   incrementally,
    keeping a current off-host copy throughout. Keep workstation dotfiles
    separate from R720 infrastructure ownership.
-5. Exercise normal work, including the main repositories, a container build,
+5. After the deferred backup/restore gate, exercise normal work, including
+   the main repositories, a container build,
    and remote LAN access, for at least 14 days. Require zero new OOM, ZFS,
    SMART, or SEL memory errors; successful scheduled backups; `fast-vm` at
    least 20% free; and CPU/drive temperatures below their iDRAC warning

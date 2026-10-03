@@ -3,11 +3,19 @@
 Each phase leaves the environment recoverable and produces evidence before the
 next phase depends on it.
 
+Current Group 5 work completes the
+[interim backup implementation plan](backup-recovery.md#interim-same-host-truenas-backup-plan--2026-10-03).
+The
+[second-site backup and restore implementation](../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md),
+including unique-data promotion, is deferred until a receiver solution exists.
+The gates below remain conditions for future promotion, not claims that those
+backups or restores have run.
+
 Planned changes from 2026-10-01 onward follow the
 [R720 change-control cutoff](r720-change-control.md). The existing `fast-vm`
 pool passed its serial-specific drift check, and the OpenTofu control-plane
-gates are complete. The Fedora VM is deployed; group 4's read-only NAS
-preflight is the next OpenSpec milestone.
+gates are complete. The Fedora VM and reproducible NAS test shares are
+deployed; refresh live evidence before relying on them.
 The [first-VM implementation plan](first-vm-implementation-plan.md) gives the
 ordered work and exit evidence from this cutoff through Fedora deployment.
 The [NAS implementation plan](nas-implementation-plan.md) gives the separate
@@ -133,7 +141,7 @@ permitted and denied networks.
   leaving headroom for Fedora; 256 GiB is not a NAS prerequisite.
   Follow the NAS plan's separate serial, passthrough, guest-pool, and recovery
   gates; do not treat VM creation as permission to clear the SATA disks.
-- Before unique data enters the NAS, configure its encrypted second-site copy
+- Before unique data enters the NAS, complete the deferred second-site copy
   and restore a representative file and appliance configuration from off-site.
 - Create the base AAP execution environment with pinned collections and tools.
 - Create a separate Brocade execution environment plus audit, backup, apply,
@@ -147,7 +155,7 @@ and both state backends can be recovered off-host. The NAS substage additionally
 requires a no-change VM plan, guest pool and share read-back, and a host reboot
 test before carrying unique data.
 
-## Phase 5: primary development environment
+## Phase 5: primary development environment (promotion deferred)
 
 - Provision the Fedora development VM on `fast-vm`.
 - Restore configuration through chezmoi without transferring host-specific
@@ -188,7 +196,11 @@ it, and remove it through an audited workflow.
 Completion evidence: cluster upgrades, GitOps self-healing, backup, and a
 documented rebuild from Git are exercised.
 
-## Phase 8: independent recovery and operations
+## Phase 8: independent recovery (deferred) and operations
+
+The second-site backup and restore work in this phase belongs to the backlog
+item linked above. Continue independent operational work only when its own
+preconditions and change-control gates pass.
 
 - Extend the earlier independent NAS and Fedora recovery paths to the remaining
   important VMs and infrastructure artifacts. Keep encrypted copies, retention,
