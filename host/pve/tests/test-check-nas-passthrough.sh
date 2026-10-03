@@ -20,6 +20,7 @@ expect_status 0 stopped vfio-pci $'rpool\nfast-vm'
 expect_status 0 stopped mpt3sas $'rpool\nfast-vm'
 expect_status 1 stopped other-driver $'rpool\nfast-vm'
 expect_status 1 unknown vfio-pci $'rpool\nfast-vm'
+expect_status 1 running vfio-pci $'rpool\nfast-vm\ntank'
 expect_status 1 stopped mpt3sas $'rpool\nfast-vm\narray'
 
 printf 'NAS passthrough state tests PASS\n'

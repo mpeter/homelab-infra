@@ -46,7 +46,7 @@ reproducible/test data.
 - [ ] 6.1 After a fresh backup and in a planned outage, install and diagnose the remaining matched RDIMMs; verify 256 GiB in iDRAC and the OS with no new memory errors before increasing VM allocations.
 - [ ] 6.2 Add a second firmware-visible boot SSD with versioned recovery procedure; prove a cold boot with each boot device independently unavailable.
 - [ ] 6.3 Create the disposable `scratch` tier only after serial-specific classification and reviewed storage preflight; verify it cannot be mistaken for durable data storage.
-- [ ] 6.4 Measure pool health, scrubs, SMART tests, quotas, capacity thresholds, and representative device-failure procedures for each implemented host tier.
+- [ ] 6.4 Measure pool health, scrubs, SMART tests, quotas, capacity thresholds, and representative device-failure procedures for each implemented host tier. PVE pool/SMART evidence refreshed and NAS host-import check corrected on 2026-10-03; task remains open for guest-owned `tank` read-back, configured capacity thresholds, and failure-procedure acceptance.
 
 ## 7. Build the managed network foundation
 

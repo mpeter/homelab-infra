@@ -79,5 +79,48 @@ repeat this safety sequence:
 8. Configure scheduled scrubs, SMART tests, capacity alerts, and snapshots.
 9. Run representative I/O tests before placing important workloads.
 
+## Pool health and device-failure response
+
+The read-only PVE snapshot from 2026-10-03 08:03 EDT is recorded in the
+component-dated `rpool`, `fast_vm`, and `pve_storage_monitoring` sections of
+[`inventory/storage.yaml`](../inventory/storage.yaml). The file-level date
+and NAS/SATA sections retain their earlier observation dates; this PVE readback
+does not refresh guest-owned disk or pool evidence. `rpool` and `fast-vm`
+were ONLINE mirrors with no recorded read, write, checksum, or known data
+errors. The versioned `host/pve/check-fast-vm.sh` check passed against the
+live host. ZFS automatic periodic scrub is enabled by the PVE package's monthly
+second-Sunday cron schedule; the pools' effective property is `auto`, but
+`zpool status -v` showed no scan entry at the time of the snapshot. `smartd` was
+active and its `DEVICESCAN` health checks passed for host-visible NVMe devices
+and the boot SSD. The active `smartd.conf` line defines monitoring but no
+scheduled SMART self-test. PVE ZFS datasets report no quota or refquota.
+
+For a storage alert, first capture `zpool status -P -v`, `zpool events -v`,
+`pvesm status`, and SMART health for the exact `/dev/disk/by-id` member. Match
+the persistent path to its serial in `inventory/storage.yaml`; never select a
+replacement from a transient `/dev/nvme*` name. Do not offline, detach, or
+replace a device until a reviewed maintenance plan confirms the failing and
+replacement serials, recovery path, and expected resilver outcome. After an
+approved repair, verify the pool state, member identity, errors, and PVE
+storage read-back before returning workloads to normal.
+
+For `rpool` and `fast-vm`, both mirrors, identify the faulted leaf by its
+persistent path and serial, preserve the healthy mirror member, and use a
+reviewed replacement plan. Wait for resilver completion, then verify member
+identity, pool errors, and PVE storage status. For RAIDZ2 `tank`, identify the
+failed SATA serial and physical slot through the trusted TrueNAS guest before
+replacing it through the guest-owned pool workflow; never operate on these
+HBA disks from PVE. `scratch` is not implemented and has no current failure
+procedure. No device was faulted, offlined, or replaced during this read-only
+pass; representative failure-procedure results remain open.
+
+`tank` belongs to the TrueNAS guest and must only be inspected or repaired
+through a trusted guest-management path. Its current health, scrub result,
+SMART-test history, dataset quotas, and alert thresholds were not re-read in
+this pass because its certificate identity remains unresolved. The 20%-free
+`fast-vm` criterion applies to Fedora promotion; no configured capacity alert
+threshold or accepted device-failure exercise is evidenced yet. OpenSpec task
+6.4 remains open until the NAS tier and these operational gates are verified.
+
 Linux device names in the inventory are observations, not persistent identity.
 Pool definitions and destructive commands must use `/dev/disk/by-id`.
