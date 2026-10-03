@@ -8,17 +8,71 @@ its pools, AAP, and OpenShift are all unavailable.
 
 ## Backup destination
 
-Use a local ZFS receiver at another site for encrypted copies of NAS data and
-selected infrastructure recovery artifacts. The operator selected this
-destination design. On 2026-10-03 the operator confirmed that no second-site
-ZFS receiver exists yet. Off-host replication and restore are blocked until a
-receiver is provisioned and verified. Decide the replication and full-VM
+For the off-site copy, use a local ZFS receiver at another site for encrypted
+copies of NAS data and selected infrastructure recovery artifacts. The
+operator selected this destination design. On 2026-10-03 the operator
+confirmed that no second-site ZFS receiver exists yet. Off-host replication
+and restore are blocked until a receiver is provisioned and verified. Decide
+the replication and full-VM
 archive methods, encryption, access boundaries, and independently recoverable
 keys before writing backup automation. Keep the encryption key and recovery
 material recoverable outside the R720 and the receiver. The NAS VM and its
 RAIDZ2 pool remain on the R720 and do not satisfy the host-loss requirement. If
 local Proxmox VM backup staging is added, it is an intermediate copy, not the
 sole backup destination.
+
+## Interim same-host TrueNAS backup plan — 2026-10-03
+
+The operator directed using TrueNAS VM 200 for interim backups until an
+off-site receiver exists. Start with Fedora VM 100 and a copy of the encrypted
+PVE host-configuration bundle. This is a convenience recovery copy on the same
+R720 and at the same site; it does not protect against loss of the host, power,
+or site, and it does not close any Group 5 task or authorize unique-data
+migration.
+
+Do not use the existing `tank/nfs_test` or `tank/smb_test` setup shares. A
+read-only export query on 2026-10-03 found only `/mnt/tank/nfs_test`, restricted
+to workstation `192.168.0.183`; no backup export is configured. Create a
+dedicated dataset and access path only after a fresh TrueNAS configuration
+export and a trusted endpoint identity are available. The prior TrueNAS UI
+certificate evidence remains untrusted (`CN=localhost`, SAN `DNS:localhost`,
+hostname mismatch), and current guest certificate and alert status remain
+unverified. Do not send credentials or backup contents to that endpoint yet.
+
+The interim run must remain on-demand. VM 200 is OpenTofu-managed and has
+`on_boot=false` so its HBA ownership stays explicit. A backup helper must
+require VM 200 to already be running, confirm `tank` is healthy and the HBA is
+assigned to the guest, and refuse to start or change the VM. Do not register a
+permanently mounted backup storage or schedule a job while the NAS guest is
+normally off.
+
+Prepared run contract, not yet implemented:
+
+- Preflight the authenticated transfer endpoint, the dedicated target path,
+  VM 100 backup mode, VM 200 running/HBA state, `tank` health, and current PVE
+  staging capacity. The workstation currently has only 11 GiB free; do not
+  stage a full VM archive there. PVE `local` had 452 GiB free in the latest
+  2026-10-03 read, but recheck before each run.
+- Produce a compressed `vzdump` archive for VM 100, encrypt the archive before
+  transfer, and keep the host bundle encrypted end-to-end using the existing
+  `host/pve/backup-host-config.sh` output. Transfer only ciphertext over the
+  future restricted path; do not decrypt the host bundle on PVE or TrueNAS.
+- Use temporary names and refuse to overwrite an existing recovery point.
+  Compare source and destination SHA-256 values after read-back, verify GPG
+  integrity, and retain the previous known-good copy until the new copy passes.
+  A matching hash proves byte integrity, not endpoint identity or a restore.
+- Keep the existing host-bundle decryption material in the workstation
+  keyring. Before creating a VM archive, use a separate encryption key and
+  keep its interim copy in the workstation keyring. This is usable only while
+  the workstation/keyring remains available; it does not meet the off-site
+  key-recovery gate.
+
+Proxmox documents `vzdump --stdout` and zstd compression, but streamed output
+has no storage-managed catalog or retention. The earlier VM 100 stream was a
+sizing probe and no archive was retained. The interim procedure must record its
+own result and verify the archive before transfer; it must not count as task
+5.3 until the required isolated restore passes. See the
+[Proxmox `vzdump` documentation](https://github.com/proxmox/pve-docs/blob/master/vzdump.adoc).
 
 ## Receiver readiness checklist — task 5.1
 
