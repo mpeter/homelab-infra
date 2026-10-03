@@ -183,9 +183,16 @@ test shares limited to setup validation. Before adding real clients or unique
 data, adopt the current UniFi DHCP/DNS objects through the import-first network
 workflow, select the NAS identity and trusted certificate path, verify the
 reserved address and name, and test the allowed and denied client policy under
-network task 7.1. Complete the backup/recovery gates in task group 5 as well.
+network task 7.1. Complete the independent backup and restore gates in the
+deferred backlog item before unique data; current Group 5 only prepares a plan.
 
-## 3. Make unique NAS data recoverable off-site
+## 3. Make unique NAS data recoverable off-site (deferred)
+
+This implementation belongs to the
+[second-site backup and restore backlog item](../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md)
+until a receiver solution exists. The steps and exit gate below are future
+promotion requirements. Current Group 5 only prepares the
+[interim backup implementation plan](backup-recovery.md#interim-same-host-truenas-backup-plan--2026-10-03).
 
 1. Identify and verify the operator-selected second-site ZFS receiver. Define
    the NAS replication and full-VM archive formats, local staging capacity,

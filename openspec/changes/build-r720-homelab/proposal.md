@@ -8,7 +8,7 @@ The R720 needs to become a recoverable development platform and Red Hat lab with
 - Put planned host changes and Proxmox/UniFi resources under versioned, recoverable control, with a disposable-VM lifecycle test before important VMs.
 - Deploy an initially reproducible Fedora development VM and a NAS VM with whole-HBA passthrough; gate NAS pool creation separately from VM creation.
 - Build the managed network foundation, then IdM, AAP, and Single Node OpenShift as capacity and prerequisites allow.
-- Provide independent encrypted backup, tested restores, monitoring, and operational recovery before promoting unique data or calling the platform complete.
+- Prepare an executable implementation plan for a bounded same-host backup of reproducible Fedora and host-configuration data. Keep backup execution, unique-data promotion, and any host-loss recovery claim outside this change until their respective prerequisites and deferred second-site work pass.
 
 ## Capabilities
 
@@ -20,7 +20,7 @@ The R720 needs to become a recoverable development platform and Red Hat lab with
 - `nas-service`: Guest-owned SATA storage through whole-HBA passthrough and tested file shares.
 - `managed-network`: Backed-up and recoverable Brocade/UniFi configuration, resilient host connectivity, and secure administration.
 - `red-hat-platform`: IdM, AAP, and Single Node OpenShift with their respective automation owners.
-- `independent-recovery`: Off-host encrypted recovery, restore evidence, alerts, and host-loss procedures.
+- `independent-recovery`: A reviewable interim backup implementation plan and an explicit gate that prevents a same-host copy from being treated as independent recovery.
 
 ### Modified Capabilities
 
@@ -28,4 +28,4 @@ None; this repository has no existing OpenSpec capability specs.
 
 ## Impact
 
-This change spans versioned `host/pve/` maintenance, separate Proxmox and UniFi OpenTofu roots, guest bootstrap and AAP automation, NAS guest configuration, OpenShift GitOps, inventories, ADRs, and recovery documentation. It affects the live R720, iDRAC, Brocade, UniFi, and an independent backup destination only through later reviewed implementation stages. This proposal itself authorizes no disk clearing, host reboot, network cutover, or placement of unique data.
+This change spans versioned `host/pve/` maintenance, separate Proxmox and UniFi OpenTofu roots, guest bootstrap and AAP automation, NAS guest configuration, OpenShift GitOps, inventories, ADRs, and recovery documentation. Full second-site backup implementation and unique-data promotion are tracked in the [deferred recovery backlog item](../../../.backlog/2026-10-03-implement-independent-second-site-backup-and-tested-recovery.md), outside this change. This proposal itself authorizes no disk clearing, host reboot, network cutover, or placement of unique data.

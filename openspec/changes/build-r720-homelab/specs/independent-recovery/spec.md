@@ -1,30 +1,22 @@
 ## ADDED Requirements
 
-### Requirement: Off-host encrypted recovery
-Unique NAS and Fedora data, infrastructure state, recovery keys, and important configuration artifacts SHALL have encrypted copies and restoration procedures that do not depend on the R720 remaining available. No laptop disk, NAS pool, or keyring SHALL be the sole holder of material needed to decrypt or restore them.
+### Requirement: Executable backup implementation plan
+The active change SHALL document a bounded, on-demand same-R720 backup implementation for the reproducible Fedora VM and encrypted PVE host-configuration bundle. The plan SHALL identify ownership, trusted endpoint prerequisites, a dedicated restricted target, capacity and key custody, encryption before transfer, preflight and failure behavior, verification of retained ciphertext, an isolated local restore procedure, and rollback. The plan SHALL distinguish reviewable design from a backup or restore that has actually run.
 
-#### Scenario: Unique data promotion
-- **WHEN** unique data is to be placed on the NAS or Fedora becomes the primary workspace
-- **THEN** the selected independent destination is configured, the remote copy is verified at the destination, and a representative restore is performed from an independent recovery host using the remote copy and separately held credentials and keys
+#### Scenario: Plan accepted under current constraints
+- **WHEN** no second-site receiver exists and TrueNAS endpoint identity is not yet trusted
+- **THEN** the plan can still be reviewed and completed with those prerequisites and stop conditions explicit, without creating a backup job, sending credentials, or claiming recovery evidence
 
-### Requirement: Layer-specific recovery tests
-Recovery evidence SHALL include file, VM, configuration, and eventual bare-metal exercises appropriate to the layer rather than treating a successful backup job or local mirror as proof of recovery.
+### Requirement: Independent-recovery boundary
+Unique NAS or Fedora data SHALL NOT be promoted to this R720 until the deferred second-site backup and independent-restore gate passes. A local mirror, NAS pool, or same-host copy SHALL NOT satisfy that gate.
 
-#### Scenario: Backup job reports success
-- **WHEN** a scheduled backup completes
-- **THEN** destination-side presence and freshness are checked and a separately scheduled restore exercise can demonstrate usable content
-
-#### Scenario: Full-VM backup acceptance
-- **WHEN** Fedora backup is prepared for unique data
-- **THEN** a full VM archive is verified at the independent destination and restored under an isolated scratch ID with its NIC absent or down, and the test leaves no orphan VM or disk; the record distinguishes this on-host format test from host-loss recovery
-
-#### Scenario: Bare-metal exercise planned
-- **WHEN** boot redundancy and recovery media are ready for a bare-metal rehearsal
-- **THEN** the exercise has a reviewed non-destructive target and isolation plan, explicit pass criteria for boot and pool import, and no overwrite of the live host's data devices
+#### Scenario: Unique data promotion is proposed
+- **WHEN** unique NAS data or Fedora primary-workspace status is proposed before the deferred independent restore passes
+- **THEN** the promotion is stopped; any same-host copy is reported only as local recovery evidence if it was actually created and restore-tested
 
 ### Requirement: Operational detection and shutdown
-The platform SHALL alert on storage, hardware, backup, capacity, certificate, and service failures and SHALL support an orderly guest-to-host shutdown during a tested UPS event.
+Implemented services SHALL alert on applicable storage, hardware, capacity, certificate, and service failures and SHALL support an orderly guest-to-host shutdown during a tested UPS event. Backup-failure and stale-copy detection SHALL be added when backup jobs and their destinations are implemented.
 
 #### Scenario: Recovery operations acceptance
-- **WHEN** the platform is declared operational
-- **THEN** alert delivery, stale-backup detection, capacity thresholds, and the orderly shutdown sequence have been exercised
+- **WHEN** an implemented service is declared operational
+- **THEN** its applicable alert delivery, capacity thresholds, and orderly shutdown path have been exercised at the layer actually implemented; any implemented backup job also has tested failure and age detection
