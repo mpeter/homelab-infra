@@ -1,0 +1,20 @@
+[Unit]
+Description=Record PVE ZFS pool capacity threshold transitions
+After=zfs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pve-storage-capacity-monitor
+StateDirectory=pve-storage-capacity-monitor
+StateDirectoryMode=0750
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=true
+MemoryDenyWriteExecute=true
+TimeoutStartSec=30s

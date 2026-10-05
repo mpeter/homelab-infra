@@ -20,3 +20,10 @@ The host SHALL keep boot, important VM, scratch, and guest-owned NAS storage in 
 #### Scenario: Capacity or storage expansion
 - **WHEN** a new VM, DIMM population, boot device, or storage tier is introduced
 - **THEN** current capacity and device identities are verified, the relevant diagnostic or failure test passes, and no unclassified disk is overwritten
+
+### Requirement: Host pool capacity threshold monitoring
+The host SHALL evaluate `rpool`, `fast-vm`, and `scratch` every five minutes, record severity transitions and recovery in the local system journal, warn at 80% capacity, and report critical at 90% capacity. Saved state SHALL represent each pool's last evaluated alert severity, not a capacity measurement. Repeated samples within one severity SHALL NOT create repeated transition records. This local policy does not imply notification delivery.
+
+#### Scenario: Host pool crosses or recovers from a capacity threshold
+- **WHEN** a pool crosses 80% or 90%, or falls below its current severity threshold
+- **THEN** valid readings update per-pool alert severity; a failed pool query records and saves one critical `pool_unreadable` transition until recovery, while malformed output fails the run and leaves saved severity unchanged

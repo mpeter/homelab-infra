@@ -66,6 +66,291 @@ pve_storage_monitoring:
     boot_ssd: KINGSTON SUV400S37240G serial 50026B7767031A82; PASSED; reallocated, pending, and UDMA CRC counters all 0
   capacity_alerts: no configured host-pool threshold was verified; fast-vm promotion requires at least 20% free
 
+pve_storage_health_capture:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T09:36:28-04:00"
+  provenance: versioned capture-storage-health.sh run over authenticated read-only SSH with strict host-key checking
+  collection_result: commands completed; smartctl exit status 0 for all five queried host-owned devices; pool health and capacity policy require separate review
+  pools:
+    rpool:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6827757568
+      free_bytes: 499978383360
+      zpool_percent_allocated: 1
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0
+    fast_vm:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 5987827712
+      free_bytes: 1016214388736
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.60
+      dataset_quota_readback: quota and refquota are none on fast-vm and fast-vm/data
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0
+  proxmox_storage_usage_percent:
+    fast-vm: 0.60
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    effective_pool_policy: default auto (-) for rpool and fast-vm
+    status: no scan entry in zpool status -P -v for either pool at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no schedule on the active DEVICESCAN line
+    boot_ssd: serial 50026B7767031A82; PASSED; reallocated, pending, and UDMA CRC counters all 0; no self-tests logged
+  capacity_alerts: no configured host-pool threshold was verified; 20%-free remains a Fedora promotion criterion, not an alert threshold
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+
+pve_storage_health_readback_1117:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T11:17:19-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to root over authenticated SSH with StrictHostKeyChecking=yes; command output retained in task scratch during review
+  collection_result: all read-only commands completed; smartctl exit status 0 for all five queried host-owned devices
+  pools:
+    rpool:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6828138496
+      free_bytes: 499978002432
+      zpool_percent_allocated: 1
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6034526208
+      free_bytes: 1016167690240
+      zpool_percent_allocated: 0
+      dataset_quota_readback: quota and refquota are none on fast-vm and fast-vm/data
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.61
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    effective_pool_policy: default auto (-) for rpool and fast-vm
+    status: no scan entry in zpool status -P -v for either pool at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no schedule directive in the active smartd configuration
+    boot_ssd: serial 50026B7767031A82; PASSED; temperature 25 C; reallocated, pending, and UDMA CRC counters all 0; no self-tests logged
+  capacity_alerts: no configured host-pool threshold was verified; 20%-free remains a Fedora promotion criterion, not an alert threshold
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+
+pve_storage_health_readback_1452:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:52-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed over authenticated SSH with BatchMode=yes and StrictHostKeyChecking=yes; no file written on PVE; a separate strict-host-key status read at 14:53 found no scan line and recorded the boot ID
+  collection_result: all read-only collector commands completed with exit status 0; host/pve/check-fast-vm.sh returned fast-vm baseline PASS
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  pools:
+    rpool:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832107520
+      free_bytes: 499974033408
+      zpool_percent_allocated: 1
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0
+    fast_vm:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6153981952
+      free_bytes: 1016048234496
+      zpool_percent_allocated: 0
+      dataset_quota_readback: quota and refquota are none on fast-vm and fast-vm/data
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0
+  proxmox_storage_usage_percent:
+    fast-vm: 0.62
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    effective_pool_policy: default auto (-) for rpool and fast-vm
+    status: no scan entry in zpool status -P -v for either pool at 14:53 EDT
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no schedule directive on the active DEVICESCAN line
+    boot_ssd: serial 50026B7767031A82; PASSED; 24 C; reallocated, pending, and UDMA CRC counters all 0; no self-tests logged
+  capacity_alerts: no configured host-pool threshold was verified; 20%-free remains a Fedora promotion criterion, not an alert threshold
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+
+pve_storage_status_readback_1151:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T11:51:40-04:00"
+  provenance: authenticated SSH to PVE root with StrictHostKeyChecking=yes; read-only zpool list, zpool status -x, and pvesm status
+  host_imported_pool_names: [fast-vm, rpool]
+  zpool_status: all pools are healthy
+  pools:
+    fast_vm:
+      size_bytes: 1022202216448
+      allocated_bytes: 6048792576
+      free_bytes: 1016153423872
+      zpool_percent_allocated: 0
+      health: ONLINE
+    rpool:
+      size_bytes: 506806140928
+      allocated_bytes: 6828441600
+      free_bytes: 499977699328
+      zpool_percent_allocated: 1
+      health: ONLINE
+  proxmox_storage_usage_percent:
+    fast-vm: 0.61
+    local: 0.94
+    local-zfs: 0.00
+  scope_limit: focused pool and PVE storage read only; did not refresh SMART, scrub schedule, thresholds, guest state, or failure procedures
+
+scratch_candidate_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T09:57:50-04:00"
+  provenance: authenticated read-only SSH with strict host-key checking; serial by-id paths checked with lsblk, wipefs --no-act, and smartctl -x
+  front_nvme_c:
+    serial: PHHH8505034Q512H
+    observed_device: /dev/nvme4n1
+    signatures: GPT; partition 2 is EFI VFAT; partition 3 is zfs_member with pool GUID 14828205673918207700 and label rpool-OLD-14828205673918207700
+    smart_readback: PASSED; critical warning 0; 30 C; spare 100%; percentage used 2%; media/data integrity errors 0; no self-tests logged
+    state: old ZFS metadata remains; no label clearing performed or authorized
+  front_nvme_d:
+    serial: BTHH8244042V512D
+    observed_device: /dev/nvme5n1
+    signatures: none found; no partition children reported by lsblk at observation time
+    smart_readback: PASSED; critical warning 0; 31 C; spare 100%; percentage used 1%; media/data integrity errors 0; no self-tests logged
+    state: unpartitioned candidate only; no pool creation performed or authorized
+
+scratch_candidate_readback_1251:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T12:51:53-04:00"
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  provenance: authenticated SSH with StrictHostKeyChecking=yes; lsblk serial and child read-back, by-id symlink resolution, blkid -p, and smartctl JSON read
+  front_nvme_c:
+    serial: PHHH8505034Q512H
+    canonical_device_at_observation: /dev/nvme4n1
+    by_id_aliases:
+      - nvme-eui.0000000001000000e4d25c1a03645001
+      - nvme-INTEL_SSDPEKKF512G8_PHHH8505034Q512H_1
+      - nvme-INTEL_SSDPEKKF512G8_PHHH8505034Q512H
+    whole_device_probe:
+      blkid_exit_status: 0
+      partition_table: gpt
+      partition_table_guid: 1a819ab0-ef33-408c-ae28-0c015a191bbd
+    partitions:
+      - number: 1
+        partuuid: 9b0a0c3b-e928-4e3b-bb19-b6e80e7cdf97
+        parttype: 21686148-6449-6e6f-744e-656564454649
+        size_bytes: 1031168
+      - number: 2
+        partuuid: 7d7d54b6-42a7-4dde-a045-c97aa2c911ee
+        filesystem_uuid: A497-4B2D
+        parttype: c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+        filesystem: vfat
+        size_bytes: 1073741824
+      - number: 3
+        partuuid: 01153cd9-d265-4292-a8f3-d66ace72ac89
+        pool_guid: 14828205673918207700
+        filesystem: zfs_member
+        size_bytes: 510026318336
+    smart_readback:
+      result: PASSED
+      critical_warning: 0
+      temperature_c: 30
+      available_spare_percent: 100
+      available_spare_threshold_percent: 12
+      percentage_used: 2
+      media_errors: 0
+    state: GPT, EFI, and old ZFS member remain; the 09:57 capture is the latest exact label read; no pool-membership, mount, holder, boot-reference, sector-hash, or data-disposition check was performed here; no write was performed or authorized
+  front_nvme_d:
+    serial: BTHH8244042V512D
+    canonical_device_at_observation: /dev/nvme5n1
+    by_id_aliases:
+      - nvme-INTEL_SSDPEKKF512G8_BTHH8244042V512D_1
+      - nvme-INTEL_SSDPEKKF512G8_BTHH8244042V512D
+      - nvme-eui.0000000001000000e4d25cc0767b4f01
+    whole_device_probe:
+      blkid_exit_status: 2
+      output: empty; no recognizable signature reported
+    partitions: []
+    smart_readback:
+      result: PASSED
+      critical_warning: 0
+      temperature_c: 31
+      available_spare_percent: 100
+      available_spare_threshold_percent: 10
+      percentage_used: 1
+      media_errors: 0
+    state: no child partitions or blkid signature at observation; no pool-membership, mount, holder, boot-reference, sector-hash, or data-disposition check was performed here; no pool creation was performed or authorized
+
+scratch_candidate_preflight_140648:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:06:48-04:00"
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  provenance: workstation-local host/pve/check_scratch_preflight.py streamed to PVE root over authenticated SSH with StrictHostKeyChecking=yes; candidate block open modes traced on the live PVE host with strace before running the collector
+  probe_open_modes:
+    lsblk: opened /sys/dev/block entries O_RDONLY; no candidate block-device open observed
+    blkid_blockdev_dd_smartctl: both candidate whole disks opened O_RDONLY (smartctl also O_NONBLOCK); first and last 8 MiB reads used O_RDONLY
+    zpool_list_and_status: opened /dev/zfs O_RDWR for the ZFS control interface; did not open either candidate block device
+    zpool_import_scan: candidate block devices opened O_RDONLY with O_DIRECT or O_EXCL; no block-device write-open observed
+  front_nvme_c:
+    serial: PHHH8505034Q512H
+    canonical_device: /dev/nvme4n1
+    by_id_identity: serial-bearing by-id alias resolves to the same whole disk
+    partitions: [/dev/nvme4n1p1, /dev/nvme4n1p2, /dev/nvme4n1p3]
+    signatures: GPT on whole disk; EFI VFAT and ZFS member on partitions
+    boundary_reads: first and last 8 MiB both contain non-zero bytes
+    smart_health: PASSED; critical warning 0; available spare above threshold; media errors 0
+    references: no mounts, swap, sysfs holders, imported-pool, host-configuration, or firmware references; importable-pool scan includes old ZFS pool GUID 14828205673918207700 and label rpool-OLD-14828205673918207700
+    result: BLOCK; existing GPT, EFI, ZFS metadata and importable-pool reference remain
+  front_nvme_d:
+    serial: BTHH8244042V512D
+    canonical_device: /dev/nvme5n1
+    by_id_identity: serial-bearing by-id alias resolves to the same whole disk
+    partitions: []
+    signatures: no blkid signature reported on whole disk
+    boundary_reads: first 8 MiB zero (SHA-256 2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74); last 8 MiB contain non-zero bytes
+    smart_health: PASSED; critical warning 0; available spare above threshold; media errors 0
+    references: no mounts, swap, sysfs holders, imported or importable pools, host-configuration, or firmware references
+    result: BLOCK; non-zero trailing data requires review; disk is not classified as blank or disposable
+  controls: imported rpool and fast-vm, all four expected mirror members, mounted PVE configuration, configured ESP identities and firmware entries were present; no existing scratch pool or PVE storage ID found
+  local_opentofu_source_scan:
+    observed_at_time: "2026-10-03T14:13:21-04:00"
+    method: workstation-local ripgrep search for scratch in five versioned *.tf and *.tfvars source files
+    result: no scratch pool or storage reference found
+  overall: BLOCK
+  scope_limit: read-only time-bound preflight only; no operator content classification, off-target header capture, label clearing, pool creation, or write authorization
+
 nvme:
   front:
     observed_at: 2026-10-01
@@ -94,7 +379,7 @@ nvme:
         capacity_gb: 512
         serial: BTHH8244042V512D
         observed_device: /dev/nvme5n1
-        state: blank
+        state: unpartitioned at 2026-10-03 14:06; first 8 MiB zero and final 8 MiB non-zero; contents require review, not classified as blank
   internal_pcie:
     topology: Microchip Switchtec PM8562 PCIe Gen3 switch; each drive negotiates Gen3 x4
     observed_at: 2026-10-01
@@ -194,6 +479,156 @@ boot:
       mountpoint: /boot
   risk: single point of failure for firmware-visible boot path
 
+pve_boot_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T10:19:27-04:00"
+  provenance: authenticated SSH with strict host-key checking; findmnt, proxmox-boot-tool status, efibootmgr, and lsblk by serial
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  mounted_boot_filesystems:
+    boot:
+      serial: 50026B7767031A82
+      source_partition: /dev/sdk2
+      filesystem: ext4
+      mountpoint: /boot
+    efi:
+      serial: 50026B7767031A82
+      source_partition: /dev/sdk1
+      filesystem: vfat
+      mountpoint: /boot/efi
+  proxmox_boot_tool:
+    mode: UEFI
+    configured_kernel_version: 7.0.2-6-pve
+    esp_devices:
+      - serial: BTHH95021LD4512D
+        device_at_observation: /dev/nvme0n1
+        partition: /dev/nvme0n1p2
+        partuuid: a6ab2778-6cfa-4764-864d-4c63bb08364e
+        filesystem_uuid: 929D-9F5B
+        firmware_entry: Boot0009 Linux Boot Manager
+      - serial: BTHH8122061E512D
+        device_at_observation: /dev/nvme3n1
+        partition: /dev/nvme3n1p2
+        partuuid: c0096bb5-4bfc-4fc0-ad5b-156a16e0a9ab
+        filesystem_uuid: 929E-65B4
+        firmware_entry: Boot000A Linux Boot Manager
+  firmware:
+    current_entry: Boot000B Proxmox SATA Boot
+    boot_order_prefix: [Boot000B, Boot000A, Boot0009]
+  acceptance:
+    independent_cold_boots: not tested
+    status: configured NVMe EFI entries are candidate alternate paths; firmware-visible resilience is not yet proven
+  method_caveat: proxmox-boot-tool status was invoked for this readback; later review of the installed implementation found that it may mount ESPs, so this observation is not treated as a strictly read-only capture
+
+pve_boot_readback_1429:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:29:14-04:00"
+  provenance: authenticated SSH with StrictHostKeyChecking=yes; read-only findmnt, /etc/kernel/proxmox-boot-uuids, lsblk, efibootmgr -v, zpool status -x, and zpool list
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  mounted_boot_filesystems:
+    boot:
+      serial: 50026B7767031A82
+      source_partition: /dev/sdk2
+      filesystem: ext4
+      mountpoint: /boot
+    efi:
+      serial: 50026B7767031A82
+      source_partition: /dev/sdk1
+      filesystem: vfat
+      mountpoint: /boot/efi
+  configured_esp_filesystem_uuids: [929D-9F5B, 929E-65B4]
+  firmware:
+    current_entry: Boot000B Proxmox SATA Boot
+    boot_order_prefix: [Boot000B, Boot000A, Boot0009]
+    entries:
+      - entry: Boot0009 Linux Boot Manager
+        serial: BTHH95021LD4512D
+        partition: /dev/nvme0n1p2
+        partuuid: a6ab2778-6cfa-4764-864d-4c63bb08364e
+        filesystem_uuid: 929D-9F5B
+        loader: '\EFI\systemd\systemd-bootx64.efi'
+      - entry: Boot000A Linux Boot Manager
+        serial: BTHH8122061E512D
+        partition: /dev/nvme3n1p2
+        partuuid: c0096bb5-4bfc-4fc0-ad5b-156a16e0a9ab
+        filesystem_uuid: 929E-65B4
+        loader: '\EFI\systemd\systemd-bootx64.efi'
+      - entry: Boot000B Proxmox SATA Boot
+        serial: 50026B7767031A82
+        partition: /dev/sdk1
+        partuuid: 0cfb7d02-bd7a-41ea-a221-d0f717f0d86b
+        filesystem_uuid: 70E9-7572
+        loader: '\EFI\BOOT\BOOTX64.EFI'
+  pool_status: all pools reported healthy; rpool and fast-vm ONLINE
+  candidate_esp_contents: not inspected; mtools is not installed and no ESP was mounted
+  kernel_update_hooks:
+    package: proxmox-kernel-helper 9.1.0+fde2
+    configured_hooks:
+      - /etc/kernel/postinst.d/zz-proxmox-boot iterates the configured ESP UUID list and copies/configures kernels
+      - /etc/kernel/postrm.d/zz-proxmox-boot iterates the configured ESP UUID list after kernel removal
+      - /etc/initramfs/post-update.d/proxmox-boot-sync requests proxmox-boot-tool refresh
+    esp_operation: hook implementation mounts configured VFAT ESPs and may write kernel and bootloader files
+    strict_failure_mode_default: disabled (PROXMOX_BOOT_TOOL_STRICT defaults to 0)
+    current_sync_success: not verified; no hook or refresh command was executed
+  recovery_media: PVE installer USB remains attached as /dev/sdi (serial KT20200000000975); off-host recovery-media readiness is not established
+  acceptance:
+    independent_cold_boots: not tested
+    status: NVMe firmware entries map to distinct rpool mirror ESPs; they remain candidate boot paths, not proven independent
+  method: read-only capture; proxmox-boot-tool status was not invoked and no mount or host configuration change was made
+
+pve_esp_inspection_readback_1840:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:40-04:00"
+  provenance: authenticated root SSH with StrictHostKeyChecking=yes and the pinned workstation known_hosts file; read-only by-id mapping, lsblk, fsck.fat --help, and fsck.fat -n -l checks directly against each ESP partition; no ESP mount or repair was performed
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  fsck_fat:
+    version: "4.2 (2021-01-31)"
+    options: [-n, -l]
+    option_meaning: -n is documented by the installed tool as a no-op that makes no changes; -l lists path names
+    result: both checks exited 1; both reported the FAT dirty bit set and a difference between the boot sector and its backup at offset 65 (primary 0x01, backup 0x00); both explicitly reported that the filesystem was left unchanged
+    filesystem_usage: "20 files, 26488/261628 clusters on each ESP"
+  esp_devices:
+    - firmware_entry: Boot0009
+      serial: BTHH95021LD4512D
+      by_id_partition: /dev/disk/by-id/nvme-INTEL_SSDPEKKF512G8_BTHH95021LD4512D-part2
+      device_at_observation: /dev/nvme0n1p2
+      partuuid: a6ab2778-6cfa-4764-864d-4c63bb08364e
+      filesystem_uuid: 929D-9F5B
+    - firmware_entry: Boot000A
+      serial: BTHH8122061E512D
+      by_id_partition: /dev/disk/by-id/nvme-INTEL_SSDPEKKF512G8_BTHH8122061E512D-part2
+      device_at_observation: /dev/nvme3n1p2
+      partuuid: c0096bb5-4bfc-4fc0-ad5b-156a16e0a9ab
+      filesystem_uuid: 929E-65B4
+  relevant_paths_listed_on_both:
+    - /EFI/systemd/systemd-bootx64.efi
+    - /EFI/BOOT/BOOTX64.EFI
+    - /EFI/proxmox/7.0.2-6-pve/vmlinuz-7.0.2-6-pve
+    - /EFI/proxmox/7.0.2-6-pve/initrd.img-7.0.2-6-pve
+    - /loader/entries/proxmox-7.0.2-6-pve.conf
+  limitations: names only; no EFI file contents or hashes were read, files were not compared with the Kingston boot path, and neither NVMe has been cold-booted; both remain candidate paths, not proven bootable
+
+pve_boot_nvme_pcie_readback_1858:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:58-04:00"
+  provenance: authenticated root SSH with StrictHostKeyChecking=yes; read-only lspci topology/device IDs, NVMe controller serial and sysfs paths, and dmidecode --type 9 SMBIOS slot table
+  smbios_system_slot:
+    designation: PCI4
+    bus_address: "0000:42:00.0"
+    upstream_device: PLX PEX8632 32-lane, 12-port PCIe Gen 2 switch [10b5:8632]
+  boot_nvme_controllers:
+    - firmware_entry: Boot0009
+      serial: BTHH95021LD4512D
+      controller: nvme0
+      switch_downstream_bridge: "0000:43:04.0"
+      endpoint: "0000:44:00.0"
+    - firmware_entry: Boot000A
+      serial: BTHH8122061E512D
+      controller: nvme3
+      switch_downstream_bridge: "0000:43:05.0"
+      endpoint: "0000:45:00.0"
+  interpretation: both boot NVMe controllers sit behind the PLX switch mapped by SMBIOS to system slot PCI4; removing that shared adapter would remove both boot candidates
+  limitation: PCIe/SMBIOS data does not identify the physical connector label for either M.2 device; verify each connector-to-serial mapping before isolating a single device; no hardware was removed and no cold boot was performed
+
 removable:
   - description: Proxmox installer USB
     capacity_gb: 32
@@ -204,3 +639,3049 @@ removable:
     capacity_gb: 8
     observed_device: /dev/sdj
     action: do not use for PVE or workload storage
+
+truenas_vm_console_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T10:46:17-04:00"
+  provenance: authenticated PVE 9.2.2 UI in the managed personal Chrome session; VM 200 selected at the exact PVE origin and its noVNC frame remained on that origin
+  vmid: 200
+  displayed_guest: TrueNAS local CLI menu
+  guest_status_commands_issued: none during this observation
+  certificate_identity: not freshly verified
+  storage_and_alert_status: not freshly read
+  limitation: visible prior console history was not treated as current guest read-back
+
+truenas_storage_health_readback:
+  observed_at: 2026-10-03
+  provenance: read-only zpool status, midclt alert.list, and recursive zfs quota/refquota queries through the VM 200 PVE console
+  pools:
+    boot-pool:
+      state: ONLINE
+      member_read_write_checksum_errors: zero
+      known_data_errors: none
+    tank:
+      layout: RAIDZ2
+      state: ONLINE
+      members_online: 8
+      member_read_write_checksum_errors: zero
+      known_data_errors: none
+      latest_reported_scrub: "2026-10-02 08:47:00"
+      scrub_repaired: 0 B
+      scrub_errors: zero
+  active_alerts: []
+  explicit_test_dataset_quotas:
+    tank/nfs_test: 5 GiB
+    tank/smb_test: 5 GiB
+  limitations:
+    - SMART test schedule and history were not read; the attempted midclt method smart.test.query does not exist
+    - certificate identity, capacity alert thresholds, and alert delivery were not freshly read
+    - the pool status output did not provide serial-specific member identity
+
+truenas_console_input_attempt_1157:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T11:57:37-04:00"
+  provenance: authenticated PVE UI in the managed personal Chrome session; VM 200 noVNC console, same PVE origin
+  visible_guest_state: root prompt in the TrueNAS Linux shell after operator selected menu option 8
+  read_only_command_attempted: midclt call alert.list
+  result: command was not executed; browser relay typed into the noVNC hidden input but routed Enter to the outer iframe
+  certificate_identity: not verified
+  alert_status: not refreshed; prior readback remains the only evidence
+  limitation: no policy or TLS warning was bypassed; console input path remains unresolved
+
+truenas_console_input_attempt_1354:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T13:54:30-04:00"
+  provenance: authenticated PVE 9.2.2 UI in the managed personal Chrome profile; VM 200 selected and same-origin noVNC child frame inspected
+  visible_guest_state: root prompt in the TrueNAS Linux CLI after operator selected menu option 8
+  view_only_setting: enabled before and restored after the focused attempt
+  read_only_command_attempted: midclt call alert.list
+  result: command was not submitted; chrome-use reported Enter landed on the outer iframe, and the noVNC keyboard input remained unsubmitted
+  certificate_identity: not verified
+  alert_status: not refreshed; the earlier empty alert list is historical only
+  limitation: no browser-policy or TLS-warning bypass was used; guest keyboard input path remains unresolved
+
+truenas_tls_identity_readback_1428:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:28-04:00"
+  provenance: read-only OpenSSL TLS handshake and X.509 leaf inspection from the workstation to the recorded TrueNAS address 192.168.0.186:443; no browser warning or certificate validation bypass
+  endpoint: 192.168.0.186:443
+  leaf_certificate:
+    sha256_fingerprint: 1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8
+    subject: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    issuer: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    serial: 37C8CC24
+    not_before: "2026-10-02T07:04:56Z"
+    not_after: "2027-11-03T07:04:56Z"
+    subject_alt_names: [DNS:localhost]
+  validation:
+    trust_chain: failed; self-signed leaf certificate
+    endpoint_ip_identity: failed; 192.168.0.186 does not match the certificate
+    configured_certificate_selection: not verified
+    current_ip_to_vm_attachment: not independently verified; the PVE QEMU guest agent is not running and the console input attempt did not run a guest command
+  conclusion: the endpoint currently presents an iXsystems self-signed certificate identifying localhost; intended trusted TrueNAS identity remains unresolved
+
+truenas_console_input_attempt_1427:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:27-04:00"
+  provenance: authenticated PVE 9.2.2 UI in the managed personal Chrome profile; VM 200 and its same-origin noVNC frame
+  visible_guest_state: root prompt after operator selected TrueNAS Linux CLI option 8
+  view_only_setting: enabled before input and restored enabled after the attempt
+  read_only_command_attempted: midclt call alert.list
+  result: chrome-use could not type into the noVNC hidden input and reported focus on the parent iframe; Enter was not sent and no guest command was submitted
+  alert_status: not refreshed; the empty alert list remains historical evidence only
+  limitation: the console frame rendered black after the failed input and the guest prompt could not be re-read; no browser-policy or TLS-warning bypass was used
+
+truenas_console_access_recheck_1447:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:47-04:00"
+  provenance: managed personal Chrome attached to the existing authenticated PVE tab at 192.168.0.188:8006; the PVE Datacenter view was navigated to VM 200's details page
+  visible_guest_state: not visible; the adopted tab remained on the PVE VM summary page and did not open a noVNC console view
+  read_only_command_attempted: none; the toolbar Console click was intercepted by an overlay and the later navigation ref was stale
+  result: no guest command was submitted and no TrueNAS state was read
+  view_only_setting: unchanged; no noVNC view-only control was reached
+  alert_status: not refreshed; the prior empty list remains historical evidence only
+  certificate_identity: not verified in TrueNAS; the served endpoint certificate remains as recorded in truenas_tls_identity_readback_1428
+  limitation: no browser-policy or TLS-warning bypass or policy change was used
+
+truenas_console_input_attempt_1458:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:58:29-04:00"
+  provenance: managed personal Chrome noVNC console for PVE VM 200; operator had reset the guest shell and selected Linux CLI option 8; the initial screenshot showed the TrueNAS root prompt
+  view_only_setting: checked before input; temporarily unchecked for the read-only query and restored checked afterward
+  read_only_command_attempted: midclt call alert.list
+  result: no terminal result was visible; Chrome-use Enter was routed to the outer iframe, and a synthetic Enter dispatched inside the child frame produced no observable output; execution is unconfirmed
+  keyboard_buffer_after_attempt: the noVNC hidden keyboard textarea still contained the command at the final read
+  alert_status: not refreshed; the earlier empty list remains historical evidence only
+  certificate_identity: not verified in TrueNAS; see truenas_tls_identity_readback_1428 for the served endpoint certificate
+  limitation: no browser-policy or TLS-warning bypass or policy change was used; no certificate warning was bypassed
+
+truenas_vm_config_readback_1521:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:21-04:00"
+  provenance: authenticated PVE 9.2.2 UI session; same-origin read-only GET of the VM 200 configuration API
+  vmid: 200
+  name: nas
+  qemu_guest_agent: enabled=0
+  result: no existing guest-agent read path is configured; guest-agent execution was not attempted
+  limitation: the VM configuration does not establish the current IP-to-VM attachment or TrueNAS guest state
+
+truenas_console_input_attempt_1523:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:23-04:00"
+  provenance: authenticated PVE 9.2.2 UI in managed personal Chrome; VM 200 noVNC console after operator reset the shell and selected Linux CLI option 8
+  visible_guest_state: root prompt initially visible; final screenshot was black and did not re-establish the prompt
+  view_only_setting: checked initially, temporarily unchecked for the read-only query, then restored checked and verified in the DOM
+  read_only_command_attempted: midclt call alert.list
+  result: no guest output; chrome-use continued routing Enter to the outer PVE iframe, so command execution is unconfirmed
+  keyboard_buffer_after_cleanup: snapshot showed only the 99-character underscore placeholder and no command text
+  alert_status: not refreshed; the earlier empty alert list remains historical evidence only
+  certificate_identity: not verified in TrueNAS
+  limitation: no browser policy or TLS warning was bypassed; no PVE, TrueNAS, or network configuration changed
+
+truenas_tls_endpoint_readback_1523:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:23-04:00"
+  provenance: read-only OpenSSL TLS handshake from the workstation to the previously recorded endpoint; explicit IP verification and verify-return-error enabled
+  endpoint: 192.168.0.186:443
+  leaf_certificate:
+    sha256_fingerprint: 41:18:AF:D3:FB:DD:24:27:99:3F:C7:5B:5C:9F:9C:73:1B:01:07:BC:CC:6C:E8:F2:70:EB:5E:90:30:E1:7B:30
+    serial: 37C8CC24
+    subject: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    issuer: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    not_before: "2026-10-02T07:04:56Z"
+    not_after: "2027-11-03T07:04:56Z"
+    subject_alt_names: [DNS:localhost]
+  validation:
+    trust_chain: failed; self-signed leaf certificate, OpenSSL verify return code 18
+    endpoint_ip_identity: not verified by the handshake because trust validation failed first; the SAN contains no IP address and does not identify 192.168.0.186
+    configured_certificate_selection: not verified
+    current_ip_to_vm_attachment: not verified
+  comparison: fingerprint differs from truenas_tls_identity_readback_1428 although the recorded serial, subject, issuer, and validity dates match; the available evidence cannot distinguish certificate replacement from a different endpoint
+  conclusion: the recorded endpoint still does not provide a trusted identity for TrueNAS VM 200
+
+truenas_endpoint_mac_readback_1531:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:31-04:00"
+  provenance: one read-only arping probe from workstation 192.168.0.183 on enp82s0u2u1u2; compared with same-origin PVE VM 200 configuration GET
+  endpoint: 192.168.0.186
+  arp_reply_mac: BC:24:11:87:F2:2B
+  pve_vmid: 200
+  pve_name: nas
+  pve_net0_mac: BC:24:11:87:F2:2B
+  result: live ARP reply MAC matches VM 200's configured net0 MAC; current endpoint-to-VM NIC attachment is corroborated
+  limitation: does not verify the TrueNAS-selected certificate or the endpoint mapping at the earlier 14:28 TLS observation
+
+truenas_console_input_attempt_1545:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:45-04:00"
+  provenance: authenticated PVE 9.2.2 UI in managed personal Chrome; fresh noVNC frame snapshot for VM 200 and frame-local references
+  visible_guest_state: TrueNAS root prompt was visible before input; post-attempt screenshot was black and did not show command output
+  view_only_setting: restored and verified true from noVNC DOM
+  read_only_command_attempted: midclt call alert.list
+  result: Enter still routed to the outer PVE iframe even with frame-local references; guest command execution is unconfirmed
+  keyboard_buffer_after_cleanup: noVNC textarea value was only the 99-character underscore placeholder; command text was cleared
+  alert_status: not refreshed; the earlier empty alert list remains historical evidence only
+  certificate_identity: unchanged from the unresolved evidence in truenas_tls_endpoint_readback_1523
+  limitation: no browser policy, TLS warning, PVE configuration, TrueNAS configuration, or network configuration was bypassed or changed
+
+truenas_console_input_attempt_1554:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T15:54-04:00"
+  provenance: authenticated PVE 9.2.2 UI in managed personal Chrome; noVNC VM 200 frame snapshot, screenshot, and DOM readback
+  operator_reported_guest_state: shell reset and Linux CLI option 8 selected
+  visible_guest_state: fresh screenshot was black and did not independently show the root prompt or command output
+  view_only_setting: restored and verified true from the noVNC DOM
+  read_only_command_attempted: midclt call alert.list
+  result: chrome-use reported Enter landed on the outer PVE iframe even with frame 1 selected and the noVNC textbox selector; guest command execution is unconfirmed
+  keyboard_buffer_after_cleanup: an empty fill returned a verification mismatch because noVNC repopulated its 99-character underscore placeholder; a subsequent DOM read confirmed only that placeholder and no command text
+  alert_status: not refreshed; the prior empty alert-list result remains historical evidence only
+  certificate_identity: unchanged from the unresolved evidence in truenas_tls_endpoint_readback_1523
+  limitation: no browser policy, TLS warning, PVE configuration, TrueNAS configuration, or network configuration was bypassed or changed
+
+truenas_console_input_attempt_1616:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T16:16-04:00"
+  provenance: authenticated PVE 9.2.2 UI in managed personal Chrome; VM 200 noVNC screenshot, frame snapshot, and keyboard-buffer read-back
+  operator_reported_guest_state: root shell after resetting the shell and selecting Linux CLI option 8
+  visible_guest_state: initial screenshot showed root@truenas shell prompt; after the input attempt the console screenshot was black and showed no result
+  view_only_setting: temporarily disabled for the read-only command attempt, then restored and verified true before handoff
+  read_only_command_attempted: midclt call alert.list
+  result: command text appeared in the noVNC hidden keyboard buffer; Enter was routed to the outer PVE iframe despite selecting the noVNC frame and textbox; execution is unconfirmed
+  alert_status: not refreshed; the prior empty alert-list result remains historical evidence only
+  certificate_identity: unchanged from the unresolved evidence in truenas_tls_endpoint_readback_1523
+  limitation: no command output was observed and no browser policy, TLS warning, PVE configuration, TrueNAS configuration, or network configuration was changed
+
+truenas_console_input_attempt_1646:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T16:46:56-04:00"
+  provenance: authenticated PVE 9.2.2 UI in managed personal Chrome; VM 200 selected and its same-origin noVNC frame inspected with a screenshot and frame DOM readback
+  pve_vmid: 200
+  pve_name: nas
+  visible_guest_state: screenshot initially showed root@truenas[/]#; after the failed typing attempt the console framebuffer was black with no command result
+  read_only_command_input_attempted: midclt call alert.list
+  result: chrome-use type did not take; the noVNC hidden keyboard field remained its underscore placeholder and the tool reported keyboard focus on the iframe; no Enter was sent and guest command execution is unconfirmed
+  view_only_setting: observed false before input; briefly set true during cleanup, then returned to false after the operator reported that typing was blocked; final DOM readback was false
+  operator_input: enabled; console left available for operator keyboard input
+  alert_status: not refreshed; prior empty alert-list output remains historical only
+  certificate_identity: configured TrueNAS identity remains unverified; served endpoint uncertainty is unchanged
+  limitation: no PVE, TrueNAS, network, browser-policy, or TLS configuration changed; only the noVNC View Only UI setting was toggled
+
+truenas_alerts_readback_170036:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T17:00:36-04:00"
+  provenance: read-only screenshot from authenticated PVE 9.2.2 UI in managed personal Chrome; noVNC console for VM 200
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell, root prompt
+  command: midclt call alert.list
+  output: []
+  result: command completed and returned an empty alert list at the observation time
+  keyboard_input: operator input succeeded with noVNC View Only disabled; screenshot shows unsubmitted text "fff" at the subsequent root prompt, left untouched
+  certificate_identity: configured TrueNAS certificate remains unverified; served endpoint uncertainty is unchanged
+  limitation: point-in-time alert list only; this does not verify certificate identity, guest SMART policy/history, pool capacity, disk-to-serial mapping, alert thresholds, or device-failure handling
+
+pve_storage_health_readback_171357:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T17:13:57-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed over password-only SSH using the desktop keyring, StrictHostKeyChecking=yes, and no host-side output file; raw output retained in local task scratch
+  host:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    kernel: 7.0.2-6-pve
+  collection_result: all read-only collector commands completed with exit status 0; host/pve/check-fast-vm.sh returned fast-vm baseline PASS
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6830071808
+      free_bytes: 499976069120
+      zpool_capacity_percent_field: 1
+      dataset_quota_readback: quota and refquota none on all listed rpool datasets
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; spare threshold 12%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 12%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6272991232
+      free_bytes: 1015929225216
+      zpool_capacity_percent_field: 0
+      dataset_quota_readback: quota and refquota none on fast-vm and fast-vm/data; volume children have no separate quota values
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 12%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; spare threshold 12%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.63
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    effective_pool_policy: default auto (-) for rpool and fast-vm
+    status: no scan entry displayed for either pool by zpool status -P -v at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no self-test schedule directive in active configuration
+    boot_ssd: KINGSTON SUV400S37240G serial 50026B7767031A82; PASSED; 24 C; reallocated, current-pending, and UDMA CRC raw counters all 0; no self-tests logged
+  quota_readback:
+    observed_at_time: "2026-10-03T17:17:32-04:00"
+    provenance: strict-host-key read-only zfs get -r quota,refquota
+    result: quota and refquota are none on all rpool datasets, fast-vm, and fast-vm/data; zvol children report no separate values
+  capacity_alerts: collector does not inspect configured alert thresholds; none verified by this capture; 20%-free remains a Fedora promotion criterion, not an alert setting
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+  limitation: this is a point-in-time PVE-owned storage readback; it does not verify TrueNAS guest SMART, capacity, member serial mapping, alert thresholds, trusted certificate identity, or failure handling
+
+scratch_candidate_preflight_172022:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T17:20:22-04:00"
+  provenance: workstation-local host/pve/check_scratch_preflight.py streamed to PVE over password-only SSH using the desktop keyring, StrictHostKeyChecking=yes; no host-side file written
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  collection_result: all serial, disk, positive-control, signature, boundary, SMART, reference, and pool-scan probes completed without UNKNOWN findings; checker exit 1 reflects BLOCK findings
+  overall_state: BLOCK
+  candidates:
+    front_nvme_c:
+      serial: PHHH8505034Q512H
+      canonical_device: /dev/nvme4n1
+      serial_and_by_id_identity: CLEAR
+      child_devices: [/dev/nvme4n1p1, /dev/nvme4n1p2, /dev/nvme4n1p3]
+      signature_state: BLOCK; signatures reported on whole disk and all three child partitions
+      boundary_state: BLOCK; non-zero unsigned bytes in both first and last 8 MiB
+      importable_pool_reference: BLOCK; pool GUID 14828205673918207700 and label rpool-OLD-14828205673918207700 found through by-id alias nvme-eui.0000000001000000e4d25c1a03645001
+      references: no mounts, swap, sysfs holders, imported-pool membership, PVE host configuration, or firmware entry found
+      smart_state: required health and error/spare fields passed; no destructive SMART test was started
+    front_nvme_d:
+      serial: BTHH8244042V512D
+      canonical_device: /dev/nvme5n1
+      serial_and_by_id_identity: CLEAR
+      child_devices: []
+      signature_state: CLEAR; no blkid signature reported on whole disk
+      boundary_state: BLOCK; first 8 MiB zero with SHA-256 2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74, last 8 MiB contain non-zero unsigned bytes
+      importable_pool_reference: CLEAR; no importable pool found
+      references: no mounts, swap, sysfs holders, imported-pool membership, PVE host configuration, or firmware entry found
+      smart_state: required health and error/spare fields passed; no destructive SMART test was started
+  positive_controls: all passed, including imported rpool and fast-vm, exact four host mirror-member identities, mounted /etc/pve, fast-vm storage entry, both Proxmox ESP filesystem UUIDs, and both firmware ESP PARTUUIDs
+  scratch_pool_or_storage_collision: none found
+  limitation: this is a time-bound read-only preflight, not operator data classification, an off-target header capture, write approval, or authorization to clear metadata or create the scratch pool
+
+truenas_console_input_recheck_174812:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T17:48:12-04:00"
+  provenance: screenshot from the authenticated PVE 9.2.2 VM 200 noVNC console in managed personal Chrome; no guest command was submitted during this recheck
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell, root prompt after selecting option 8
+  visible_prompt_input: fffc; unsubmitted
+  prior_view_only_readback: unchecked at 17:42 EDT; setting was not reopened for this screenshot
+  keyboard_attempt: Chrome-use Control+C landed on the outer PVE iframe and did not reach the guest
+  alert_status: not refreshed; the 17:00:36 empty result remains the latest command output
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query result was visible
+  limitation: screenshot-only recheck; it establishes neither current guest execution nor certificate identity
+
+truenas_console_input_recheck_175538:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T17:55:38-04:00"
+  provenance: authenticated PVE 9.2.2 VM 200 noVNC screenshot from managed personal Chrome; screenshot retained in private task scratch as console-recheck-after-1755.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell, root prompt after selecting option 8
+  visible_prompt_input: fffc; unsubmitted
+  observed_console_history: prior midclt call alert.list returned []; no certificate query output visible
+  alert_status: 17:00:36 empty result remains the latest executed alert-list command
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query result was visible
+  limitation: screenshot-only recheck; no guest command was submitted and this establishes neither current guest execution nor certificate identity
+
+pve_storage_health_readback_181148:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:11:48-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to PVE over password-only SSH using the desktop keyring and strict host-key checking; no PVE file written; raw output retained in private task scratch
+  host:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    kernel: 7.0.2-6-pve
+  collection_result: collector exited 0; separate check-fast-vm.sh read returned PASS; all five smartctl reads exited 0
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6830485504
+      free_bytes: 499975655424
+      zpool_capacity_percent_field: 1
+      dataset_quota_readback: quota and refquota none on every listed dataset
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; spare threshold 12%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 10%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6313533440
+      free_bytes: 1015888683008
+      zpool_capacity_percent_field: 0
+      dataset_quota_readback: quota and refquota none on fast-vm and fast-vm/data; volume children report not applicable
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 10%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; spare threshold 10%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.64
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    effective_pool_policy: default auto (-) for rpool and fast-vm
+    status: no scan entry displayed for either pool by zpool status -P -v at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no self-test schedule directive in active configuration
+    boot_ssd: KINGSTON SUV400S37240G serial 50026B7767031A82; PASSED; 24 C; reallocated, current-pending, and UDMA CRC raw counters all 0; no self-tests logged
+  capacity_alerts: no configured host-pool threshold verified; 20%-free remains a Fedora promotion criterion, not an alert setting
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+  limitation: point-in-time PVE-owned readback only; does not verify TrueNAS guest SMART, capacity, member serial mapping, thresholds, trusted certificate identity, or failure handling
+
+truenas_console_input_recheck_180832:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:08:32-04:00"
+  provenance: authenticated PVE 9.2.2 VM 200 noVNC screenshot in managed personal Chrome; private copy retained in task scratch as console-recheck-after-1808.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: fffc; unsubmitted
+  observed_console_history: prior midclt call alert.list returned []; no certificate query output visible
+  alert_status: 17:00:36 empty result remains the latest executed alert-list command
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query result was visible
+  limitation: screenshot-only read; no guest command was submitted and this does not verify certificate identity
+
+pve_capacity_notification_policy_readback_182722:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:27:22-04:00"
+  provenance: strict-host-key read-only SSH inspection of the PVE notification matcher, selected monitoring service names, PVE metrics-config presence, timers, root crontab, ZED email-setting presence, and relevant configuration paths
+  notification_matcher:
+    name: default-matcher
+    mode: all
+    targets: [mail-to-root, cloudflare-email]
+    comment: Route all notifications to mail-to-root
+  monitoring:
+    pvestatd: active; enabled
+    smartd: active
+    zfs_zed: active; enabled
+    zed_email_setting: configured; value not copied
+    external_metrics_config: /etc/pve/status.cfg absent
+    capacity_related_systemd_timers: none matched
+    capacity_related_root_cron_entries: none matched
+    threshold_related_file_matches: none in /etc/pve, /etc/zfs/zed.d, /etc/cron.d, /etc/systemd/system, /usr/local/sbin, or /usr/local/bin
+  result: event notification routes exist, but no host-pool capacity threshold or measurement/alert job was found in the inspected configuration
+  limitation: bounded host inspection only; does not rule out monitoring outside PVE or arbitrary code with unrelated names; no notification or threshold configuration was changed
+
+truenas_console_input_recheck_182144:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:21:44-04:00"
+  provenance: authenticated PVE 9.2.2 VM 200 noVNC screenshot in managed personal Chrome; private copy retained in task scratch as console-recheck-after-1821.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: fffc; unsubmitted
+  observed_console_history: prior midclt call alert.list returned []; no certificate query output visible
+  alert_status: 17:00:36 empty result remains the latest executed alert-list command
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query result was visible
+  limitation: screenshot-only read; no guest command was submitted and this does not verify certificate identity
+
+truenas_console_recheck_1850:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T18:50-04:00"
+  provenance: authenticated PVE VM 200 noVNC screenshot through the existing personal Chrome session; private screenshot retained in workstation task scratch as console-goal-resume.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  observed_console_history: midclt call alert.list is visible above the prompt with its earlier [] result; no newer command output is visible
+  alert_status: latest executed alert-list result remains the 17:00:36 EDT empty result
+  certificate_identity: no configured-certificate query result visible; identity remains unverified
+  limitation: screenshot-only read; no guest command was submitted and this does not verify a fresh alert status or certificate identity
+
+truenas_console_recheck_1902:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:02-04:00"
+  provenance: authenticated PVE VM 200 noVNC screenshot through the existing personal Chrome session after the operator reported typing the prepared command; private screenshot retained in workstation task scratch as console-goal-resume-2.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  observed_console_history: only the earlier midclt call alert.list command and its [] result are visible; the reported certificate query has no visible echo or output
+  alert_status: latest executed alert-list result remains the 17:00:36 EDT empty result
+  certificate_identity: no configured-certificate query result visible; identity remains unverified
+  limitation: screenshot-only read cannot establish whether the reported keystrokes reached the noVNC console; no console input was sent by the observer
+
+truenas_console_recheck_190815:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:08:15-04:00"
+  provenance: authenticated PVE VM 200 noVNC screenshot through the existing personal Chrome session during the resumed goal; private screenshot retained in workstation task scratch as console-goal-latest.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  observed_console_history: only the earlier midclt call alert.list command and its [] result are visible; no newer command echo or output
+  alert_status: latest executed alert-list result remains the 17:00:36 EDT empty result
+  certificate_identity: no configured-certificate query result visible; identity remains unverified
+  limitation: screenshot-only read; no guest command was submitted and this does not verify a fresh alert status or certificate identity
+
+pve_storage_health_readback_190939:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:09:39-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to PVE over password-only SSH using the desktop keyring and strict host-key checking; no PVE file written; raw output retained in private task scratch; a separate strict-host-key read after collection confirmed host boot ID and kernel; check-fast-vm.sh streamed separately over the same verified SSH path
+  host:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    kernel: 7.0.2-6-pve
+  collection_result: collector exited 0; separate check-fast-vm.sh read returned PASS; all five smartctl reads exited 0
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6830993408
+      free_bytes: 499975147520
+      zpool_capacity_percent_field: 1
+      dataset_quota_readback: quota and refquota none on every listed dataset
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; spare threshold 12%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 10%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6350471168
+      free_bytes: 1015851745280
+      zpool_capacity_percent_field: 0
+      dataset_quota_readback: quota and refquota none on fast-vm and fast-vm/data; volume children report not applicable
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; spare threshold 10%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; spare threshold 10%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.64
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: no scan entry displayed for either pool by zpool status -P -v at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no self-test schedule directive in active configuration
+    boot_ssd: KINGSTON SUV400S37240G serial 50026B7767031A82; PASSED; 24 C; reallocated, current-pending, and UDMA CRC raw counters all 0; SMART extended self-test log empty; SSD_Life_Left attribute normalized 94 with raw value 6, interpretation not inferred
+  capacity_alerts: this collector does not evaluate thresholds; latest separate bounded configuration inspection is pve_capacity_notification_policy_readback_182722
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_pool_status: not inspected by this host-owned storage capture
+  limitation: point-in-time PVE-owned readback only; does not verify TrueNAS guest SMART, capacity, member serial mapping, thresholds, trusted certificate identity, or failure handling
+
+truenas_console_recheck_192240:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:22:40-04:00"
+  provenance: fresh authenticated PVE 9.2.2 VM 200 noVNC screenshot from the existing managed personal Chrome session after the operator reported typing the prepared command; screenshot retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-after-192240.png
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  observed_console_history: only the earlier midclt call alert.list and its [] result are visible; no new command echo or output
+  alert_status: 17:00:36 EDT remains the latest confirmed alert-list result
+  certificate_identity: configured TrueNAS certificate remains unverified; no query result was visible
+  limitation: screenshot-only read cannot establish whether reported keystrokes reached noVNC; no guest input was sent by the observer
+
+pve_smartd_scope_readback_192057:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:20:57-04:00"
+  provenance: strict-host-key read-only SSH collection of smartmontools service status, package version, selected boot journal entries, current VM 200 state and HBA driver, and imported host-pool names; raw output retained in private task scratch
+  service:
+    unit: smartmontools.service
+    package_version: 7.5-pve2
+    state: active
+    active_since: "2026-10-02T15:19:38-04:00"
+    next_check_reported: "2026-10-03T19:49:38-04:00"
+  boot_journal:
+    startup_policy: DEVICESCAN with implied -a; later directives apply to found devices
+    initial_monitored_count: 9 ATA/SATA and 6 NVMe devices
+    nvme_serials:
+      - BTHH95021LD4512D
+      - PHHH829001A91P0E
+      - PHHH828600761P0E
+      - BTHH8122061E512D
+      - PHHH8505034Q512H
+      - BTHH8244042V512D
+    nas_array_members_added_at_start:
+      - 2108E4FA8118
+      - 2108E4FA82BD
+      - 2108E4FA8283
+      - 2108E4FA82C7
+      - 2108E4FA8085
+      - 2108E4FA8267
+      - 2108E4FA8084
+      - 2108E4FA80B6
+    nas_array_members_disappeared_at: "2026-10-02T15:49:38-04:00"
+    disappearance_message: "removed ATA device: No such device"
+    note: the journal does not establish why the devices disappeared or their exact relation to a VM start
+  current_readback:
+    vm_200: running
+    hba_0000_02_00_0: vfio-pci
+    imported_host_pools: [fast-vm, rpool]
+  result: PVE smartd scanned the NAS array drives while they were visible to the host and later recorded them absent; the separate current read confirms VM 200 is running with the HBA bound to vfio-pci and only fast-vm and rpool imported on PVE
+  limitation: this is not evidence that TrueNAS guest smartd monitors the passed-through drives, runs scheduled self-tests, or raises alerts; no guest SMART query or configuration change was performed
+
+truenas_console_recheck_1940:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:40:29-04:00"
+  provenance: fresh screenshot of authenticated PVE 9.2.2 VM 200 noVNC in the existing managed personal Chrome session after the operator reported typing the prepared query; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-after-1940.png; sha256 0d7189f7f08ff055cb41410baacae6a53d54f5ccf6a45022c87fd222b336d6c2
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  observed_console_history: only the earlier midclt call alert.list and its [] result are visible; no certificate-query command or output is visible
+  alert_status: 17:00:36 EDT remains the latest confirmed alert-list result
+  certificate_identity: configured TrueNAS certificate remains unverified
+  limitation: screenshot-only read does not establish what happened to the reported keystrokes; no guest input was sent by the observer
+
+pve_storage_health_readback_1953:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T19:53:04-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to PVE with password-only SSH using the desktop keyring and StrictHostKeyChecking=yes; no PVE file written; raw output retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-1950.txt; supplemental strict-host-key reads verified PVE identity/state, quotas, and check-fast-vm.sh
+  collection_result: collector exit status 0; all five smartctl reads exit status 0
+  host:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    kernel: 7.0.2-6-pve
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6831325184
+      free_bytes: 499974815744
+      zpool_capacity_percent_field: 1
+      dataset_quota_readback: quota and refquota none
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6381338624
+      free_bytes: 1015820877824
+      zpool_capacity_percent_field: 0
+      dataset_quota_readback: quota and refquota none
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.64
+    local: 0.94
+    local-zfs: 0.00
+  boot_ssd:
+    serial: 50026B7767031A82
+    result: PASSED; 24 C; reallocated, current-pending, and UDMA CRC raw counters 0; extended self-test log empty; SSD_Life_Left normalized 94 with raw value 6, interpretation not inferred
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: no scan entry displayed for either pool by zpool status -P -v at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no self-test schedule directive in active configuration; no self-tests logged for the five queried host-owned devices
+  capacity_alerts: collector does not evaluate thresholds; latest separate bounded inspection remains pve_capacity_notification_policy_readback_182722
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  supplemental_live_readback:
+    observed_at_time: "2026-10-03T19:54:19-04:00"
+    vm_200: running
+    hba_0000_02_00_0: vfio-pci
+    imported_host_pools: [fast-vm, rpool]
+    smartd_next_check_reported: "2026-10-03T20:19:38-04:00"
+    smartd_journal_since_1945: no entries; this does not establish a scan result or NAS-device presence
+    quota_readback_at: "2026-10-03T19:57:59-04:00"
+    host_pool_quota_refquota: none on rpool and fast-vm
+  fast_vm_baseline:
+    observed_at_time: "2026-10-03T19:58:39-04:00"
+    result: PASS
+  guest_pool_status: not inspected by this PVE-owned capture
+  limitation: point-in-time PVE-owned evidence only; does not verify TrueNAS guest SMART, capacity, member serial mapping, trusted certificate identity, capacity thresholds, or failure handling
+
+truenas_console_recheck_200724:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:07:24-04:00"
+  provenance: fresh screenshot of authenticated PVE VM 200 noVNC in the existing personal Chrome profile; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-alert-query-200724.png
+  screenshot_sha256: 0d7189f7f08ff055cb41410baacae6a53d54f5ccf6a45022c87fd222b336d6c2
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_prompt_input: empty
+  visible_console_history: only the earlier `midclt call alert.list` and its `[]` result; no new command echo or result
+  comparison: screenshot bytes and SHA-256 exactly match truenas_console_recheck_1940
+  alert_status: no fresh alert result verified; the 17:00:36 EDT empty alert-list result remains the latest confirmed read
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query result is visible
+  limitation: screenshot cannot establish whether the operator's later keystrokes reached noVNC; no guest input was sent by the observer
+
+truenas_console_settings_recheck_202316:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:23:16-04:00"
+  provenance: authenticated PVE VM 200 noVNC settings inspected through the existing personal Chrome profile; private screenshot retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-console-settings-202316.png
+  screenshot_sha256: 08b6793963675349eaceae6a9d40137ca753b3f4f552cb1a93278a33bc173c8b
+  pve_vmid: 200
+  pve_name: nas
+  view_only: false
+  console_canvas_after_closing_settings: black; no readable guest prompt or new command output
+  alert_status: latest confirmed alert-list result remains the 17:00:36 EDT empty result
+  certificate_identity: configured TrueNAS certificate remains unverified
+  guest_input_sent: false
+  limitation: unchecked View Only rules out that setting as the input blocker but does not establish guest keyboard focus; black canvas prevented further read-only console inspection
+
+scratch_candidate_preflight_201045:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:10:45-04:00"
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  provenance: versioned host/pve/check_scratch_preflight.py streamed to PVE over password-only SSH using the desktop keyring, StrictHostKeyChecking=yes, and the pinned known_hosts file; output retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/scratch-preflight-2008.txt; no PVE file written
+  checker_exit_status: 1
+  overall_state: BLOCK
+  unknown_findings: 0
+  front_nvme_c:
+    serial: PHHH8505034Q512H
+    canonical_device: /dev/nvme4n1
+    serial_bearing_by_id_alias: present and resolved to canonical device
+    child_devices: [/dev/nvme4n1p1, /dev/nvme4n1p2, /dev/nvme4n1p3]
+    signatures: GPT and signatures on whole device and all three child partitions
+    boundaries: first and last 8 MiB non-zero
+    smart: health and required error/spare fields passed
+    references: no mount, swap, holder, imported-pool, host-configuration, or firmware reference
+    importable_pool: GUID 14828205673918207700; alias nvme-eui.0000000001000000e4d25c1a03645001; label rpool-OLD-14828205673918207700
+    disposition: blocked; no data classification or write
+  front_nvme_d:
+    serial: BTHH8244042V512D
+    canonical_device: /dev/nvme5n1
+    serial_bearing_by_id_alias: present and resolved to canonical device
+    child_devices: []
+    signatures: no blkid signature reported
+    boundaries: first 8 MiB zero with SHA-256 2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74; last 8 MiB non-zero
+    smart: health and required error/spare fields passed
+    references: no mount, swap, holder, imported-pool, host-configuration, or firmware reference
+    disposition: blocked; no data classification or write
+  controls: all required imported-pool, host-member, mounted-PVE, storage-ID, ESP UUID/PARTUUID, and firmware controls CLEAR; no scratch pool or PVE storage ID
+  limitation: BLOCK is a read-only point-in-time preflight, not content classification or write authorization
+
+scratch_boundary_metadata_capture_201319:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:13:19-04:00 to 2026-10-03T20:13:22-04:00"
+  provenance: strict-host-key, password-only SSH using the desktop keyring; before each capture, lsblk serial, readlink canonical path, and blockdev size were rechecked; previously traced dd probes opened candidate devices read-only; no PVE files written
+  local_artifacts: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/scratch-boundary-capture-2010
+  artifact_permissions: directory mode 0700; four files mode 0600; each file exactly 8388608 bytes
+  content_handling: first and last 8 MiB boundary regions only; bytes were not parsed or classified; these are not full data backups
+  candidates:
+    - serial: PHHH8505034Q512H
+      by_id_alias: nvme-INTEL_SSDPEKKF512G8_PHHH8505034Q512H_1
+      canonical_device: /dev/nvme4n1
+      device_size_bytes: 512110190592
+      first_sha256: b2ec4c876b4dc34fe195e3aae3e7f7153070ee8abbde3f5dad855b716519e7c6
+      last_sha256: 7f5c5d8cb1c1bcd52adc39622a008d1bab7696eb61dd91367157208019088c41
+    - serial: BTHH8244042V512D
+      by_id_alias: nvme-INTEL_SSDPEKKF512G8_BTHH8244042V512D_1
+      canonical_device: /dev/nvme5n1
+      device_size_bytes: 512110190592
+      first_sha256: 2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74
+      last_sha256: e92c13df072c73f2722c8de2b057c21ce00fba8f0ef78e3d4f201d94b14618ce
+  limitation: boundary preservation only; neither candidate is classified disposable and no write or pool creation is authorized
+
+truenas_alerts_readback_203707:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:37:07-04:00"
+  provenance: fresh screenshot of authenticated PVE VM 200 noVNC in the existing personal Chrome profile, captured after the operator reported typing the prepared command; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-alert-query-203707.png
+  screenshot_sha256: 022969a31f7d4a373dba98f9323384c15999a9191e8503b3ca71428b68852c41
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt after option 8
+  visible_command: midclt call alert.list
+  visible_result: []
+  operator_report: typed the prepared command before this screenshot
+  guest_execution_timestamp: not available in the console output
+  alert_status: empty alert list visible at the 20:37:07 EDT screenshot; no alert entries were returned
+  certificate_identity: configured TrueNAS certificate remains unverified; no certificate query was entered or visible
+  console_input: operator input reached the guest shell; the prior focus failure's exact cause remains unresolved
+  incidental_pve_ui_message: >-
+    screenshot also shows a PVE task error banner dated 16:37:33 and 16:38:33 EDT
+    stating "VM 200 - RebootError: VM quit/powerdown failed - got timeout"; this
+    is distinct from the guest alert-list result and was not investigated in
+    this read
+  observer_guest_input_sent: false
+
+truenas_cert_query_input_recheck_204610:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:46:10-04:00"
+  provenance: fresh screenshot of authenticated PVE VM 200 noVNC in the existing personal Chrome profile after a chrome-use type attempt; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-cert-query-unsubmitted-204610.png
+  screenshot_sha256: b71bdcfca35395527bb07b40daa2c6a433635aa8d21888176e97726dd28f75fa
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt
+  intended_read_only_command: midclt call system.general.config | jq '.ui_certificate | {id, name}'
+  observed_unsubmitted_line: >-
+    shell echo showed altered punctuation: a backslash in place of pipe, hyphen
+    in place of underscore, and square brackets in place of braces
+  command_submitted: false
+  enter_sent: false
+  cleanup_attempt: chrome-use Control+C targeted the outer Proxmox iframe twice; a later screenshot still showed the unsubmitted line
+  certificate_identity: remains unverified; no middleware query result was produced
+  input_diagnosis: chrome-use keyboard injection translated punctuation incorrectly; this does not establish why earlier operator typing lacked focus
+  next_operator_action: press Ctrl+C directly in the TrueNAS console to clear the unsubmitted line before any new command
+  observer_guest_input_sent: chrome-use attempted keyboard text and Control+C signals; no Enter was sent and the command remained unsubmitted
+
+pve_storage_health_readback_205510:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:55:10-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to PVE using the GNOME Keyring credential over password-only SSH; StrictHostKeyChecking=yes with pinned /home/mpeter/.ssh/known_hosts; no PVE file written
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-205507.txt
+  raw_output_sha256: 5059f8e6712b89ef4b8cda0acf10b2978a1697144363c680ae1dab45d9a24e71
+  raw_output_permissions: 0600; private task scratch directory mode 0700
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832177152
+      free_bytes: 499973963776
+      zpool_capacity_percent_field: 1
+      dataset_quotas: zfs list returned 0 quota/refquota values (unlimited) for all listed rpool datasets
+      members_smart_readback:
+        - serial: BTHH95021LD4512D
+          result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: BTHH8122061E512D
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6432993280
+      free_bytes: 1015769223168
+      zpool_capacity_percent_field: 0
+      dataset_quotas: zfs list returned 0 quota/refquota values (unlimited) for datasets; volume rows reported -
+      members_smart_readback:
+        - serial: PHHH829001A91P0E
+          result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+        - serial: PHHH828600761P0E
+          result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.65
+    local: 0.94
+    local-zfs: 0.00
+  boot_ssd:
+    serial: 50026B7767031A82
+    result: PASSED; 24 C; no self-tests logged
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: zpool status output contained no scan entry at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+  scheduled_self_tests: no self-test schedule directive in active configuration; no self-tests logged for the five queried host-owned devices
+  capacity_alerts: collector does not evaluate thresholds; selected host alert threshold and cadence remain unverified
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_state: TrueNAS guest pool, SMART, capacity, and alert state were not queried by this PVE-owned capture
+  limitation: point-in-time PVE-owned evidence only; healthy host readback does not establish guest health, selected thresholds, or failure handling
+
+truenas_webui_readback_0235:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T02:35:44-04:00/2026-10-04T02:40:30-04:00"
+  provenance: >-
+    refreshed the authenticated TrueNAS tab in the selected personal Chrome
+    profile; truenas_admin was filled with the existing GNOME Keyring value
+    through the active user D-Bus bus, and the password was not displayed.
+    Dashboard, Storage, Disks, Alerts, and Data Protection were read-only;
+    no settings, tasks, tests, or storage state were changed.
+  endpoint: https://192.168.0.186
+  product: TrueNAS Community Edition 25.10.7
+  alerts: dashboard alert drawer displayed "There are no alerts."
+  tank:
+    state: ONLINE; no errors
+    dashboard_disks_with_errors: "0 of 8"
+    used_capacity: 25.15 MiB
+    available_capacity: 5.03 TiB
+    scheduled_scrub: Sunday at 00:00; UI timezone not established
+    last_scrub: finished 2026-10-02 11:47:00; last scan errors 0
+  disk_table:
+    tank_members: [2108E4FA8118, 2108E4FA82BD, 2108E4FA8283, 2108E4FA82C7, 2108E4FA8085, 2108E4FA8267, 2108E4FA8084, 2108E4FA80B6]
+    boot_pool_device: sda; 32 GiB virtual drive
+    smart_health_or_test_history: not displayed by the inspected disk list
+  data_protection:
+    enabled_tasks_observed: one local tank periodic snapshot task
+    retention: 7 days
+    schedule: daily 23:00–23:01; UI timezone not established
+    last_run: FINISHED about 35 minutes before the read
+    next_run: about 23 hours after the read
+    remote_replication_or_cloud_backup: no configured task rows appeared in the inspected page
+  instance_api_docs:
+    displayed_version: v25.10.5 current; the running UI reports v25.10.7
+    search: query "smart" returned only certificate.create because its extended key usage contains SMARTCARD_LOGON; no documented SMART-test API method appeared in search results
+    limitation: documentation-version mismatch and an empty method search do not prove undocumented live API behavior; no undocumented method was called
+  certificate: not re-read in this pass; the earlier selected-object/served-leaf fingerprint match is recorded in truenas_certificate_object_match_0221, while strict TLS trust and IP identity remain unresolved
+  limitation: point-in-time WebUI readback; it does not establish SMART history, alert-delivery acceptance, host capacity thresholds/cadence, device-failure handling, or independent backup/restore evidence
+
+pve_storage_health_readback_000930:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T00:09:30-04:00"
+  provenance: versioned host/pve/capture-storage-health.sh streamed to PVE over authenticated SSH with StrictHostKeyChecking=yes and the pinned known_hosts entry; no PVE file written
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-HJ8e42.txt
+  raw_output_sha256: 73975eb7eef7400cd770a8c1d4223c6d7b7ab535c04f127033576dd610ac4837
+  raw_output_permissions: "0600; private task scratch directory mode 0700"
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832062464
+      free_bytes: 499974078464
+      zpool_capacity_percent_field: 1
+      dataset_quotas: quota and refquota are none for all listed datasets
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6573318144
+      free_bytes: 1015628898304
+      zpool_capacity_percent_field: 0
+      dataset_quotas: quota and refquota are none for listed datasets
+  members_smart_readback:
+    - serial: BTHH95021LD4512D
+      pool: rpool
+      result: PASSED; critical warning 0; 31 C; percentage used 0%; media/data errors 0; error log entries 0; no self-tests logged
+    - serial: BTHH8122061E512D
+      pool: rpool
+      result: PASSED; critical warning 0; 30 C; percentage used 1%; media/data errors 0; error log entries 0; no self-tests logged
+    - serial: PHHH829001A91P0E
+      pool: fast-vm
+      result: PASSED; critical warning 0; 30 C; percentage used 0%; media/data errors 0; error log entries 0; no self-tests logged
+    - serial: PHHH828600761P0E
+      pool: fast-vm
+      result: PASSED; critical warning 0; 29 C; percentage used 0%; media/data errors 0; error log entries 0; no self-tests logged
+  boot_ssd:
+    serial: 50026B7767031A82
+    result: PASSED; 24 C; no errors or self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.66
+    local: 0.94
+    local-zfs: 0.00
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: no scan entry in either pool at capture time
+  smartd:
+    service: active
+    scheduled_self_tests: no schedule directive in active configuration
+  capacity_alerts: collector did not evaluate thresholds; numeric host threshold and measurement cadence remain unselected
+  failure_procedures: no device fault/offline/replace action was performed; representative procedures remain untested
+  guest_state: TrueNAS guest pool, SMART, capacity, and alerts were not queried by this PVE-owned capture
+  limitation: point-in-time host evidence only; this does not establish guest health, alert policy, or device-failure handling
+
+truenas_webui_health_readback_0035:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T00:10:00-04:00/2026-10-04T00:38:36-04:00"
+  provenance: read-only pages in a Chrome tab opened in the operator's personal profile; login used truenas_admin from GNOME Keyring through the existing user D-Bus bus; no password displayed; the tab later returned to the sign-in page
+  endpoint: https://192.168.0.186
+  endpoint_neighbor_readback: current workstation ARP entry resolves 192.168.0.186 to BC:24:11:87:F2:2B; this matches the VM 200 net0 MAC in the earlier truenas_endpoint_mac_readback_1531, but the PVE VM config was not re-read in this session
+  product: TrueNAS Community Edition 25.10.7; UI hostname truenas
+  alerts: alert drawer displayed "There are no alerts."
+  gui_settings:
+    selected_certificate: truenas_default
+    gui_certificate_summary: CN=localhost; SAN=DNS:localhost; UI validity 2026-10-02 00:04:56 to 2027-11-03 00:04:56
+    bind_address_ipv4: 0.0.0.0
+    https_port: 443
+    https_protocols: TLSv1.2 and TLSv1.3
+  served_certificate:
+    sha256_fingerprint: 1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8
+    subject: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    issuer: same as subject; self-signed
+    subject_alt_name: DNS:localhost; does not name 192.168.0.186
+    validity_utc: 2026-10-02 07:04:56 to 2027-11-03 07:04:56
+    strict_openssl_verification: failed with verify error 18 (self-signed certificate)
+  tank:
+    status: ONLINE; no errors
+    data_vdev: RAIDZ2 ONLINE; no errors
+    usable_capacity: 5.03 TiB
+    used_capacity_at_read: 23.75 MiB
+    available_capacity: 5.03 TiB
+    scrub_schedule: Sunday at 00:00
+    last_scrub: finished 2026-10-02 11:47:00; last scan errors 0
+    auto_trim: off
+    disk_serials: [2108E4FA8118, 2108E4FA82BD, 2108E4FA8283, 2108E4FA82C7, 2108E4FA8085, 2108E4FA8267, 2108E4FA8084, 2108E4FA80B6]
+    disk_table_model: CT1000MX500SSD1
+    disk_health: temperature-alert count 0; highest 33 C; lowest 25 C; average 27.929 C
+    smart_health_and_test_history: not established by inspected pages
+  raw_config_output_event: unfiltered midclt call system.general.config output included privatekey and certificate PEM fields in a local console view; screenshot copy deleted; no values copied into repository or handoff; do not repeat unfiltered
+  capacity_alerts: no numeric host-pool threshold or measurement cadence selected by this observation
+  failure_procedures: no device fault, offline, or replacement was performed
+  certificate_trust: selected UI certificate subject and SAN match the served leaf, but the configured API fingerprint association was not read; endpoint identity is not trusted until a certificate names the IP and strict verification succeeds
+  limitation: read-only point-in-time UI snapshot; it does not establish SMART schedule/history, alert delivery, host capacity policy, or device-failure acceptance
+
+truenas_webui_followup_readback_0100:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T00:58:16-04:00/2026-10-04T01:00:27-04:00"
+  provenance: >-
+    read-only Chrome UI pass in a task-owned tab on the operator's selected
+    personal profile; TrueNAS login used truenas_admin from GNOME Keyring
+    through the existing user D-Bus bus; password was not displayed; the page
+    opened without a certificate interstitial and no browser policy changed
+  endpoint: https://192.168.0.186
+  pages_inspected:
+    - Storage > Disks: all eight tank disk rows and the boot-pool row displayed; expanded sdb details showed model/configuration only, with no SMART health or test history
+    - Data Protection: no SMART test task table was present; an enabled tank snapshot task showed seven-day retention, daily 23:00 schedule (UI timezone not established), and FINISHED last run about 23 hours earlier
+    - System > Services: searching the service list for SMART returned no results
+    - Reporting > Disk: available metrics were Disk I/O and Disk Temperature, with no SMART status or test-history view
+    - Alerts drawer: displayed "There are no alerts."
+  snapshot_scope: local periodic snapshots only; not independent backup, restore, or promotion evidence
+  smart_health_and_test_history: not established by the inspected WebUI pages
+  limitation: point-in-time UI inspection only; certificate trust remains unresolved, and no configuration or test was changed or run
+
+truenas_webui_shell_attempt_0107:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T01:07:36-04:00"
+  provenance: read-only attempt in a task-owned personal-Chrome tab at https://192.168.0.186/ui/system/shell; existing truenas_admin keyring credential reused without display
+  page: System > Shell
+  websocket: wss://192.168.0.186/websocket/shell/ connected
+  observed_state: terminal accessibility snapshot rendered CSS-like text instead of a readable prompt; screenshot capture timed out after 8 seconds
+  recovery_attempt: selected the owned tab and refreshed its snapshot/screenshot once; screenshot capture timed out again
+  command_submitted: false
+  guest_commands_sent: []
+  certificate_policy: no interstitial bypass or browser policy change
+  cleanup: task-owned Chrome session closed
+  result: guest SMART health and test history remain unverified; use a verified read-only route if continuing
+
+truenas_certificate_object_match_0221:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T02:21:10-04:00/2026-10-04T02:24:30-04:00"
+  provenance: read-only Credentials > Certificates page in a task-owned personal-Chrome tab; TrueNAS login reused the keyring credential without displaying it; no browser policy changed
+  selected_gui_certificate: truenas_default
+  certificate_object_metadata: CN=localhost; SAN=DNS:localhost; validity 2026-10-02 00:04:56 to 2027-11-03 00:04:56 as displayed in the UI
+  downloaded_public_certificate_sha256: 1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8
+  comparison: exact match to the served HTTPS leaf fingerprint in truenas_webui_health_readback_0035; selected GUI object-to-served-leaf association verified
+  trust: leaf remains self-signed, CN=localhost, SAN=DNS:localhost only; strict OpenSSL verification previously failed with error 18; no IP-valid or CA-trusted identity established
+  download_side_effect:
+    action: selecting the certificate row Download menu also exported a private-key file
+    private_key_file: /home/mpeter/Downloads/truenas_default.key
+    observed_size_and_mode_before_removal: 1704 bytes; mode 0644
+    parent_permissions: /home/mpeter mode 0700; Downloads mode 0755
+    key_opened_or_copied: false
+    cleanup: exact .key and accompanying .crt files deleted; both paths verified absent
+    download_history: two task-created download records remain in Chrome history; the CLI only offers clearing all entries, so unrelated history was preserved
+    tool_output: download auth-token query strings appeared in command output; their values are not reproduced or recorded in project files
+  infrastructure_changed: false
+  limitation: certificate selection-to-leaf association is verified, but endpoint trust and the separate API parsed-status read remain unresolved
+
+truenas_webui_followup_readback_0253:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T02:53:36-04:00/2026-10-04T03:00:05-04:00"
+  provenance: >-
+    read-only navigation in a task-owned chrome-use session pinned to the
+    operator's selected personal Chrome profile at https://192.168.0.186;
+    authenticated page identified the account as truenas_admin. No credential
+    was displayed or changed, and no configuration, schedule, or test was
+    changed or run.
+  product: TrueNAS Community Edition 25.10.7
+  pages_inspected:
+    - >-
+      Storage > Disks: tank disk table was visible; expanded sdb details showed
+      model/configuration only, with no SMART health or test history
+    - >-
+      Data Protection: periodic snapshot task was visible; no SMART test table
+      appeared
+    - >-
+      UI search for SMART returned "No results found in UI"; a documentation
+      search link was offered
+    - >-
+      Credentials > Certificates: the listed certificate object was
+      truenas_default, CN=localhost, SAN=DNS:localhost, valid 2026-10-02
+      00:04:56 through 2027-11-03 00:04:56
+    - >-
+      System > General Settings > GUI Settings: GUI SSL Certificate was
+      truenas_default; HTTPS port 443 with TLSv1.2 and TLSv1.3 selected
+    - 'Alerts drawer: displayed "There are no alerts."'
+  certificate_identity:
+    configured_object: truenas_default; CN=localhost; SAN=DNS:localhost
+    endpoint_ip_identity: not valid for 192.168.0.186
+    served_leaf_fingerprint: not re-read in this pass; the earlier object-to-leaf fingerprint match remains in truenas_certificate_object_match_0221
+    trust: unresolved; this UI read did not perform strict TLS verification, and the self-signed certificate does not identify the endpoint IP
+  smart_health_or_test_history: not established by the inspected WebUI pages
+  limitation: >-
+    point-in-time UI inspection only; no SMART API or guest-shell command was
+    attempted. The absence of a UI result does not prove that no undocumented
+    API or guest-side evidence exists. No browser policy or TLS-warning bypass
+    was used.
+
+truenas_ssh_port_probe_0307:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:07:36-04:00"
+  provenance: read-only workstation TCP connect check and neighbor-table read; no credentials or guest commands sent
+  endpoint: 192.168.0.186
+  tcp_connect:
+    port_22: connection refused
+    port_443: connected
+  neighbor:
+    mac: BC:24:11:87:F2:2B
+    state: REACHABLE
+    prior_vm200_net0_match: matches the earlier truenas_endpoint_mac_readback_1531; PVE configuration was not re-read in this pass
+  result: SSH is not accepting TCP connections at 192.168.0.186:22 from the workstation at this observation; no authentication attempt occurred
+  limitation: endpoint-to-VM attachment was not independently refreshed; this does not rule out SSH on another address or port
+
+truenas_cert_console_recheck_213048:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T21:30:48-04:00"
+  provenance: >-
+    fresh screenshots of authenticated PVE VM 200 noVNC in the existing
+    personal Chrome profile; private copies retained under
+    /home/mpeter/.cache/agent-scratch/homelab-infra-group6
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt
+  operator_clear_check:
+    observed_at_time: "2026-10-03T21:26:08-04:00"
+    screenshot: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-after-operator-clear.png
+    screenshot_sha256: 2d56ed2dbc9090e5bd20f428cc2fbcc396db1998284b171c228ca184b2cc22e2
+    screenshot_permissions: 0600; private task scratch directory mode 0700
+    visible_state: empty TrueNAS root prompt; no pending command text or command output
+  observer_attempt:
+    attempted_command: "midclt call system.general.config | jq '.ui_certificate | {id, name}'"
+    method: chrome-use keyboard inserttext
+    screenshot: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-command-check.png
+    screenshot_sha256: 912fb73b114487d22a0df5cf57dde20b4d1d0cc385cb25c468ee50f1f9c623ca
+    visible_state: command punctuation appeared altered; no output or new prompt followed
+    enter_sent: false
+    command_submitted: false
+  input_clear_attempt:
+    screenshot: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-after-clear-attempts.png
+    screenshot_sha256: 5fa7b771c21ae0251ce0303ad469009cb208c3eaadf9b061a6c01756a3dcca62
+    screenshot_permissions: 0600; private task scratch directory mode 0700
+    visible_state: unsubmitted shell input remained; no command output or fresh prompt appeared
+    control_c_delivery: chrome-use reported the key landed on the outer PVE iframe; nothing inside the guest console received it
+  certificate_identity: remains unverified
+  alert_status: latest confirmed alert-list output remains [] in truenas_alerts_readback_203707; this attempt did not refresh it
+  next_operator_action: clear the current line directly in noVNC and verify an empty root prompt before another query
+
+truenas_cert_console_recheck_214437:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T21:44:37-04:00"
+  provenance: fresh screenshot-only recheck of PVE VM 200 noVNC in the existing personal Chrome profile; observer sent no console input
+  screenshot: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/console-current-goal-cont.png
+  screenshot_sha256: b6ee38d145b542df5d99ef410e8950505a692acb5cf4a87f0af5ab52ea1ebd9f
+  screenshot_permissions: 0600; private task scratch directory mode 0700
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell
+  visible_line_state: malformed unsubmitted query text remains at the root prompt with trailing characters; no output or fresh prompt is visible
+  command_submitted: false
+  observer_guest_input_sent: false
+  certificate_identity: remains unverified
+  alert_status: latest confirmed alert-list output remains [] in truenas_alerts_readback_203707; this screenshot does not refresh it
+  next_operator_action: clear the current line directly in noVNC and verify an empty root prompt before another query
+
+truenas_cert_console_recheck_205844:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T20:58:44-04:00"
+  provenance: fresh screenshot of authenticated PVE VM 200 noVNC in the existing personal Chrome profile; no keys were sent for this screenshot; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-cert-console-current-205844.png
+  screenshot_sha256: ad5743a8555b0a627fdd5cb870964c3332832676ce9e15818bf319355604d1ff
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt
+  visible_line_state: the malformed, unsubmitted certificate query remains on the current prompt line; it ends with two additional c characters and has no following output or fresh prompt
+  command_submitted: false
+  enter_sent: false
+  trailing_characters: the two c characters appeared after the prior Control+C attempts; their exact input event cannot be proven from the screenshot
+  certificate_identity: remains unverified
+  next_operator_action: press Ctrl+C directly in the TrueNAS console to clear the pending line before another query
+
+truenas_console_recheck_210410:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T21:04:10-04:00"
+  provenance: fresh screenshot of authenticated PVE VM 200 noVNC in the existing personal Chrome profile after the operator reported typing the requested input; observer sent no keys; private copy retained at /home/mpeter/.cache/agent-scratch/homelab-infra-group6/truenas-console-after-operator-input-210410.png
+  screenshot_sha256: ad5743a8555b0a627fdd5cb870964c3332832676ce9e15818bf319355604d1ff
+  pve_vmid: 200
+  pve_name: nas
+  guest_context: TrueNAS Linux Shell root prompt
+  visible_line_state: malformed, unsubmitted certificate query remains at the prompt with two trailing c characters and no output or fresh prompt
+  comparison: screenshot bytes and SHA-256 exactly match truenas_cert_console_recheck_205844
+  command_submitted: false
+  enter_sent: false
+  certificate_identity: remains unverified
+  alert_status: latest confirmed alert-list output remains [] in truenas_alerts_readback_203707; this screenshot does not refresh it
+  observer_guest_input_sent: false
+  next_operator_action: focus the TrueNAS console directly, clear the line with Ctrl+C, and verify an empty prompt before any further query
+
+pve_storage_health_readback_211052:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T21:10:52-04:00"
+  provenance: >-
+    versioned host/pve/capture-storage-health.sh streamed to PVE over
+    password-only SSH using StrictHostKeyChecking=yes and the pinned
+    /home/mpeter/.ssh/known_hosts entry; credential read from GNOME Keyring
+    through the existing user D-Bus bus; no PVE file written
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-211049.txt
+  raw_output_sha256: 428e3f4eb73e28fafb4898a30cb6f3cd626ada0469b1abfd499ca5cb4e4e67dc
+  raw_output_permissions: 0600; private task scratch directory mode 0700
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832046080
+      free_bytes: 499974094848
+      zpool_capacity_percent_field: 1
+      dataset_quotas: zfs list returned 0 quota/refquota values (unlimited) for all listed rpool datasets
+    fast_vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6441168896
+      free_bytes: 1015761047552
+      zpool_capacity_percent_field: 0
+      dataset_quotas: zfs list returned 0 quota/refquota values (unlimited) for datasets; volume rows reported -
+  members_smart_readback:
+    - serial: BTHH95021LD4512D
+      pool: rpool
+      result: PASSED; critical warning 0; 31 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    - serial: BTHH8122061E512D
+      pool: rpool
+      result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 1%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    - serial: PHHH829001A91P0E
+      pool: fast-vm
+      result: PASSED; critical warning 0; 30 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+    - serial: PHHH828600761P0E
+      pool: fast-vm
+      result: PASSED; critical warning 0; 29 C; spare 100%; percentage used 0%; media/data integrity errors 0; error log entries 0; no self-tests logged
+  proxmox_storage_usage_percent:
+    fast-vm: 0.65
+    local: 0.94
+    local-zfs: 0.00
+  boot_ssd:
+    serial: 50026B7767031A82
+    result: PASSED; 24 C; no errors logged; no self-tests logged
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: zpool status output contained no scan entry at capture time
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no self-test schedule directive in active configuration; no self-tests logged for the five queried host-owned devices
+  capacity_alerts: collector does not evaluate thresholds; selected host alert threshold and cadence remain unverified
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedures remain untested
+  guest_state: TrueNAS guest pool, SMART, capacity, and alert state were not queried by this PVE-owned capture
+  limitation: point-in-time PVE-owned evidence only; healthy host readback does not establish guest health, selected thresholds, or failure handling
+
+truenas_guest_shell_readback_0321:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:21:21-04:00"
+  provenance: >-
+    authenticated read-only System > Shell session in task-owned chrome-use
+    session pinned to the selected personal Chrome profile; page account was
+    truenas_admin. Each submitted command was visibly confirmed in the terminal
+    input before Enter. No credential was displayed or changed.
+  endpoint: https://192.168.0.186/ui/system/shell
+  guest:
+    hostname: truenas
+    kernel: 6.12.105-production+truenas
+  device_readback:
+    command: lsblk -d -o NAME,SERIAL,MODEL,SIZE
+    devices:
+      sda: {serial: drive-scsi0, model: QEMU HARDDISK, size: 32G}
+      sdb: {serial: 2108E4FA8118, model: CT1000MX500SSD1, size: 931.5G}
+      sdc: {serial: 2108E4FA82BD, model: CT1000MX500SSD1, size: 931.5G}
+      sdd: {serial: 2108E4FA8283, model: CT1000MX500SSD1, size: 931.5G}
+      sde: {serial: 2108E4FA82C7, model: CT1000MX500SSD1, size: 931.5G}
+      sdf: {serial: 2108E4FA8085, model: CT1000MX500SSD1, size: 931.5G}
+      sdg: {serial: 2108E4FA8267, model: CT1000MX500SSD1, size: 931.5G}
+      sdh: {serial: 2108E4FA8084, model: CT1000MX500SSD1, size: 931.5G}
+      sdi: {serial: 2108E4FA80B6, model: CT1000MX500SSD1, size: 931.5G}
+      sr0: {serial: QM00003, model: QEMU DVD-ROM, size: 1024M}
+    limitation: this device enumeration does not independently map each Linux device to a pool member
+    first_invocation: an earlier identical command appears in shell history with no visible output; a later exact entry returned the device table above
+  pool_health:
+    command: zpool status -x
+    output: all pools are healthy
+    limitation: this summary does not identify pool topology, member mapping, capacity, or scrub state
+  alerts: the WebUI Alerts drawer displayed "There are no alerts."
+  smart_readback:
+    command: smartctl -H -l selftest /dev/sdb
+    result: Permission denied for truenas_admin
+    noninteractive_elevation_attempt: sudo -n smartctl -H -l selftest /dev/sdb
+    elevation_result: "sudo: a password is required"
+    health_and_test_history: not verified
+    self_test_started: false
+  changes:
+    TrueNAS_PVE_network_configuration: none
+    schedules_or_settings: none
+    browser_policy_or_TLS_warning_bypass: none
+    PVE_or_guest_writes: none
+  certificate_identity: remains unresolved; this session did not perform strict TLS verification or re-read the configured certificate identity
+  limitation: >-
+    Point-in-time authenticated guest-shell and WebUI evidence. SMART health and
+    history remain unverified because raw device access requires elevation;
+    capacity thresholds, cadence, representative failure handling, and trusted
+    certificate identity remain open. No receiver or restore evidence was
+    created.
+
+truenas_guest_storage_detail_readback_0334:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:34:58-04:00"
+  provenance: >-
+    Authenticated read-only System > Shell session in task-owned chrome-use
+    session pinned to the selected personal Chrome profile; page account was
+    truenas_admin. Each command was visibly confirmed in the terminal input
+    before Enter. No credential was displayed or changed.
+  endpoint: https://192.168.0.186/ui/system/shell
+  commands:
+    - lsblk -o NAME,PARTUUID,SERIAL,MODEL,SIZE
+    - zpool status -P -v
+    - zpool list -Hp -o name,size,alloc,free,capacity,health tank
+    - zfs list -H -p -r -o name,used,avail,quota,refquota tank
+  pool_health:
+    boot-pool: ONLINE; /dev/sda3; zero read, write, and checksum errors; no known data errors
+    tank: ONLINE RAIDZ2; eight members; zero read, write, and checksum errors; no known data errors
+    last_scrub: repaired 0B with 0 errors on 2026-10-02 at 08:47:00 as displayed by the guest
+  tank_member_mapping:
+    - {device: /dev/sdb1, partuuid: f76f6b31-caf8-462c-b33a-c0bcd3f7b685, serial: 2108E4FA8118, model: CT1000MX500SSD1}
+    - {device: /dev/sdc1, partuuid: 675ede5b-0eb6-4695-b033-c0cf2a6c6021, serial: 2108E4FA82BD, model: CT1000MX500SSD1}
+    - {device: /dev/sdd1, partuuid: 8c77d31e-1f70-46fe-ba09-5c449ce0d318, serial: 2108E4FA8283, model: CT1000MX500SSD1}
+    - {device: /dev/sde1, partuuid: 49a9dae5-7152-4587-a7d2-df8381c48eaa, serial: 2108E4FA82C7, model: CT1000MX500SSD1}
+    - {device: /dev/sdf1, partuuid: f2d3bc4b-b963-490f-889b-51fda36a5cd6, serial: 2108E4FA8085, model: CT1000MX500SSD1}
+    - {device: /dev/sdg1, partuuid: aeb08b2a-f773-4ed4-a42a-e26465392820, serial: 2108E4FA8267, model: CT1000MX500SSD1}
+    - {device: /dev/sdh1, partuuid: 5a174ba6-8ba4-4339-9018-61f088728030, serial: 2108E4FA8084, model: CT1000MX500SSD1}
+    - {device: /dev/sdi1, partuuid: 5a6458ad-7fc7-4509-9787-639fe990dc8e, serial: 2108E4FA80B6, model: CT1000MX500SSD1}
+  tank_capacity:
+    size_bytes: 7971459301376
+    allocated_bytes: 37871616
+    free_bytes: 7971421429760
+    zpool_capacity_percent: 0
+    zfs_available_bytes: 5529743635232
+  dataset_quota_readback:
+    tank: quota 0; refquota 0
+    tank/.system/cores: quota 1073741824 bytes; refquota 0
+    tank/nfs_test: quota 0; refquota 5368709120 bytes
+    tank/smb_test: quota 0; refquota 5368709120 bytes
+    remaining_listed_datasets: quota and refquota 0
+  alerts: WebUI Alerts drawer displayed "There are no alerts."
+  smart_access:
+    result: unprivileged SMART read was denied; sudo -n required a password, as recorded in truenas_guest_shell_readback_0321
+    health_and_test_history: not verified
+    self_test_started: false
+  configuration_changes: none
+  certificate_identity: remains unresolved; no strict TLS verification or configured-certificate read was performed
+  limitation: >-
+    Point-in-time guest evidence. It verifies pool members by PARTUUID-to-serial
+    mapping, current pool size/quota state, and the last displayed scrub result,
+    but not SMART health/history, a scheduled scrub policy in this pass, alert
+    thresholds/cadence, failure handling, trusted endpoint identity, or backup
+    and restore acceptance.
+
+pve_storage_health_readback_032936:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:29:36-04:00/2026-10-04T03:29:39-04:00"
+  provenance: >-
+    Versioned host/pve/capture-storage-health.sh streamed to root@192.168.0.188
+    over password-only SSH with StrictHostKeyChecking=yes and the pinned
+    /home/mpeter/.ssh/known_hosts file; credential read from the existing GNOME
+    Keyring over the user D-Bus bus without display; no PVE file written.
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-032936.txt
+  raw_output_sha256: 27c9559a3fea814dc14ce2619ad46dc96918e845fa52b916f6c4f8ca106abd9a
+  raw_output_permissions: 0600; task scratch directory mode 0700
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6831247360
+      free_bytes: 499974893568
+      zpool_capacity_percent: 1
+      members:
+        - {serial: BTHH95021LD4512D, model: INTEL SSDPEKKF512G8}
+        - {serial: BTHH8122061E512D, model: INTEL SSDPEKKF512G8}
+      smart: both PASSED; critical warning 0; spare 100%; media/data errors 0; error-log entries 0; no self-tests logged
+    fast-vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6702481408
+      free_bytes: 1015499735040
+      zpool_capacity_percent: 0
+      members:
+        - {serial: PHHH829001A91P0E, model: INTEL SSDPEKKW010T8}
+        - {serial: PHHH828600761P0E, model: INTEL SSDPEKKW010T8}
+      smart: both PASSED; critical warning 0; spare 100%; media/data errors 0; error-log entries 0; no self-tests logged
+  boot_ssd:
+    serial: 50026B7767031A82
+    smart: PASSED; 25 C; no errors logged; no self-tests logged
+  proxmox_storage_usage_percent: {fast-vm: 0.67, local: 0.94, local-zfs: 0.00}
+  dataset_quotas: no finite quota/refquota on listed host datasets; volume rows reported -
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    pool_status: no active scan entry in either pool output
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no active self-test schedule directive; no tests logged for the five queried devices
+  capacity_alerts: collector does not evaluate thresholds; numeric threshold and cadence remain unselected
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedure remains untested
+  limitation: point-in-time PVE evidence; guest health is recorded separately, and collector success is not a capacity-alert or failure-test result
+
+pve_nas_ownership_readback_0337:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:37:54-04:00"
+  provenance: >-
+    Read-only SSH commands to root@192.168.0.188 with StrictHostKeyChecking=yes
+    and the pinned /home/mpeter/.ssh/known_hosts file; credential read from
+    GNOME Keyring without display; no host configuration changed.
+  vm_200: running
+  hba_0000_02_00_0_driver: vfio-pci
+  imported_host_zfs_pools: [fast-vm, rpool]
+  storage_definitions:
+    local: directory storage
+    local-zfs: pool rpool/data
+    fast-vm: pool fast-vm/data
+  guest_pool_imported_on_pve: false
+  check_fast_vm_baseline: PASS from the versioned host/pve/check-fast-vm.sh streamed over the same strict SSH path
+  limitation: point-in-time host ownership and drift readback; no write, reboot, or pool operation was performed
+
+truenas_webui_cert_alert_readback_0344:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:44:43-04:00"
+  provenance: >-
+    Read-only authenticated navigation in task-owned chrome-use session pinned
+    to selected personal Chrome profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74;
+    endpoint https://192.168.0.186. Dashboard, Credentials > Certificates,
+    System > General Settings > GUI Settings, and Alerts drawer were inspected.
+    The browser loaded the UI without showing an interstitial; no certificate
+    exception, browser policy, or infrastructure setting was changed.
+  product: TrueNAS Community Edition 25.10.7
+  dashboard: {tank: ONLINE, disks_with_errors: "0 of 8", free_space: 5.03 TiB}
+  alerts: Alerts drawer displayed "There are no alerts."
+  gui_certificate:
+    selected: truenas_default
+    https_port: 443
+    tls_protocols: [TLSv1.2, TLSv1.3]
+    certificate_object_metadata: CN=localhost; SAN=DNS:localhost; validity 2026-10-02 00:04:56 to 2027-11-03 00:04:56 as displayed in the UI
+    current_served_leaf_serial: 37C8CC24
+    current_served_leaf_sha256: 1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8
+    configured_object_match: exact fingerprint match to the public certificate readback in truenas_certificate_object_match_0221; selected GUI object-to-leaf association confirmed
+    strict_tls_verification: failed with verify error 18 (self-signed certificate)
+    endpoint_hostname_check: 192.168.0.186 does not match the served certificate; SAN is DNS:localhost only
+    trust: endpoint identity remains untrusted; no CA-trusted or IP-valid identity established
+  configuration_changes: none
+  limitation: >-
+    Point-in-time UI and TLS evidence. The configured certificate object matches
+    the served leaf, but its self-signed identity does not validate for the IP.
+    This readback does not establish alert delivery, alert thresholds/cadence,
+    guest SMART history, or representative failure handling.
+
+truenas_alert_policy_readback_0355:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T03:55:50-04:00/2026-10-04T03:58:20-04:00"
+  provenance: >-
+    Authenticated, read-only System > Alert Settings page in task-owned
+    chrome-use session pinned to selected personal Chrome profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74 at https://192.168.0.186. The page
+    was inspected without pressing Save or changing a setting.
+  product: TrueNAS Community Edition 25.10.7
+  alert_services:
+    - {service: E-Mail, level: Warning, enabled: true}
+    - {service: SNMP Trap, level: Warning, enabled: true}
+  storage_alerts:
+    - {alert: Critical Quota Exceeded on Dataset, level: CRITICAL, frequency: IMMEDIATELY}
+    - {alert: New Feature Flags Are Available for Pool, level: NOTICE, frequency: IMMEDIATELY}
+    - {alert: Pool Space Usage Is Above 85%, level: NOTICE, frequency: IMMEDIATELY}
+    - {alert: Pool Space Usage Is Above 90%, level: WARNING, frequency: IMMEDIATELY}
+    - {alert: Pool Space Usage Is Above 95%, level: CRITICAL, frequency: IMMEDIATELY}
+    - {alert: Pool Status Is Not Healthy, level: CRITICAL, frequency: IMMEDIATELY}
+    - {alert: Pool consuming USB disks, level: WARNING, frequency: IMMEDIATELY}
+    - {alert: Quota Exceeded on Dataset, level: WARNING, frequency: IMMEDIATELY}
+    - {alert: Scrub Is Paused, level: WARNING, frequency: IMMEDIATELY}
+    - {alert: Too Many Snapshots Exist, level: WARNING, frequency: IMMEDIATELY}
+    - {alert: Too Many Snapshots Exist For Dataset, level: WARNING, frequency: IMMEDIATELY}
+  active_alerts: Alerts drawer displayed "There are no alerts."
+  delivery_tested: false
+  configuration_changes: none
+  limitation: >-
+    Read-back confirms configured TrueNAS alert severities and notification
+    frequencies, not successful E-Mail or SNMP delivery. This does not select
+    PVE host-pool thresholds/cadence or exercise failure handling.
+
+truenas_webui_access_readback_0409_0417:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T04:09:37-04:00/2026-10-04T04:17:12-04:00"
+  provenance: >-
+    Authenticated read-only navigation in the task-owned chrome-use session
+    pinned to personal Chrome profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74
+    at https://192.168.0.186. System > Services and System > Shell were
+    inspected; a certificate.query request selected only id, name, common,
+    san, fingerprint, from, until, and parsed. A workstation TCP connection
+    check to port 22 returned Connection refused. No service or certificate
+    setting was saved, started, or enabled.
+  product: TrueNAS Community Edition 25.10.7
+  services:
+    FTP: Stopped
+    iSCSI: Stopped
+    NFS: Running
+    NVMe-oF: Stopped
+    SMB: Running
+    SNMP: Stopped
+    SSH: Stopped
+    UPS: Stopped
+  alerts: Alerts drawer displayed "There are no alerts."
+  ssh_probe:
+    target: 192.168.0.186:22
+    command: nc -vz -w 3 192.168.0.186 22
+    result: Connection refused
+  smart_api_method_name_search:
+    method: core.get_methods
+    filter: case-insensitive method names containing "smart"
+    matches: []
+    implication: no SMART-named API method was exposed by this query; SMART schedule/history remain unverified
+  selected_gui_certificate:
+    id: 1
+    name: truenas_default
+    common: localhost
+    san: ["DNS:localhost"]
+    from: "Fri Oct  2 00:04:56 2026"
+    until: "Wed Nov  3 00:04:56 2027"
+    parsed: true
+  configuration_changes: none
+  certificate_trust: endpoint identity remains untrusted; SAN does not match 192.168.0.186
+  limitation: >-
+    Point-in-time UI and API reads. The stopped SSH service and refused TCP
+    connection explain why SSH is currently unavailable. The selected
+    certificate metadata remains self-signed and localhost-only; this does not
+    establish trusted endpoint identity, SMART test history, alert delivery,
+    PVE thresholds, or failure-procedure acceptance.
+
+pve_storage_health_readback_042614:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T04:26:14-04:00"
+  provenance: >-
+    Versioned host/pve/capture-storage-health.sh was streamed to root on
+    192.168.0.188 over password-only SSH using the GNOME Keyring credential,
+    StrictHostKeyChecking=yes, ControlMaster=no, and the pinned
+    /home/mpeter/.ssh/known_hosts file. No file was written on PVE. Raw output
+    is retained in private task scratch with mode 0600; the task directory is
+    mode 0700.
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-0425.txt
+  raw_output_sha256: a0727eadbb8b127bf4cdc00d0f2b0bb2b909863a774f050ad3ff2c7671b74b6b
+  raw_output_permissions: 0600
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832037888
+      free_bytes: 499974103040
+      zpool_capacity_percent: 1
+      members:
+        - {serial: BTHH95021LD4512D, model: INTEL SSDPEKKF512G8}
+        - {serial: BTHH8122061E512D, model: INTEL SSDPEKKF512G8}
+      smart: both PASSED; critical warning 0; media/data errors 0; error-log entries 0; no self-tests logged
+    fast-vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6754238464
+      free_bytes: 1015447977984
+      zpool_capacity_percent: 0
+      members:
+        - {serial: PHHH829001A91P0E, model: INTEL SSDPEKKW010T8}
+        - {serial: PHHH828600761P0E, model: INTEL SSDPEKKW010T8}
+      smart: both PASSED; critical warning 0; media/data errors 0; error-log entries 0; no self-tests logged
+  boot_ssd:
+    serial: 50026B7767031A82
+    model: KINGSTON SUV400S37240G
+    smart: PASSED; no errors logged; no self-tests logged
+  proxmox_storage_usage_percent: {fast-vm: 0.68, local: 0.94, local-zfs: 0.00}
+  dataset_quotas: no finite quota/refquota on listed host datasets
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    active_scan_entry: none in either captured zpool status
+  smartd:
+    service: active
+    active_policy: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_tests: no active self-test schedule directive
+    logged_self_tests: none for the five queried devices
+  capacity_alerts: collector does not evaluate thresholds; numeric threshold and cadence remain unselected
+  failure_procedures: no device was faulted, offlined, or replaced; representative procedure remains untested
+  limitation: point-in-time PVE evidence; collection success is not a capacity-alert or failure-test result
+
+pve_capacity_monitor_readback_043133:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T04:31:33-04:00"
+  provenance: >-
+    Bounded strict-host-key read-only SSH inspection of PVE service state,
+    /etc/pve/status.cfg presence, systemd timers, root crontab, and threshold-
+    related file names in /etc/pve, /etc/zfs/zed.d, /etc/cron.d,
+    /etc/systemd/system, /usr/local/sbin, and /usr/local/bin. Password came
+    from GNOME Keyring; no host files were written and no credential was
+    displayed.
+  services: {pvestatd: active, smartd: active, zfs_zed: active}
+  external_metrics_config: /etc/pve/status.cfg absent
+  capacity_or_threshold_timers: none matched
+  capacity_or_threshold_root_cron_entries: none matched
+  threshold_related_file_matches: none in inspected paths
+  result: no PVE host-pool capacity threshold or measurement/alert job found in the bounded inspection
+  limitation: >-
+    Does not rule out external monitoring or differently named code outside
+    the inspected paths; no notification or threshold configuration was
+    changed.
+
+truenas_webui_readback_0437:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T04:37:04-04:00"
+  provenance: >-
+    Authenticated read-only navigation in task-owned chrome-use session
+    homelab-truenas-readonly, pinned to personal Chrome profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74, at https://192.168.0.186. Dashboard,
+    Alerts, Credentials > Certificates, and System > General Settings > GUI
+    Settings were inspected. The endpoint public leaf was read with OpenSSL
+    without emitting certificate or private-key PEM. No browser exception,
+    setting save, or infrastructure change occurred.
+  product: TrueNAS Community Edition 25.10.7
+  alerts: Alerts drawer displayed "There are no alerts."
+  gui_certificate:
+    selected: truenas_default
+    https_port: 443
+    tls_protocols: [TLSv1.2, TLSv1.3]
+    certificate_public_metadata:
+      subject: CN=localhost
+      san: [DNS:localhost]
+      not_before_utc: "2026-10-02T07:04:56Z"
+      not_after_utc: "2027-11-03T07:04:56Z"
+  served_leaf:
+    subject: CN=localhost
+    issuer: CN=localhost
+    san: [DNS:localhost]
+    not_before_utc: "2026-10-02T07:04:56Z"
+    not_after_utc: "2027-11-03T07:04:56Z"
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+    matches_previous_selected_public_certificate_readback: true
+    object_to_leaf_fingerprint_comparison: >-
+      Not refreshed in this pass. The GUI still selected truenas_default with
+      the same public subject, SAN, and validity as the 03:44 EDT readback; the
+      current served-leaf hash matches that prior readback, which recorded the
+      exact selected-object fingerprint match.
+    strict_tls_verification: failed; OpenSSL verify return code 18 (self-signed certificate)
+    endpoint_ip_identity: unverified; SAN DNS:localhost does not match 192.168.0.186
+  shell_refresh: Chrome screenshot of authenticated System > Shell timed out; no command was typed or submitted
+  configuration_changes: none
+  limitation: >-
+    Confirms current selected-certificate metadata and served-leaf identity
+    against the prior exact object match, and records point-in-time alert
+    status. The certificate remains self-signed and does not identify the
+    endpoint IP. Alert delivery, guest SMART history, PVE capacity thresholds,
+    and representative failure handling remain open.
+
+truenas_smart_cron_readback_0454:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T04:54:52-04:00/2026-10-04T04:55:02-04:00"
+  provenance: >-
+    Authenticated read-only System > Advanced Settings > Cron Jobs inspection
+    in task-owned chrome-use session homelab-truenas-smart-ui pinned to
+    personal Chrome profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74. No row action
+    was opened; no setting was edited or saved, and no command or SMART test
+    was submitted.
+  product: TrueNAS Community Edition 25.10.7
+  smart_test_jobs:
+    - user: root
+      command: >-
+        for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do
+        /usr/sbin/smartctl -t short "$d"; done
+      description: Weekly short SMART self-tests for TrueNAS pool SSDs
+      schedule: At 01:00, only on Wednesday
+      enabled: true
+      next_run_display: in 3 days
+    - user: root
+      command: >-
+        for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do
+        /usr/sbin/smartctl -t long "$d"; done
+      description: Monthly long SMART self-tests for TrueNAS pool SSDs
+      schedule: At 03:00, on day 15 of the month
+      enabled: true
+      next_run_display: in 11 days
+  smart_health: not verified; no drive health command was run in this readback
+  test_execution_history: not shown in the cron-job list and remains unverified
+  serial_coverage: the by-id model glob was displayed; matching paths were not enumerated in this pass
+  configuration_changes: none
+  limitation: >-
+    Confirms two enabled SMART self-test cron definitions and their displayed
+    schedules only. It does not prove glob expansion to all eight pool members,
+    successful job execution, test results, current SMART health, alert
+    delivery, PVE thresholds, or failure-procedure acceptance.
+
+truenas_webui_shell_render_readback_0505:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T05:05-04:00"
+  provenance: >-
+    Authenticated read-only System > Shell page in task-owned chrome-use
+    session homelab-truenas-smart-ui pinned to personal Chrome profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74 at https://192.168.0.186. After a
+    page reload and 2.5-second wait, the accessibility snapshot showed the
+    Shell heading, terminal input textbox, and CSS-like terminal text beginning
+    with `.xterm-dom-renderer-owner-1 .xterm-rows span`; no shell prompt or
+    command result was visible.
+  result: terminal did not expose a usable prompt in this readback
+  command_or_password_submitted: false
+  configuration_changes: none
+  limitation: >-
+    The page snapshot does not establish the shell backend's state or guest
+    command execution. No command or password was typed; guest SMART health and
+    self-test execution history remain unverified.
+
+truenas_webui_signin_recheck_0516:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T05:16-04:00"
+  provenance: >-
+    Read-only chrome-use accessibility snapshot in session
+    homelab-truenas-smart-ui pinned to personal Chrome profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74. The current page was
+    https://192.168.0.186/ui/signin and exposed Username and Password fields.
+  result: authenticated WebUI session was not available in this browser tab
+  credential_submitted_to_webui: false
+  configuration_changes: none
+  limitation: >-
+    The endpoint remains untrusted: its self-signed certificate identifies only
+    localhost. No credential was submitted and no new guest SMART or alert
+    evidence was obtained.
+
+truenas_webui_alert_api_unauth_readback_0540:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T05:40:02-04:00"
+  provenance: >-
+    Read-only same-origin GET to /api/v2.0/alert/list from the pinned personal
+    Chrome session homelab-truenas-smart-ui at https://192.168.0.186. The
+    request explicitly omitted browser credentials; the page remained at
+    /ui/signin.
+  http_status: 401
+  response: "401: Unauthorized"
+  credential_sent: false
+  configuration_changes: none
+  limitation: >-
+    No alert records were returned, so this does not refresh alert status. The
+    served certificate identity remains untrusted and unverified.
+
+pve_storage_collector_ssh_auth_attempt_0540:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T05:40:09-04:00"
+  provenance: >-
+    Strict-host-key, batch-mode public-key-only SSH authentication check to
+    root@192.168.0.188 with connection multiplexing disabled. The remote
+    command was true; the versioned storage collector was not streamed.
+  result: "Permission denied (publickey,password)"
+  collector_executed: false
+  configuration_changes: none
+  limitation: >-
+    This attempt establishes only that public-key authentication was denied;
+    it does not establish that the host is unreachable or that the previously
+    used password-only keyring path is unavailable. No fresh PVE storage
+    evidence was collected.
+
+pve_storage_health_readback_055003:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T05:50:03-04:00"
+  provenance: >-
+    Versioned host/pve/capture-storage-health.sh streamed to PVE root using
+    the existing GNOME Keyring credential and password-only SSH with
+    StrictHostKeyChecking=yes, the pinned workstation known_hosts file, and
+    connection multiplexing disabled. No host file was written. Raw output is
+    retained in private task scratch with mode 0600.
+  collection_exit_status: 0
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-055003.txt
+  raw_output_sha256: ae29663da97f0b862327926ac6fcea26f76ae79697521833c86964cb63ba9f33
+  raw_output_permissions: 0600
+  pools:
+    rpool:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6831308800
+      free_bytes: 499974832128
+      zpool_capacity_percent: 1
+      members:
+        - {serial: BTHH95021LD4512D, model: INTEL SSDPEKKF512G8}
+        - {serial: BTHH8122061E512D, model: INTEL SSDPEKKF512G8}
+    fast-vm:
+      state: ONLINE mirror; zero read, write, and checksum errors; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 6822309888
+      free_bytes: 1015379906560
+      zpool_capacity_percent: 0
+      members:
+        - {serial: PHHH829001A91P0E, model: INTEL SSDPEKKW010T8}
+        - {serial: PHHH828600761P0E, model: INTEL SSDPEKKW010T8}
+  smart:
+    pool_nvme_devices:
+      - {serial: BTHH95021LD4512D, result: PASSED, critical_warning: 0, media_data_integrity_errors: 0, error_log_entries: 0, self_tests: none_logged, smartctl_exit_status: 0}
+      - {serial: BTHH8122061E512D, result: PASSED, critical_warning: 0, media_data_integrity_errors: 0, error_log_entries: 0, self_tests: none_logged, smartctl_exit_status: 0}
+      - {serial: PHHH829001A91P0E, result: PASSED, critical_warning: 0, media_data_integrity_errors: 0, error_log_entries: 0, self_tests: none_logged, smartctl_exit_status: 0}
+      - {serial: PHHH828600761P0E, result: PASSED, critical_warning: 0, media_data_integrity_errors: 0, error_log_entries: 0, self_tests: none_logged, smartctl_exit_status: 0}
+    boot_ssd:
+      serial: 50026B7767031A82
+      model: KINGSTON SUV400S37240G
+      result: PASSED
+      self_tests: none_logged
+      smartctl_exit_status: 0
+  smartd:
+    service: active
+    directive: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_test_directive: none
+  scrub:
+    configured_schedule: monthly second Sunday at 00:24
+    active_scan_entry: none in either pool status
+  proxmox_storage_usage_percent: {fast-vm: 0.69, local: 0.94, local-zfs: 0.00}
+  dataset_quotas: no finite quota/refquota on listed host-pool datasets
+  configuration_changes: none
+  limitations: >-
+    This read does not select or verify a host capacity-alert threshold,
+    exercise device failure, or refresh TrueNAS guest state, alert status,
+    SMART execution history, or certificate identity.
+
+truenas_webui_readback_0604:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:00:00-04:00/2026-10-04T06:04:02-04:00"
+  provenance: >-
+    Reopened task-owned chrome-use session homelab-truenas-readonly pinned to
+    personal Chrome profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74 at
+    https://192.168.0.186. The session loaded the authenticated Dashboard as
+    truenas_admin; read-only navigation inspected Credentials > Certificates
+    and System > General Settings > GUI Settings, then opened the Alerts drawer.
+    No credential was entered, shown, or changed. No save, browser-policy
+    change, or infrastructure change occurred.
+  product: TrueNAS Community Edition 25.10.7
+  alerts: Alerts drawer displayed "There are no alerts."
+  gui_settings:
+    selected_certificate: truenas_default
+    https_port: 443
+    https_protocols: [TLSv1.2, TLSv1.3]
+  certificate_object_metadata:
+    subject: CN=localhost
+    san: [DNS:localhost]
+    validity_displayed: "2026-10-02 00:04:56 to 2027-11-03 00:04:56"
+  served_leaf:
+    subject: CN=localhost
+    issuer: CN=localhost
+    san: [DNS:localhost]
+    not_before_utc: "2026-10-02T07:04:56Z"
+    not_after_utc: "2027-11-03T07:04:56Z"
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+    matches_prior_public_object_readback: true
+    prior_public_object_readback: truenas_certificate_object_match_0221
+  trust_and_scope:
+    strict_tls_verification: not performed in this pass
+    endpoint_ip_identity: unverified; SAN DNS:localhost does not match 192.168.0.186
+    current_ip_to_vm200_mapping: not refreshed in this pass
+  configuration_changes: none
+  limitation: >-
+    Confirms current WebUI alert display and GUI certificate selection, and
+    observes the same served leaf fingerprint recorded in the prior public
+    certificate object comparison. It does not establish a trusted endpoint
+    identity or a fresh IP-to-VM 200 mapping, nor does it refresh guest SMART
+    history, capacity thresholds, or failure handling.
+
+truenas_storage_alert_policy_readback_0613:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:11:00-04:00/2026-10-04T06:13:21-04:00"
+  provenance: >-
+    Read-only System > Alert Settings inspection in the existing authenticated
+    task-owned Chrome session homelab-truenas-readonly, pinned to personal
+    profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74. Selected the Storage category
+    in the UI and read the displayed controls; no alert setting was edited and
+    Save was not clicked.
+  product: TrueNAS Community Edition 25.10.7
+  alert_services:
+    email: {type: E-Mail, level: Warning, enabled: true}
+    snmp_trap: {type: SNMP Trap, level: Warning, enabled: true}
+    delivery_tested: false
+  storage_alerts:
+    pool_space_above_85_percent: {level: NOTICE, frequency: IMMEDIATELY}
+    pool_space_above_90_percent: {level: WARNING, frequency: IMMEDIATELY}
+    pool_space_above_95_percent: {level: CRITICAL, frequency: IMMEDIATELY}
+    pool_status_not_healthy: {level: CRITICAL, frequency: IMMEDIATELY}
+    critical_quota_exceeded: {level: CRITICAL, frequency: IMMEDIATELY}
+  pve_host_capacity_policy: not covered by these TrueNAS guest alert settings
+  configuration_changes: none
+  limitation: >-
+    This confirms configured TrueNAS alert levels and frequency only. It does
+    not prove email or SNMP delivery, choose a PVE host threshold/cadence, or
+    exercise pool failure handling.
+
+truenas_vm200_mac_mapping_readback_0626:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:26-04:00"
+  provenance: >-
+    Read-only Proxmox WebUI VM 200 Hardware view and GET
+    /api2/extjs/nodes/pve/qemu/200/config showed net0 as
+    virtio=BC:24:11:87:F2:2B,bridge=vmbr0,firewall=0. In the existing
+    authenticated TrueNAS WebUI Shell, `ip -br addr show enp6s18` and reading
+    its address file showed 192.168.0.186/24 and MAC bc:24:11:87:f2:2b. A
+    workstation neighbor-table read showed 192.168.0.186 at that same MAC in
+    REACHABLE state. No PVE, guest, or network setting changed.
+  vm_id: 200
+  vm_name: nas
+  pve_node: pve
+  pve_net0: "virtio=BC:24:11:87:F2:2B,bridge=vmbr0,firewall=0"
+  guest_interface: {name: enp6s18, ipv4: 192.168.0.186/24, mac: "bc:24:11:87:f2:2b"}
+  workstation_neighbor: "192.168.0.186 dev enp82s0u2u1u2 lladdr bc:24:11:87:f2:2b REACHABLE"
+  assessment: >-
+    The current guest address and NIC MAC match VM 200 net0 and the
+    workstation's live neighbor entry; this refreshes the IP-to-VM mapping.
+  certificate_identity: >-
+    Not verified by this mapping read. The prior served leaf was self-signed,
+    CN=localhost with SAN DNS:localhost; that name does not identify
+    192.168.0.186. See truenas_webui_readback_0604. No new TLS verification was
+    performed.
+  configuration_changes: none
+
+truenas_guest_storage_health_readback_0635:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:13-04:00/2026-10-04T06:35-04:00"
+  provenance: >-
+    Read-only commands in the authenticated task-owned chrome-use session
+    homelab-truenas-readonly, pinned to personal Chrome profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74, read guest interface addresses,
+    `zpool status -x`, `zpool list`, and `zfs get`. The same session inspected
+    the TrueNAS Dashboard, Storage Dashboard, Disks list, and Disk Reports;
+    no scan, test, save, or other change was started. The shell user was
+    truenas_admin (uid 950, builtin_administrators); one noninteractive
+    `sudo -n smartctl -H -l selftest /dev/sdb` attempt returned
+    `sudo: a password is required`, so smartctl did not run and no password
+    was supplied.
+  product: TrueNAS Community Edition 25.10.7
+  guest_interface: {name: enp6s18, ipv4: 192.168.0.186/24, mac: "bc:24:11:87:f2:2b"}
+  pools:
+    boot-pool: {health: ONLINE, size: 31G, allocated: 3.36G, free: 27.6G, capacity_percent: 10}
+    tank: {health: ONLINE, size: 7.25T, allocated: 37.7M, free: 7.25T, capacity_percent: 0}
+  tank_dashboard:
+    usable_capacity: 5.03 TiB
+    used: 26.84 MiB
+    available: 5.03 TiB
+    disk_errors: "0 of 8"
+    scheduled_scrub: "At 00:00, only on Sunday"
+    last_scrub: "Finished 2026-10-02 11:47:00; 0 errors"
+    disk_temperature_alerts: 0
+    disk_temperature_celsius: {highest: 33, lowest: 25, average: 27.956}
+  tank_disks:
+    - {device: sdb, serial: "2108E4FA8118"}
+    - {device: sdc, serial: "2108E4FA82BD"}
+    - {device: sdd, serial: "2108E4FA8283"}
+    - {device: sde, serial: "2108E4FA82C7"}
+    - {device: sdf, serial: "2108E4FA8085"}
+    - {device: sdg, serial: "2108E4FA8267"}
+    - {device: sdh, serial: "2108E4FA8084"}
+    - {device: sdi, serial: "2108E4FA80B6"}
+  datasets:
+    tank: {used: 26.7M, available: 5.03T, quota: none, refquota: none}
+    tank/nfs_test: {used: 205K, available: 5.00G, quota: none, refquota: 5G}
+    tank/smb_test: {used: 205K, available: 5.00G, quota: none, refquota: 5G}
+  current_alerts: "WebUI displayed 'There are no alerts.'"
+  disk_reports:
+    available_metrics: [Disk I/O, Disk Temperature]
+    smart_health_or_self_test_history: not displayed
+  smart_read_attempt:
+    command: sudo -n smartctl -H -l selftest /dev/sdb
+    result: "sudo: a password is required"
+    smartctl_executed: false
+    password_supplied: false
+  certificate_identity: >-
+    Still unresolved. The prior readback records a self-signed CN=localhost
+    certificate with SAN DNS:localhost and an IP-name mismatch; this pass did
+    not perform a TLS trust check or query the selected certificate again.
+  configuration_changes: none
+  limitations: >-
+    Pool, scrub, quota, error-count, and temperature displays do not establish
+    per-drive SMART health or self-test execution history. The WebUI reporting
+    selector exposed Disk I/O and Disk Temperature only, and the unprivileged
+    shell could not run smartctl without an interactive password. Alert
+    delivery, PVE capacity threshold/cadence, trusted endpoint identity, and
+    representative failure handling remain unverified.
+
+truenas_webui_tls_alert_readback_0652:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:49-04:00/2026-10-04T06:52:23-04:00"
+  provenance: >-
+    Read-only Storage Dashboard and Alerts drawer inspection in task-owned
+    chrome-use session homelab-truenas-readonly, pinned to personal Chrome
+    profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74 at https://192.168.0.186.
+    The authenticated page rendered as truenas_admin without entering or
+    displaying a credential. A strict local OpenSSL leaf read and default
+    certificate-verifying curl request to /api/boot_id were run from the
+    workstation. No certificate warning was bypassed and no setting was saved.
+  product: TrueNAS Community Edition 25.10.7
+  storage_dashboard:
+    tank_health: "Online, no errors"
+    usable_capacity: 5.03 TiB
+    used: 27.2 MiB
+    available: 5.03 TiB
+    disk_errors: "0 of 8"
+    scheduled_scrub: "At 00:00, only on Sunday"
+    last_scrub: "Finished 2026-10-02 11:47:00; 0 errors"
+    disk_temperature_alerts: 0
+    disk_temperature_celsius: {highest: 33, lowest: 25, average: 27.958}
+  current_alerts: "Alerts drawer displayed 'There are no alerts.'"
+  served_leaf:
+    subject: CN=localhost
+    issuer: CN=localhost
+    san: [DNS:localhost]
+    not_before_utc: "2026-10-02T07:04:56Z"
+    not_after_utc: "2027-11-03T07:04:56Z"
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+    fingerprint_matches_readback: truenas_webui_readback_0604
+  tls_verification:
+    curl_request: "GET https://192.168.0.186/api/boot_id"
+    strict_verification: failed
+    failure: "curl (60): no alternative certificate subject name matches target IPv4 address 192.168.0.186"
+    http_status: none
+    endpoint_ip_identity: unverified
+  current_ip_to_vm200_mapping: not refreshed in this pass
+  configuration_changes: none
+  limitation: >-
+    The live WebUI confirms its current storage dashboard and clear alert
+    drawer. The served leaf matches the 06:04 fingerprint but identifies only
+    localhost; strict HTTPS verification for the endpoint IP fails. This does
+    not establish trusted endpoint identity, alert delivery, guest SMART
+    health/history, PVE thresholds, or failure-procedure acceptance.
+
+truenas_vm200_mac_mapping_readback_0654:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:54-04:00"
+  provenance: >-
+    Read-only GET /api2/json/nodes/pve/qemu/200/config in the authenticated
+    Proxmox WebUI returned HTTP 200 and net0
+    virtio=BC:24:11:87:F2:2B,bridge=vmbr0,firewall=0. On the workstation,
+    `ip neigh show 192.168.0.186` returned device enp82s0u2u1u2 with the same
+    MAC and REACHABLE state. This matches the guest interface read in
+    truenas_vm200_mac_mapping_readback_0626.
+  pve_vm200_net0_mac: "BC:24:11:87:F2:2B"
+  endpoint_ip: 192.168.0.186
+  neighbor: {device: enp82s0u2u1u2, mac: "bc:24:11:87:f2:2b", state: REACHABLE}
+  guest_interface_reference: truenas_vm200_mac_mapping_readback_0626
+  configuration_changes: none
+  limitation: >-
+    PVE's current configured MAC and the workstation's current neighbor entry
+    corroborate the earlier guest interface mapping; no fresh guest interface
+    output was visible during the later Shell-page attempt.
+
+truenas_webui_shell_attempt_0700:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T06:57-04:00/2026-10-04T07:00:53-04:00"
+  provenance: >-
+    Read-only attempt in System > Shell in the authenticated task-owned
+    chrome-use session homelab-truenas-readonly pinned to personal Chrome
+    profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74 at https://192.168.0.186.
+    The terminal rendered CSS-like text. The command was entered and Enter
+    was sent; the terminal input then cleared, but a screenshot request timed
+    out and a fresh accessibility snapshot still showed CSS-like text with no
+    shell output or prompt. No credential was entered.
+  command: "ip -br addr show enp6s18; cat /sys/class/net/enp6s18/address"
+  execution_confirmed: false
+  visible_result: none
+  configuration_changes: none
+  limitation: >-
+    This attempt does not refresh guest interface state or provide SMART
+    health/history. The current endpoint mapping relies on the current PVE
+    configuration and workstation neighbor read plus the earlier guest
+    interface readback.
+
+truenas_ssh_access_attempt_0702:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T07:01-04:00/2026-10-04T07:03:50-04:00"
+  provenance: >-
+    Read-only SSH preflight from the workstation. `ssh-keygen -F 192.168.0.186`
+    found no matching pinned host key in /home/mpeter/.ssh/known_hosts. A
+    strict-host-key, batch-mode, public-key-only connection attempt to
+    truenas_admin@192.168.0.186 ran only `true` and failed before
+    authentication with `connect to host 192.168.0.186 port 22: Connection
+    refused`. No host key was accepted or added, and no password was used.
+  known_hosts_entry: absent
+  ssh_attempt: {user: truenas_admin, authentication: publickey-only, result: "TCP port 22 connection refused"}
+  configuration_changes: none
+  limitation: >-
+    This attempt did not authenticate an SSH host or provide a guest command
+    route. It does not prove whether SSH is disabled persistently or blocked by
+    a transient service or network condition.
+
+truenas_webui_readonly_recheck_0722:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T07:22:57-04:00/2026-10-04T07:26:48-04:00"
+  provenance: >-
+    Read-only inspection through the existing authenticated personal Chrome
+    profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74 at
+    https://192.168.0.186. The WebUI Shell showed the result of the previously
+    entered interface command. No configuration form was saved, no alert was
+    sent, and no credential was entered or displayed.
+  guest_interface:
+    source: "TrueNAS WebUI System > Shell"
+    command: "ip -br addr show enp6s18; cat /sys/class/net/enp6s18/address"
+    interface: enp6s18
+    ipv4: "192.168.0.186/24"
+    mac: "bc:24:11:87:f2:2b"
+    execution_confirmed: true
+  guest_smart_access:
+    command: "sudo -n smartctl --scan-open"
+    result: "sudo: a password is required"
+    smartctl_executed: false
+    password_supplied: false
+  middleware_disk_query:
+    command: "midclt call disk.query"
+    result: "Enumerated eight CT1000MX500SSD1 disks and one 32 GiB QEMU_HARDDISK boot device"
+    smart_health_or_history_returned: false
+  middleware_smart_method_discovery:
+    command: "midclt call core.get_methods | jq -r 'keys[] | select(test(\"smart\"; \"i\"))'"
+    visible_matching_methods: []
+  storage_dashboard:
+    pool: tank
+    health: "Online, no errors"
+    available: 5.03 TiB
+    member_disk_errors: "0 of 8"
+    scrub_schedule: "At 00:00, only on Sunday"
+    last_scrub: "Finished 2026-10-02 11:47:00; 0 errors"
+    temperature_alerts: 0
+    disk_temperature_celsius: {highest: 33, lowest: 25, average: 27.962}
+  current_alerts: "Alerts drawer displayed 'There are no alerts.'"
+  alert_services:
+    - {service: E-Mail, enabled: true, level: Warning}
+    - {service: SNMP Trap, enabled: true, level: Warning}
+  alert_delivery_tested: false
+  configured_gui_certificate:
+    certificate: truenas_default
+    subject: CN=localhost
+    issuer: CN=localhost
+    san: [DNS:localhost]
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+    selected_for_https_port: 443
+    strict_curl_verification: failed
+    strict_curl_failure: "No alternative certificate subject name matches target IPv4 address 192.168.0.186"
+    endpoint_ip_identity: unverified
+  configuration_changes: none
+  limitation: >-
+    Current WebUI, guest interface, and disk inventory are verified, but SMART
+    health and self-test history remain unavailable because sudo requires an
+    interactive password and the unprivileged disk query exposed inventory
+    only. E-Mail is enabled at Warning level, but delivery was not tested. The
+    selected localhost certificate does not identify the endpoint IP. These
+    observations do not close task 6.4.
+
+pve_storage_capacity_monitor_readback_105054:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T10:50:54-04:00"
+  provenance: >-
+    Versioned host/pve/manage-storage-capacity-monitor.sh preview, apply, and
+    check over password-only SSH using the GNOME keyring credential, strict
+    pinned /home/mpeter/.ssh/known_hosts, and connection multiplexing disabled.
+    A separate read-only service run, systemd/timer read-back, pool query, and
+    journal read used the same SSH boundary. The manager compared installed
+    monitor and unit files with versioned source.
+  policy:
+    pools: [rpool, fast-vm]
+    warning_capacity_percent: 80
+    critical_capacity_percent: 90
+    evaluation_interval_minutes: 5
+    event_delivery: local system journal only
+    repeated_severity_samples_logged: false
+  pools_at_service_run:
+    rpool: {health: ONLINE, capacity_percent: 1, saved_level: normal}
+    fast-vm: {health: ONLINE, capacity_percent: 0, saved_level: normal}
+  service_run:
+    command: systemctl start pve-storage-capacity-monitor.service
+    result: success
+    exit_status: 0
+    started_at: "2026-10-04T10:50:54-04:00"
+  timer:
+    unit: pve-storage-capacity-monitor.timer
+    enabled: true
+    active: true
+    first_scheduled_firing_at: "2026-10-04T10:55:13-04:00"
+    first_scheduled_run_result: success
+    first_scheduled_run_exit_status: 0
+    next_run_at: "2026-10-04T11:00:00-04:00"
+    scheduled_firing_observed: true
+  threshold_transition_emitted: false
+  alert_delivery_tested: false
+  representative_failure_tested: false
+  installed_sha256:
+    monitor: c0e1c3c3b15df1544fc31b6ff3ece0d4cf4d4b7140431051db817e7fae9db60f
+    service: 2c7dd8bc70054a17f6a11961abf66ca54e344f02b99587926db017b4a4dc28cd
+    timer: 03cd597d3278db28494775d31a5f3d452a339d9c63269ca7535647e02e517ee2
+  configuration_changes:
+    - /usr/local/sbin/pve-storage-capacity-monitor
+    - /etc/systemd/system/pve-storage-capacity-monitor.service
+    - /etc/systemd/system/pve-storage-capacity-monitor.timer (enabled)
+  journal: >-
+    Manual run at 10:50:54 EDT and first timer-triggered run at 10:55:13 EDT
+    both logged successful start and completion. Both pools were below
+    threshold, so no capacity transition was emitted.
+  limitation: >-
+    This read-back verifies installation, timer activation, and one successful
+    monitor execution and one scheduled firing, not a live threshold event,
+    notification delivery, or device-failure recovery. TrueNAS certificate
+    identity remains unverified and guest SMART health/history remains
+    unavailable; see truenas_webui_readonly_recheck_0722.
+
+pve_scratch_tier_readback_143840:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T14:38:40-04:00"
+  provenance: >-
+    The versioned host/pve/manage-scratch-pool.sh completed its exact reviewed
+    recovery transaction over password-only SSH with strict pinned
+    /home/mpeter/.ssh/known_hosts and connection multiplexing disabled. The
+    transaction journal records the unchanged boot ID, exact candidate serials,
+    source-plan hash, findings hash, and phase=complete. At 14:38:04, the
+    versioned manager check passed; at 14:38:40, a separate strict-host-key
+    read-only SSH inspection verified pool topology/properties, dataset, PVE
+    storage registration/content, empty storage volume list, monitor marker,
+    timer, service, and state. A read-only host collector ran at 14:37:02.
+    Raw captures remain in the operator's private task scratch directory and
+    were not added to the repository.
+  operator_disposition: >-
+    The operator explicitly authorized discarding existing contents only on
+    serial PHHH8505034Q512H and serial BTHH8244042V512D. That disposition did
+    not classify either device as blank or recoverable.
+  transaction:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    source_plan_sha256: 02c3dc82e93638383f4ef45c0bc9a6268e621207c782f0b769716f590d092a7c
+    findings_sha256: ec484023e39a961d2e7af45a8e9b2fe9eb6e4c2df5fc5c5524e6e42a5a3ebcd7
+    phase: complete
+    candidate_serials: [PHHH8505034Q512H, BTHH8244042V512D]
+  pool:
+    name: scratch
+    state: ONLINE stripe; no read, write, checksum, or known data errors
+    redundancy: none; failure of either member loses this disposable pool
+    comment: "DISPOSABLE: no unique data"
+    capacity_bytes: {size: 1022202216448, allocated: 638976, free: 1022201577472}
+    members:
+      - serial: PHHH8505034Q512H
+        path: /dev/disk/by-id/nvme-INTEL_SSDPEKKF512G8_PHHH8505034Q512H_1-part1
+        ashift: 12
+      - serial: BTHH8244042V512D
+        path: /dev/disk/by-id/nvme-INTEL_SSDPEKKF512G8_BTHH8244042V512D_1-part1
+        ashift: 12
+    properties: {failmode: continue, autoexpand: off, autoreplace: off, autotrim: off}
+  datasets:
+    scratch: {mountpoint: none, compression: lz4, atime: off, quota: none, refquota: none}
+    scratch/vm: {mountpoint: /scratch/vm, compression: lz4, atime: off, quota: none, refquota: none}
+  proxmox_storage:
+    id: scratch
+    type: zfspool
+    state: active
+    pool: scratch/vm
+    content: [rootdir, images]
+    mountpoint: /scratch/vm
+    sparse: true
+    volume_listing: empty
+  capacity_monitor:
+    version_marker: homelab-infra:pve-storage-capacity-monitor:v2
+    pools: [rpool, fast-vm, scratch]
+    scratch_state: normal
+    timer: {enabled: true, active: true}
+    last_service_result: success
+    check_result: PASS
+  health_collector:
+    result: all read-only collector commands completed with exit status 0
+    pool_states: {rpool: ONLINE, fast-vm: ONLINE, scratch: ONLINE}
+    known_pool_data_errors: 0
+    pve_storage_used_percent: {fast-vm: 0.72, local: 0.94, local-zfs: 0.00, scratch: 0.00}
+    host_nvme_devices: 6
+    host_nvme_smart_health: all PASSED; no self-tests logged
+    boot_ssd_smart_health: PASSED; no self-tests logged
+    smartd_schedule: no scheduled self-test directive in active configuration
+    scheduled_scrub: monthly on the second Sunday; no active scrub at capture
+    scratch_candidate_smart:
+      PHHH8505034Q512H: {critical_warning: 0, available_spare_percent: 100, percentage_used: 2, integrity_errors: 0}
+      BTHH8244042V512D: {critical_warning: 0, available_spare_percent: 100, percentage_used: 1, integrity_errors: 0}
+  private_evidence:
+    collector:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-20261004T183702Z.txt
+      sha256: 9d63c643670a17d5beb73cfb8882c6ab9693a0264946a4b1c6a2ff7ed5d3a5c6
+    manager_check:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/scratch-final-check-20261004T183804Z.txt
+      sha256: f217491187f7019ca284f33f5ce45d4b320d3346663f0ab84c86d34d2a1ba371
+    direct_readback:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/scratch-live-readback-20261004T183840Z.txt
+      sha256: 286467c21d24bc88921e6933cba360586cb8bcb17f69ef5c0e36d67bf63fa79c
+  configuration_changes:
+    - serial-bound scratch ZFS pool and scratch/vm dataset
+    - active Proxmox scratch storage ID for rootdir and images only
+    - three-pool capacity-monitor target set
+  limitation: >-
+    The stripe is non-redundant and is for disposable workloads only. No unique
+    data or backup evidence is stored there. This readback verifies the live
+    storage boundary and monitor, not a live capacity threshold crossing,
+    notification delivery, or representative device-failure recovery. Group 5
+    off-host backup and restore remain deferred until an independent receiver
+    exists.
+
+pve_storage_health_readback_145759:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T14:57:59-04:00"
+  provenance: >-
+    The versioned host/pve/capture-storage-health.sh was streamed to PVE and
+    executed with authenticated password-only SSH, strict pinned
+    /home/mpeter/.ssh/known_hosts, and connection multiplexing disabled. The
+    collector was read-only and returned exit status 0. At 15:00:02 EDT, the
+    versioned capacity-monitor manager's read-only check also returned PASS.
+    Raw captures remain in mode-0600 operator-private workstation task scratch
+    and were not added to the repository.
+  pools:
+    rpool:
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      capacity_bytes: {size: 506806140928, allocated: 6832488448, free: 499973652480}
+      zpool_percent_allocated: 1
+      quota_and_refquota: none
+    fast_vm:
+      pool: fast-vm
+      state: ONLINE mirror; no read, write, checksum, or known data errors
+      capacity_bytes: {size: 1022202216448, allocated: 7211491328, free: 1014990725120}
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.73
+      quota_and_refquota: none
+    scratch:
+      state: ONLINE stripe; no read, write, checksum, or known data errors
+      redundancy: none; disposable workloads only
+      capacity_bytes: {size: 1022202216448, allocated: 638976, free: 1022201577472}
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.00
+      quota_and_refquota: none
+    local: {state: active, proxmox_percent_used: 0.94}
+    local_zfs: {state: active, proxmox_percent_used: 0.00}
+  scrubs:
+    schedule: monthly on the second Sunday
+    scan_line: absent from this collector output
+    active_scan_status: not established by this collector
+  smart:
+    smartd_service: active
+    active_smartd_directive: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_test_directive: absent
+    devices_checked: 7
+    collector_exit_status: 0 for all seven devices
+    overall_health: PASSED for six host-pool NVMe devices and Kingston boot SSD
+    nvme_critical_warnings: 0 for all six NVMe devices
+    nvme_media_integrity_errors: 0 for all six NVMe devices
+    nvme_error_log_entries: 0 for all six NVMe devices
+    nvme_self_test_log: No Self-tests Logged for all six NVMe devices
+    boot_ssd_self_test_log: No self-tests logged
+  monitor_readback:
+    checked_at: "2026-10-04T15:00:02-04:00"
+    manager_check: PASS
+    policy: {warning_percent: 80, critical_percent: 90, interval_minutes: 5, delivery: local journal}
+    threshold_transition_observed: false
+    notification_delivery_tested: false
+  private_evidence:
+    collector:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-current-AqXmme.txt
+      sha256: 2b62bbe439f044d3fc96419baa8d63dcd1784f37fd5555c60c708b013a03cca2
+    monitor_check:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/pve-capacity-check-current.txt
+      sha256: ca80bc465de9710ffafa66aeef3add974a0358bc78ec69c5003f7e6f19fba553
+  configuration_changes: none
+  limitation: >-
+    This is a point-in-time PVE health and configuration read, not an alert
+    delivery test, live capacity threshold transition, or representative
+    device-failure exercise. The collector emitted no zpool status scan line, so
+    active scrub status is not established by this capture. TrueNAS SMART
+    health/history and trusted endpoint identity remain unresolved; Group 5
+    off-host recovery remains deferred.
+
+pve_scratch_manager_recheck_1542:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T15:42:14-04:00"
+  provenance: >-
+    The versioned host/pve/manage-scratch-pool.sh check ran over strict pinned
+    SSH with connection multiplexing disabled and made no live configuration
+    changes. It verified the completed scratch transaction and current pool,
+    dataset, PVE storage registration, and monitor read-backs. The strengthened
+    checker validated both exact partition paths with per-member ashift=12 and
+    zero READ/WRITE/CKSUM counters. The check accepted the exact recorded
+    completed predecessor plan only for this read-only check; the current
+    source-plan hash is reported separately. Raw output is retained in private
+    task scratch and is not part of the repository.
+  transaction:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    recorded_completed_plan_sha256: 02c3dc82e93638383f4ef45c0bc9a6268e621207c782f0b769716f590d092a7c
+    current_source_plan_sha256: ffc6f9e9d2f96e9581f695cb5fb2d4d12654d0802e032f410f1b28a6caf1b819
+    findings_sha256: ec484023e39a961d2e7af45a8e9b2fe9eb6e4c2df5fc5c5524e6e42a5a3ebcd7
+    phase: complete
+    check_result: PASS
+  verified:
+    scratch_pool: ONLINE two-member stripe; exact reviewed partition paths
+    member_ashift: 12 for both members
+    read_write_checksum_counters: 0 for pool and both members
+    known_data_errors: none
+    pool_properties: {failmode: continue, autoexpand: off, autoreplace: off, autotrim: off}
+    datasets: {scratch_mountpoint: none, scratch_vm_mountpoint: /scratch/vm}
+    pve_storage: {id: scratch, type: zfspool, state: active, content: [rootdir, images]}
+    capacity_monitor: {marker: v2, timer_enabled: true, timer_active: true, source_matches: true}
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/scratch-manager-check-20261004T1542EDT.txt
+    sha256: 713a2cd9d06500112e817728477620a187a59950c2abdf4d80273bceb980e20d
+  limitation: >-
+    This read-only checker run does not refresh TrueNAS guest SMART history or
+    trusted certificate identity and does not test a capacity transition,
+    notification delivery, or device-failure recovery. Group 6 remains open.
+
+pve_storage_health_readback_160558:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T16:05:58-04:00"
+  provenance: >-
+    The versioned host/pve/capture-storage-health.sh was streamed to PVE over
+    strict-host-key, password-only SSH and returned exit status 0. The collector
+    is read-only. The versioned capacity-monitor manager check at 16:09:05 EDT
+    also returned PASS. A separate strict-host-key read-only PVE query at
+    16:09:11 EDT captured the monitor timer, recent unit journal, and scratch
+    storage volume list. No host files or settings were changed. Raw outputs
+    are retained in mode-0600 operator-private workstation task scratch and are
+    not part of the repository.
+  pools:
+    rpool:
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      capacity_bytes: {size: 506806140928, allocated: 6832025600, free: 499974115328}
+      zpool_percent_allocated: 1
+      quota_and_refquota: none
+    fast_vm:
+      pool: fast-vm
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      capacity_bytes: {size: 1022202216448, allocated: 7254036480, free: 1014948179968}
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.73
+      quota_and_refquota: none
+    scratch:
+      state: ONLINE two-member non-redundant stripe; zero READ/WRITE/CKSUM counters; no known data errors
+      redundancy: none; disposable workloads only
+      capacity_bytes: {size: 1022202216448, allocated: 638976, free: 1022201577472}
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.00
+      quota_and_refquota: none
+    local: {state: active, proxmox_percent_used: 0.94}
+    local_zfs: {state: active, proxmox_percent_used: 0.00}
+  scrubs:
+    schedule: monthly on the second Sunday at 00:24
+    scan_line: absent from all three pool status outputs
+    active_scan_status: not established by this collector
+  smart:
+    smartd_service: active
+    active_smartd_directive: DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner
+    scheduled_self_test_directive: absent
+    devices_checked: 7
+    collector_exit_status: 0 for all seven devices
+    overall_health: PASSED for six host-pool NVMe devices and Kingston boot SSD
+    nvme_critical_warnings: 0 for all six NVMe devices
+    nvme_media_integrity_errors: 0 for all six NVMe devices
+    nvme_error_log_entries: 0 for all six NVMe devices
+    nvme_self_test_log: No Self-tests Logged for all six NVMe devices
+    boot_ssd_self_test_log: No self-tests logged
+  monitor_runtime:
+    manager_check_time: "2026-10-04T16:09:05-04:00"
+    manager_check: PASS
+    policy: {warning_percent: 80, critical_percent: 90, interval_minutes: 5, delivery: local journal}
+    timer_state: active and waiting
+    last_firing: "2026-10-04T16:05:12-04:00"
+    next_firing: "2026-10-04T16:10:00-04:00"
+    successful_scheduled_runs: ["15:45:12", "15:50:13", "15:55:13", "16:00:12", "16:05:12"]
+    threshold_transition_observed: false
+    scratch_pve_volumes: none
+  scratch_transaction:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    recorded_completed_plan_sha256: 02c3dc82e93638383f4ef45c0bc9a6268e621207c782f0b769716f590d092a7c
+    current_source_plan_sha256: ffc6f9e9d2f96e9581f695cb5fb2d4d12654d0802e032f410f1b28a6caf1b819
+    findings_sha256: ec484023e39a961d2e7af45a8e9b2fe9eb6e4c2df5fc5c5524e6e42a5a3ebcd7
+    phase: complete
+    check_result: PASS
+  private_evidence:
+    collector:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-20261004T160558-0400.txt
+      sha256: 76a256f1b1d0cff92650925b1f84dcaa2d973a773fe32bbf065022927f4855c7
+    monitor_check:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/capacity-manager-check-20261004T160905-0400.txt
+      sha256: b3cf4a940587e1ec6332381b1d63969b71bcd0fe28622e437830f329c4c28b9f
+    scratch_manager_check:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/scratch-manager-check-20261004T160905-0400.txt
+      sha256: 713a2cd9d06500112e817728477620a187a59950c2abdf4d80273bceb980e20d
+    runtime_readback:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-runtime-readback-20261004T160905-0400.txt
+      sha256: 93153292c911364665af65765014eafbc7790f3a297eb3c340467402bd2ed92b
+  configuration_changes: none
+  limitation: >-
+    This readback confirms point-in-time host health, current timer operation,
+    and an empty PVE scratch volume list. It does not produce a threshold
+    transition or exercise a device failure. The local-journal capacity policy
+    does not imply remote notification delivery; that is tracked by Task 9.3.
+    Active scrub status is not established because no status output contained a
+    scan line. TrueNAS SMART history and trusted endpoint identity remain
+    unresolved under the operator's deferral; Group 5 off-host recovery remains
+    deferred.
+
+pve_scratch_manager_recheck_161512:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T16:15:12-04:00"
+  provenance: >-
+    After the storage runbook update, the versioned host/pve/manage-scratch-pool.sh
+    check ran over strict pinned SSH and returned PASS without live configuration
+    changes. It verified the source bundle, including the changed storage plan,
+    and read the existing completed transaction. Raw output is retained in
+    mode-0600 operator-private workstation task scratch and is not in the repo.
+  transaction:
+    boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+    recorded_completed_plan_sha256: 02c3dc82e93638383f4ef45c0bc9a6268e621207c782f0b769716f590d092a7c
+    current_source_plan_sha256: 4bacce1aa6319e65e4e8b14035972f4446ba9a3171327195625cd7f925c0d480
+    findings_sha256: ec484023e39a961d2e7af45a8e9b2fe9eb6e4c2df5fc5c5524e6e42a5a3ebcd7
+    phase: complete
+    check_result: PASS
+    predecessor_read_only_check: accepted exact completed transaction; no apply or rollback
+  verified:
+    source_bundle: all listed files match current manifest, including docs/storage-plan.md
+    scratch_pool: ONLINE two-member stripe; exact reviewed partition paths
+    member_ashift: 12 for both members
+    read_write_checksum_counters: 0 for pool and both members
+    capacity_monitor: marker v2; timer enabled and active; source matches
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/scratch-manager-check-20261004T161512-0400.txt
+    sha256: 5887ed71c0a114156b7a0f446c7a12cc86aff9469538fff247be231b2ca81aff
+  limitation: >-
+    This check validates the current source bundle and previously completed
+    scratch transaction; it does not apply changes or exercise device failure.
+    Group 6 remains open.
+
+truenas_webui_signin_recheck_1623:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T16:23:32-04:00"
+  provenance: >-
+    Read-only chrome-use in a task-owned session pinned to the personal Chrome
+    profile opened the previously recorded endpoint https://192.168.0.186 and
+    read the resulting page. It displayed Username, Password, and Log In; no
+    credential was submitted and no setting or state was changed. The task-owned
+    browser session was closed afterward.
+  result: authenticated TrueNAS WebUI session was not available in this tab
+  credential_submitted_to_webui: false
+  configuration_changes: none
+  limitation: >-
+    No new guest pool, alert, SMART, or certificate evidence was obtained.
+    The operator deferred TrueNAS security/access work; the previously recorded
+    certificate identity uncertainty remains unresolved and task 6.4 remains
+    open.
+
+pve_storage_capacity_monitor_readback_1628:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T16:28:09-04:00"
+  provenance: >-
+    The versioned host/pve/manage-storage-capacity-monitor.sh check returned
+    PASS using strict-host-key password-only SSH. A separate strict-host-key
+    read-only query recorded the PVE timer state, service journal, and scratch
+    volume list. No configuration changed. Raw output is retained in
+    mode-0600 operator-private workstation task scratch and is not in the repo.
+  manager_check: PASS
+  timer:
+    active: true
+    enabled: true
+    last_trigger: "2026-10-04T16:25:13-04:00"
+    next_trigger: "2026-10-04T16:30:00-04:00"
+  scheduled_service_runs:
+    successful_at:
+      - "2026-10-04T16:05:12-04:00"
+      - "2026-10-04T16:10:13-04:00"
+      - "2026-10-04T16:15:12-04:00"
+      - "2026-10-04T16:20:12-04:00"
+      - "2026-10-04T16:25:13-04:00"
+    failures_observed: false
+  scratch_pve_volumes: []
+  limitation: >-
+    This confirms scheduled execution and current empty PVE volume registration
+    below threshold. It does not prove a live threshold transition, external
+    notification delivery, TrueNAS health, or device-failure recovery.
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/pve-monitor-runtime-20261004T162809-0400.txt
+    sha256: 0488c8f223266afdeee0e314bf0d154666510c2e21ff210a8245eadaf6819773
+
+pve_storage_health_readback_162959:
+  observed_at: 2026-10-04
+  observed_at_time: "2026-10-04T16:29:59-04:00"
+  provenance: >-
+    The versioned read-only host/pve/capture-storage-health.sh was streamed to
+    PVE over strict-host-key, password-only SSH and returned exit status 0.
+    SMART device timestamps were 16:30:02 EDT. Raw output is retained in
+    mode-0600 operator-private workstation task scratch and is not in the repo.
+  pools:
+    rpool:
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6832205824
+      free_bytes: 499973935104
+      zpool_percent_allocated: 1
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members:
+        - BTHH95021LD4512D
+        - BTHH8122061E512D
+    fast_vm:
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 7275945984
+      free_bytes: 1014926270464
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.73
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members:
+        - PHHH829001A91P0E
+        - PHHH828600761P0E
+    scratch:
+      state: ONLINE two-member stripe; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 638976
+      free_bytes: 1022201577472
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.00
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+      members:
+        - PHHH8505034Q512H
+        - BTHH8244042V512D
+  proxmox_storage_usage_percent:
+    fast-vm: 0.73
+    local: 0.94
+    local-zfs: 0.00
+    scratch: 0.00
+  host_pool_smart:
+    result: PASSED for all six host-pool NVMe devices and the Kingston boot SSD
+    nvme_critical_warnings: 0 for all six devices
+    nvme_media_integrity_errors: 0 for all six devices
+    nvme_error_log_entries: 0 for all six devices
+    self_test_logs: no tests logged for any queried device
+  smartd:
+    service: active
+    active_policy: DEVICESCAN; no scheduled self-test directive
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: no scan line in any captured zpool status output; active scrub status not established
+  limitation: >-
+    This is point-in-time PVE-owned evidence. The collector does not evaluate
+    capacity thresholds or exercise a failure procedure; it does not verify
+    TrueNAS SMART/alerts or trusted certificate identity. Task 6.4 remains open.
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-20261004T162959-0400.txt
+    sha256: 98e393c87d5ccc57ce46184cbeb721ff91e3a8f4cb540713d6e4c6b192db931e
+
+pve_storage_health_readback_143910:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T14:39:10-04:00"
+  provenance: >-
+    The versioned read-only host/pve/capture-storage-health.sh was streamed to
+    PVE over strict-host-key, password-only SSH and returned exit status 0. The
+    versioned capacity-monitor manager check also returned PASS. Raw output is
+    retained in mode-0600 operator-private workstation task scratch and is not
+    in the repo.
+  pools:
+    rpool:
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 506806140928
+      allocated_bytes: 6834028544
+      free_bytes: 499972112384
+      zpool_percent_allocated: 1
+      members: [BTHH95021LD4512D, BTHH8122061E512D]
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+    fast_vm:
+      state: ONLINE two-member mirror; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 8056307712
+      free_bytes: 1014145908736
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.81
+      members: [PHHH829001A91P0E, PHHH828600761P0E]
+      dataset_quota_readback: quota and refquota are none on pool datasets; VM volume properties are not quotas
+    scratch:
+      state: ONLINE two-member stripe; zero READ/WRITE/CKSUM counters; no known data errors
+      size_bytes: 1022202216448
+      allocated_bytes: 638976
+      free_bytes: 1022201577472
+      zpool_percent_allocated: 0
+      proxmox_percent_used: 0.00
+      members: [PHHH8505034Q512H, BTHH8244042V512D]
+      dataset_quota_readback: quota and refquota are none on recursively listed datasets
+  proxmox_storage_usage_percent:
+    fast-vm: 0.81
+    local: 0.94
+    local-zfs: 0.00
+    scratch: 0.00
+  host_smart:
+    devices: [BTHH95021LD4512D, BTHH8122061E512D, PHHH829001A91P0E, PHHH828600761P0E, PHHH8505034Q512H, BTHH8244042V512D, "50026B7767031A82"]
+    result: PASSED for all six host-pool NVMe devices and the Kingston boot SSD
+    nvme_critical_warnings: 0 for all six NVMe devices
+    nvme_media_integrity_errors: 0 for all six NVMe devices
+    nvme_error_log_entries: 0 for all six NVMe devices
+    self_test_logs: no tests logged for any queried device
+  smartd:
+    service: active
+    active_policy: DEVICESCAN; no scheduled self-test directive
+  periodic_scrub:
+    schedule: second Sunday of each month at 00:24 from /etc/cron.d/zfsutils-linux
+    status: no scan line in any captured zpool status output; active scrub status not established
+  limitation: >-
+    This is point-in-time PVE-owned evidence. All measured pools were below
+    the configured 80% warning threshold, so it does not demonstrate a live
+    threshold transition. It does not verify TrueNAS SMART/alerts or trusted
+    certificate identity, or exercise a device-failure procedure. Task 6.4
+    remains open.
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/pve-storage-health-20261005T143910-0400.txt
+    sha256: 9b9c34cd351ec216643e4eb5abb6676f240441d1cf1f8e87abb0c95b17618621
+
+pve_storage_capacity_monitor_readback_144130:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T14:41:30-04:00"
+  provenance: >-
+    The versioned monitor manager check returned PASS. A separate strict-host-
+    key password-only read recorded the timer, recent service journal, PVE
+    scratch volume list, and VM 200 state. No configuration changed.
+  manager_check: PASS
+  timer:
+    active: true
+    enabled: true
+    last_trigger: "2026-10-05T14:40:13-04:00"
+    next_trigger: "2026-10-05T14:45:00-04:00"
+  scheduled_service_runs:
+    successful_at:
+      - "2026-10-05T14:05:12-04:00"
+      - "2026-10-05T14:10:13-04:00"
+      - "2026-10-05T14:15:12-04:00"
+      - "2026-10-05T14:20:12-04:00"
+      - "2026-10-05T14:25:13-04:00"
+      - "2026-10-05T14:30:12-04:00"
+      - "2026-10-05T14:35:12-04:00"
+      - "2026-10-05T14:40:13-04:00"
+    failures_observed: false
+  scratch_pve_volumes: []
+  vm_200:
+    state: running
+    net0_mac: BC:24:11:87:F2:2B
+  limitation: >-
+    Confirms repeated scheduled execution below threshold and the current empty
+    PVE volume list. It does not prove a live threshold crossing, external
+    notification delivery, guest health, or device-failure recovery.
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/pve-monitor-runtime-20261005T144130-0400.txt
+    sha256: fd01dff8be985d1debe588aca0e8857aa70bcc74b991125d234eddebd741f90b
+
+truenas_webui_signin_recheck_144555:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T14:45:55-04:00"
+  provenance: >-
+    Read-only snapshot in task-owned chrome-use session group6-readonly-20261005
+    pinned to personal Chrome profile 5dbc8ec1-ef89-437d-81e5-a712844c5e74.
+    The page displayed the TrueNAS sign-in form. No credential was submitted,
+    no browser warning was bypassed, and no setting was changed.
+  page_state: signed out; Username and Password fields and Log In button displayed
+  current_alerts: not refreshed; the last authenticated empty-alert read is historical
+  limitation: >-
+    No authenticated guest health, current alert, SMART, threshold, or
+    certificate-configuration data was obtained. Preserve the prior deferral
+    on credential/certificate remediation and privileged SMART access.
+  private_evidence:
+    path: ~/.cache/agent-scratch/homelab-infra-group6/truenas-session-state-20261005T144555-0400.txt
+    sha256: 0fbaee839447117aa540f1603e4f73fc33eebe8283eeb497efc4a9d7f3bae119
+
+truenas_tls_strict_recheck_144245:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T14:42:45-04:00/2026-10-05T14:44:39-04:00"
+  endpoint: 192.168.0.186:443
+  provenance: >-
+    OpenSSL used strict IP verification and verify_return_error. Verification
+    failed with error 18 (self-signed certificate). Public leaf fields were
+    extracted from that rejected handshake only; no HTTP request or credential
+    was sent. The live workstation neighbor entry was REACHABLE at the same
+    MAC as the current PVE VM 200 net0 readback.
+  vm_200_mapping:
+    state: running
+    net0_mac: BC:24:11:87:F2:2B
+    workstation_neighbor: REACHABLE; bc:24:11:87:f2:2b
+  served_leaf:
+    serial: 37C8CC24
+    subject: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    issuer: same as subject; self-signed
+    san: [DNS:localhost]
+    not_before_utc: "2026-10-02T07:04:56Z"
+    not_after_utc: "2027-11-03T07:04:56Z"
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+    fingerprint_matches_last_authenticated_public_object_readback: truenas_webui_tls_alert_readback_0652
+  strict_tls_verification: failed; verify error 18 (self-signed certificate)
+  endpoint_ip_identity: untrusted; SAN DNS:localhost does not match 192.168.0.186
+  selected_certificate_object: not refreshed while signed out
+  limitation: >-
+    The current endpoint maps to VM 200, and its current served leaf is the
+    same public fingerprint previously associated with truenas_default. The
+    endpoint remains untrusted and the current configured selection was not
+    refreshed. No current TrueNAS alert status is claimed.
+  private_evidence:
+    strict_tls_output:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/truenas-tls-strict-20261005T144245-0400.txt
+      sha256: a4450986a4574268b0336b869dce16302977f95ff44429a7a557ddb18c48326e
+    public_leaf:
+      path: ~/.cache/agent-scratch/homelab-infra-group6/truenas-leaf-20261005T144245-0400.pem
+      sha256: 30e750da25b6e300320e6a9e38aac16f526358b2a8907dbc1d3852970d49bddd
+
+truenas_storage_health_readback_150007:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T15:00:00-04:00/2026-10-05T15:07:00-04:00"
+  provenance: >-
+    Read-only inspection in Chrome personal profile
+    5dbc8ec1-ef89-437d-81e5-a712844c5e74 after the operator authorized one-time
+    use despite failed TLS verification. The TrueNAS WebUI accepted the
+    existing truenas_admin keyring credential. PVE VM 200 and the workstation
+    neighbor readback correlated the endpoint MAC. The browser was logged out
+    after inspection. This exception does not establish trusted TLS identity;
+    see truenas_tls_strict_recheck_150700.
+  read_only: true
+  configuration_changed: false
+  system:
+    edition: TrueNAS Community Edition
+    version: 25.10.7 Goldeye
+    timezone: America/Los_Angeles
+  current_alerts: []
+  alert_services:
+    email: enabled at Warning level; delivery not tested
+    snmp_trap: enabled at Warning level; delivery not tested
+  pool:
+    name: tank
+    state: ONLINE; dashboard reported no errors
+    layout: RAIDZ2, one vdev, eight members
+    member_capacity: 931.51 GiB each
+    usable_capacity: 5.03 TiB
+    used: 38.1 MiB
+    available: 5.03 TiB
+    latest_scrub:
+      state: finished
+      finished_at_truenas_local: "2026-10-02 11:47:00"
+      errors: 0
+    scrub_schedule: Sunday at 00:00 TrueNAS local time
+    temperatures_celsius:
+      minimum: 25
+      maximum: 33
+      average: 28.038
+  datasets:
+    tank:
+      user_quota: none
+      group_quota: none
+    tank/nfs_test:
+      usage: 204.75 KiB of 5 GiB
+      applied_dataset_quota: 5 GiB
+      user_quota: none
+      group_quota: none
+    tank/smb_test:
+      usage: 204.75 KiB of 5 GiB
+      applied_dataset_quota: 5 GiB
+      user_quota: none
+      group_quota: none
+  snapshots:
+    enabled: true
+    dataset: tank
+    schedule: daily 23:00 TrueNAS local time
+    retention: 7 days
+    limitation: local snapshots only; not an independent backup
+  smart_jobs:
+    weekly_short:
+      enabled: true
+      user: root
+      schedule: Wednesday at 01:00 TrueNAS local time
+      target_glob: /dev/disk/by-id/ata-CT1000MX500SSD1_*
+      action: smartctl -t short
+    monthly_long:
+      enabled: true
+      user: root
+      schedule: day 15 at 03:00 TrueNAS local time
+      target_glob: /dev/disk/by-id/ata-CT1000MX500SSD1_*
+      action: smartctl -t long
+    execution_history: not verified; no SMART test was started
+  selected_gui_certificate:
+    id: truenas_default
+    https_port: 443
+    tls_versions: [TLS 1.2, TLS 1.3]
+    subject_cn: localhost
+    san: [DNS:localhost]
+    endpoint_identity: unverified; no IP SAN for 192.168.0.186
+  limitation: >-
+    The operator-authorized one-time TLS exception allowed this read-only UI
+    inspection, but strict TLS verification still fails and the endpoint is not
+    cryptographically identified by its certificate. SMART job configuration
+    was visible; test execution/history and disk-by-serial SMART results were
+    not verified. Alert delivery was not tested. No test, pool operation, or
+    configuration change was performed.
+
+truenas_tls_strict_recheck_150700:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T15:07:00-04:00"
+  endpoint: 192.168.0.186:443
+  provenance: >-
+    OpenSSL strict IP verification with verify_return_error failed during a
+    read-only handshake. Public leaf fields were recorded from that handshake.
+    PVE VM 200 net0 and the workstation neighbor mapping remained matched at
+    MAC BC:24:11:87:F2:2B; that correlation does not repair TLS trust.
+  verification: failed; verify error 18 (self-signed certificate)
+  served_leaf:
+    serial: 37C8CC24
+    subject: C=US, O=iXsystems, CN=localhost, emailAddress=info@ixsystems.com, ST=Tennessee, L=Maryville
+    issuer: same as subject; self-signed
+    san: [DNS:localhost]
+    sha256: "1C:28:2F:58:5C:A4:BE:1F:16:12:B4:1E:B0:E0:18:D0:B5:18:53:5C:1C:5B:CC:D0:B4:A7:2D:0C:43:FB:5F:B8"
+  selected_gui_certificate: truenas_default
+  endpoint_ip_identity: unverified; SAN DNS:localhost does not match 192.168.0.186
+  limitation: >-
+    The WebUI selected-certificate metadata and served leaf are recorded, but
+    strict verification fails; preserve the endpoint identity uncertainty.
+
+truenas_storage_health_api_readback_162047:
+  observed_at: 2026-10-05
+  observed_at_time: "2026-10-05T15:55:02-04:00/2026-10-05T16:29:00-04:00"
+  endpoint: 192.168.0.186:443
+  provenance: >-
+    The TrueNAS OpenAPI schema was fetched from /api/v2.0, then authenticated
+    reads used the existing truenas_admin keyring credential over HTTPS with
+    certificate verification disabled under the operator's one-time
+    authorization. The served certificate remains untrusted; see
+    truenas_tls_strict_recheck_150700. Read endpoints included alert/list,
+    alert/list_policies, alertclasses, alertservice, pool, pool/scrub,
+    pool/dataset, disk, cronjob, service, and user. No browser policy or
+    certificate setting changed.
+  tls_identity:
+    strict_verification: failed; self-signed error 18
+    endpoint_identity: unverified; served SAN DNS:localhost does not match 192.168.0.186
+  current_alerts: []
+  alert_services:
+    - name: E-Mail
+      enabled: true
+      level: WARNING
+      delivery_tested: false
+    - name: SNMP Trap
+      enabled: true
+      level: WARNING
+      delivery_tested: false
+  pool:
+    name: tank
+    state: ONLINE
+    healthy: true
+    layout: one RAIDZ2 vdev; 8 SATA SSD members
+    size_bytes: 7971459301376
+    pool_allocated_bytes: 56745984
+    pool_free_bytes: 7971402555392
+    dataset_used: 38.34 MiB
+    dataset_available: 5.03 TiB
+    latest_scrub:
+      state: FINISHED
+      finished_at_truenas_local: "2026-10-02 11:47:00"
+      errors: 0
+    scrub_schedule: Sunday 00:00 America/Los_Angeles
+    member_status_and_error_counters:
+      - device_name_at_read: sdb
+        serial: 2108E4FA8118
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdc
+        serial: 2108E4FA82BD
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdd
+        serial: 2108E4FA8283
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sde
+        serial: 2108E4FA82C7
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdf
+        serial: 2108E4FA8085
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdg
+        serial: 2108E4FA8267
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdh
+        serial: 2108E4FA8084
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+      - device_name_at_read: sdi
+        serial: 2108E4FA80B6
+        status: ONLINE
+        read_write_checksum_errors: [0, 0, 0]
+  datasets:
+    tank:
+      quota: none
+      refquota: none
+    tank/nfs_test:
+      used: 204.75 KiB
+      refquota: 5 GiB
+      user_quota: none
+      group_quota: none
+    tank/smb_test:
+      used: 204.75 KiB
+      refquota: 5 GiB
+      user_quota: none
+      group_quota: none
+  capacity_thresholds:
+    whole_pool_numeric_threshold: not verified in the inspected API policy endpoints
+    alert_list_policies_returned: [IMMEDIATELY, HOURLY, DAILY, NEVER]
+    note: dataset refquotas above are hard limits, not a pool-wide warning threshold
+  smart_readback_at_161120:
+    source: read-only smartctl -x output captured through a temporary disabled Cron Job
+    unique_whole_disk_count: 8
+    overall_health: PASSED on all 8 whole disks
+    latest_short_selftest: Completed without error on all 8 whole disks
+    power_on_hours_at_latest_short_test:
+      "2108E4FA8084": 1475
+      "2108E4FA8085": 1455
+      "2108E4FA80B6": 1471
+      "2108E4FA8118": 1473
+      "2108E4FA8267": 1473
+      "2108E4FA8283": 1472
+      "2108E4FA82BD": 1470
+      "2108E4FA82C7": 1479
+    reported_uncorrectable_attribute_187: 0 on all 8 whole disks
+    offline_uncorrectable_attribute_198: 0 on all 8 whole disks
+    smartctl_x_exit_status: >-
+      4 on all 8 whole-disk captures; see the smartctl.h return-code bitmask,
+      which distinguishes command/identify failures from the separately
+      reported health and self-test results
+      (https://www.smartmontools.org/static/doxygen/smartctl_8h_source.html)
+  smart_jobs:
+    weekly_short:
+      id: 1
+      enabled: true
+      schedule: Wednesday 01:00 America/Los_Angeles
+      corrected_command: >-
+        for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; /usr/sbin/smartctl -t short "$d"; done
+      prior_command_run:
+        middleware_job_id: 5864
+        state: FAILED
+        exit_status: 4
+        output: suppressed by Cron Job configuration
+      corrected_command_run:
+        middleware_job_id: 5916
+        started_at: "2026-10-05T16:20:47-04:00"
+        state: SUCCESS
+    monthly_long:
+      id: 2
+      enabled: true
+      schedule: day 15 at 03:00 America/Los_Angeles
+      corrected_command: >-
+        for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; /usr/sbin/smartctl -t long "$d"; done
+    original_target_glob: /dev/disk/by-id/ata-CT1000MX500SSD1_*
+    original_glob_match_count: 16 (8 whole-disk paths and 8 -part1 aliases)
+    change_scope: commands for IDs 1 and 2 only; schedules, users, and enabled state unchanged
+  temporary_probe_cleanup:
+    disabled_cronjob_id: 3
+    cronjob_removed: true
+    temporary_output_file: /tmp/codex-smart-readback-20261005.txt
+    file_removed: true
+    verification: middleware removal job succeeded; filesystem/stat returned Path not found
+  ssh_service: disabled and stopped; not enabled during this work
+  final_api_readback_at: "2026-10-05T16:29:00-04:00"
+  final_api_readback:
+    active_alerts: []
+    tank: ONLINE; healthy true; last scan FINISHED with zero errors
+    weekly_short_job: enabled; Wednesday 01:00; partition filter present
+    monthly_long_job: enabled; day 15 at 03:00; partition filter present
+    ssh_service: disabled and stopped
+  representative_failure_procedures:
+    runbooks: PVE mirrors, TrueNAS RAIDZ2, and non-redundant scratch stripe documented in docs/storage-plan.md
+    scratch_synthetic_fail_closed_test: passed
+    live_device_fault: not performed
+  configuration_changed: true
+  changed_configuration: TrueNAS Cron Job command fields for IDs 1 and 2; no schedule, pool, network, or certificate change
+  limitation: >-
+    The prior Cron Job's exit 4 is recorded as an execution result and is not
+    interpreted as a failed whole-disk health result. The certificate still
+    does not identify or authenticate the API endpoint. TrueNAS whole-pool
+    capacity alert threshold and alert delivery remain unverified. No live
+    device fault or threshold crossing was performed.

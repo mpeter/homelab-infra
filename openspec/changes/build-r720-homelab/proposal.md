@@ -4,7 +4,7 @@ The R720 needs to become a recoverable development platform and Red Hat lab with
 
 ## What Changes
 
-- Establish and maintain a verified Proxmox host, resilient boot path, storage ownership boundaries, and measured capacity; treat 256 GiB as a target rather than a prerequisite for the first VMs.
+- Establish and maintain a verified Proxmox host, storage ownership boundaries, and measured capacity; treat 256 GiB as a target rather than a prerequisite for the first VMs. The optional DIMM expansion and alternate firmware boot-path exercise are deferred to the [DIMM backlog item](../../../.backlog/2026-10-05-complete-r720-dimm-expansion-after-module-identification.md) and [boot/recovery backlog item](../../../.backlog/2026-10-05-document-and-prove-independent-r720-boot-and-recovery.md).
 - Put planned host changes and Proxmox/UniFi resources under versioned, recoverable control, with a disposable-VM lifecycle test before important VMs.
 - Deploy an initially reproducible Fedora development VM and a NAS VM with whole-HBA passthrough; gate NAS pool creation separately from VM creation.
 - Build the managed network foundation, then IdM, AAP, and Single Node OpenShift as capacity and prerequisites allow.

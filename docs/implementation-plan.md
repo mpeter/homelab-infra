@@ -42,10 +42,11 @@ recovery and stable-boot evidence; establish and verify the `fast-vm` mirror
 from serial-resolved devices under the storage plan; prepare recoverable
 OpenTofu state and a tested disposable-VM workflow; and provide independent
 off-host backup before treating the Fedora VM as primary, then test its restore.
-Network automation and
-the remaining NVMe scratch pool can follow separately if the VM's required
+Network automation can follow separately if the VM's required
 management, DNS, and remote access already work safely on the existing
-network. No storage write or disruptive host change is implied by this plan.
+network. The scratch-tier write completed later under the reviewed storage
+plan; see Phase 2 and the dated inventory evidence. This overview does not
+authorize another storage write or disruptive host change.
 
 ## Phase 0: stabilize the installed host
 
@@ -66,29 +67,28 @@ evidence before treating any of these observations as current.
 Completion evidence: clean `zpool status`, no failed services, expected package
 repositories, HTTPS management access, and two recorded boot validations.
 
-## Phase 1: physical maintenance
+## Deferred: optional DIMM expansion
 
-- Preserve the currently booting 128 GB configuration and refresh iDRAC/OS
-  agreement before another physical change. The earlier A2 reseat is not a
-  pending step.
-- Gracefully power down and remove AC power.
-- Install the purchased eight matching 16 GB RDIMMs in A5-A8 and B5-B8.
-- Run lifecycle diagnostics and an extended memory test.
-- Verify 256 GB with balanced CPU/channel population and refresh inventory.
-- Optionally replace both processors with a supported matched v2 pair after the
-  memory change has been validated separately.
-
-Completion evidence: iDRAC and the operating system agree on the 256 GiB DIMM
-inventory, memory diagnostics pass, and no new SEL entries appear. This
-capacity-expansion phase may finish after the first Fedora VM is deployed;
-the VM still requires a stable, verified current memory configuration.
+The optional expansion from eight to sixteen 16 GB RDIMMs is outside the
+active OpenSpec change and is tracked in the [DIMM backlog item](../.backlog/2026-10-05-complete-r720-dimm-expansion-after-module-identification.md).
+The installed eight-DIMM configuration remains the current baseline. Inventory
+retains the dated host observations and unresolved capacity discrepancy; the
+purchased upgrade modules and historical failed-POST report are not individually
+mapped or qualified. Any future installation requires module identification,
+compatibility checks, a fresh verified backup, a planned outage, and passing
+post-install diagnostics before VM allocations change.
 
 ## Phase 2: boot and storage
 
-- Add a second firmware-visible boot SSD and implement the boot resilience plan.
+- Defer alternate boot-path and recovery-media validation to the [boot/recovery backlog item](../.backlog/2026-10-05-document-and-prove-independent-r720-boot-and-recovery.md).
+  In plain language, it asks whether Proxmox can cold-boot if the current
+  Kingston SATA boot SSD is unavailable. EFI entries and files on the NVMe
+  mirror are not proof that either path boots.
 - Fix or remove stale ZFS labels only by recorded serial number.
-- Adopt the verified `fast-vm` mirror; create `scratch` later from the two
-  serial-resolved, disposable front NVMe devices.
+- Adopt the verified `fast-vm` mirror. The serial-resolved `scratch` stripe
+  was created on 2026-10-04 from the two operator-approved disposable front
+  NVMe devices; it is non-redundant and holds no unique data. See
+  `pve_scratch_tier_readback_143840` in `inventory/storage.yaml`.
 - Inventory all eight SATA disk serials and signatures. Confirm the SAS2308
   remains isolated in its IOMMU group and that no host boot device is behind
   it. Stage the versioned host HBA-binding and recovery procedure, but do not
