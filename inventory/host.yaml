@@ -75,6 +75,126 @@ memory:
       - B7
       - B8
 
+pve_memory_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T10:11:09-04:00"
+  provenance: authenticated SSH with strict host-key checking; free -b, dmidecode --type memory, EDAC sysfs counters, and the last 500 kernel journal entries
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  operating_system_total_bytes: 135095873536
+  populated_dimm_count: 8
+  populated_slots: [A1, A2, A3, A4, B1, B2, B3, B4]
+  empty_upgrade_target_slots: [A5, A6, A7, A8, B5, B6, B7, B8]
+  populated_modules:
+    size_gb_each: 16
+    part_number: M393B2G70QH0-YK0
+    memory_type: DDR3 registered ECC RDIMM
+    speed_mt_s: 1600
+    rank: 2
+    serials_by_slot:
+      A1: 14C3C020
+      A2: 14FB759A
+      A3: 148B1F56
+      A4: 148B2FA9
+      B1: 148B190B
+      B2: 153D70BD
+      B3: 14F8A90F
+      B4: 14FB761D
+  edac:
+    corrected_and_uncorrected_controller_counters: zero on mc0 and mc1
+    corrected_and_uncorrected_populated_dimm_counters: zero on all eight populated DIMMs
+  kernel_memory_error_matches: EDAC driver initialization only in the queried journal output
+  limitations:
+    - this PVE snapshot did not read iDRAC; see the later idrac_memory_readback entry for a separate Redfish observation and remaining capacity discrepancy
+    - purchased upgrade DIMM part numbers and serial numbers are not recorded here
+    - no backup, planned outage, physical change, or extended memory test was performed
+
+pve_memory_readback_1419:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T14:19:19-04:00"
+  provenance: authenticated SSH to PVE root with StrictHostKeyChecking=yes; /proc/meminfo, dmidecode --type 17, and EDAC ce_count/ue_count sysfs counters
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  kernel: 7.0.2-6-pve
+  operating_system_total_bytes: 135095873536
+  populated_dimm_count: 8
+  populated_slots: [A1, A2, A3, A4, B1, B2, B3, B4]
+  empty_slots: [A5, A6, A7, A8, A9, A10, A11, A12, B5, B6, B7, B8, B9, B10, B11, B12]
+  populated_modules:
+    size_gb_each: 16
+    part_number: M393B2G70QH0-YK0
+    memory_type: DDR3 registered ECC RDIMM
+    speed_mt_s: 1600
+    serials_by_slot:
+      A1: 14C3C020
+      A2: 14FB759A
+      A3: 148B1F56
+      A4: 148B2FA9
+      B1: 148B190B
+      B2: 153D70BD
+      B3: 14F8A90F
+      B4: 14FB761D
+  edac:
+    corrected_error_counters: {mc0: 0, mc1: 0}
+    uncorrected_error_counters: {mc0: 0, mc1: 0}
+  limitations:
+    - this was a PVE DMI, OS memory, and EDAC read only; iDRAC, kernel journal, and extended diagnostics were not queried
+    - no backup, planned outage, physical change, or extended memory test was performed
+
+idrac_memory_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T12:14:04-04:00"
+  provenance: authenticated read-only Redfish GETs to the locally inventoried iDRAC endpoint using the desktop keyring; the existing curl -k method was used, so TLS peer identity was not verified
+  system:
+    model: Dell PowerEdge R720
+    service_tag: CN7016322R000G
+    power_state: On
+    health: Critical
+    memory_health: OK
+    reported_total_memory_gib: 119.209344
+  memory_modules:
+    detected_count: 8
+    reported_capacity_mib_each: 15625
+    part_number: M393B2G70QH0-YK0
+    status: all eight entries Health=OK and State=Enabled
+    serials_by_slot:
+      A1: 14C3C020
+      A2: 14FB759A
+      A3: 148B1F56
+      A4: 148B2FA9
+      B1: 148B190B
+      B2: 153D70BD
+      B3: 14F8A90F
+      B4: 14FB761D
+  system_event_log:
+    total_entries: 89
+    retrieved_pages: [50, 39]
+    latest_entry: "2026-09-29T03:19:33-04:00 Critical: The chassis is open while the power is off."
+    oldest_returned_timestamp: "1999-12-31T18:00:37-05:00"
+    memory_dimm_ecc_or_uncorrectable_messages: none in all returned entries
+    fan_4_warning_and_critical_events: "2026-09-27; later OK event reports RPM within range"
+  comparison:
+    pve_os_total_gib: 125.817837
+    pve_os_observed_at_time: "2026-10-03T10:11:09-04:00"
+    idrac_summary_total_gib: 119.209344
+    sum_of_idrac_per_dimm_capacity_mib_gib: 122.070312
+    capacity_discrepancy: remains unresolved; DIMM slots and serials match the PVE readback
+  limitations:
+    - the SEL contains no memory/DIMM/ECC messages; the separate lifecycle log's newest page includes DIMM detection events through 2026-09-29 but does not establish the physical change time or a post-change acceptance test
+    - no upgrade DIMMs are installed or diagnosed; no backup, outage, or extended memory test was performed
+    - iDRAC TLS certificate identity was not verified
+
+idrac_lifecycle_log_readback:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T12:23:22-04:00"
+  provenance: authenticated read-only Redfish GET to iDRAC Lclog using the desktop keyring and existing curl -k method; TLS peer identity not verified
+  total_entries_reported: 4901
+  newest_page_entries_returned: 50
+  dimm_related_entries_in_newest_page: 13
+  latest_dimm_entry: "2026-09-29T03:26:35-04:00 OK: A replacement part was detected for DDR3 DIMM Socket A1"
+  prior_events_summary: "New-device detections for A3-A4 and B2-B4 on 2026-09-27 followed not-detected warnings for those slots earlier that morning; A2 was detected on 2026-09-27 after a 2026-09-16 not-detected warning; the newest-page filter found no ECC or uncorrectable messages"
+  limitations:
+    - the first 50 newest entries were read; 4851 older entries were not scanned
+    - the latest lifecycle detection event is not an exact physical-install timestamp and does not replace post-install diagnostics
+
 network:
   integrated:
     model: Broadcom BCM57840
@@ -96,3 +216,52 @@ storage_controllers:
     model: Microchip Switchtec PM8562
     generation: PCIe Gen3
     upstream_width: x8
+
+pve_memory_readback_212024:
+  observed_at: 2026-10-03
+  observed_at_time: "2026-10-03T21:20:24-04:00"
+  provenance: >-
+    authenticated SSH to PVE root with StrictHostKeyChecking=yes; read-only
+    /proc/meminfo, dmidecode --type 17, EDAC sysfs counters, and the last 500
+    current-boot kernel journal entries; raw capture retained in private
+    workstation scratch
+  raw_output: /home/mpeter/.cache/agent-scratch/homelab-infra-group6/pve-memory-health-212022.txt
+  raw_output_sha256: cd71ad164b3c21048e5a589dd85f3fbe7b7088ae61534d68408db1e187285914
+  raw_output_permissions: 0600; private task scratch directory mode 0700
+  boot_id: b478c236-f6fe-4490-852e-868339e84ffd
+  kernel: 7.0.2-6-pve
+  operating_system_total_bytes: 135095873536
+  mem_available_kib: 106204112
+  populated_dimm_count: 8
+  populated_slots: [A1, A2, A3, A4, B1, B2, B3, B4]
+  empty_slots: [A5, A6, A7, A8, A9, A10, A11, A12, B5, B6, B7, B8, B9, B10, B11, B12]
+  populated_modules:
+    size_gb_each: 16
+    part_number: M393B2G70QH0-YK0
+    memory_type: DDR3 registered ECC RDIMM
+    speed_mt_s: 1600
+    configured_speed_mt_s: 1600
+    rank: 2
+    serials_by_slot:
+      A1: 14C3C020
+      A2: 14FB759A
+      A3: 148B1F56
+      A4: 148B2FA9
+      B1: 148B190B
+      B2: 153D70BD
+      B3: 14F8A90F
+      B4: 14FB761D
+  edac:
+    corrected_error_counters: {mc0: 0, mc1: 0}
+    uncorrected_error_counters: {mc0: 0, mc1: 0}
+    per_dimm_error_counters: current dimm sysfs nodes did not expose ce_count/ue_count attributes; do not infer zero from unavailable counters
+  kernel_memory_error_matches: last 500 current-boot entries contained EDAC driver initialization only; no MCE, corrected, or uncorrected memory-error messages
+  comparison:
+    previous_pve_memory_readback: pve_memory_readback_1419
+    installed_dimm_inventory: unchanged
+    operating_system_memory_total: unchanged at 135095873536 bytes
+    boot_id: unchanged
+  limitations:
+    - iDRAC was not queried; the iDRAC/PVE capacity discrepancy and iDRAC TLS identity remain unresolved
+    - purchased upgrade DIMM part numbers and serial numbers are not recorded here
+    - no backup, planned outage, physical change, or extended memory test was performed

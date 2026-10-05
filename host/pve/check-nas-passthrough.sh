@@ -46,4 +46,4 @@ driver=$(pve "basename \$(readlink -f /sys/bus/pci/devices/$device_path/driver)"
 pools=$(pve 'zpool list -H -o name')
 check_state "$vm_status" "$driver" "$pools"
 
-printf 'NAS passthrough check PASS: VM 200 %s, HBA driver %s, PVE pools exclude guest-owned tank/array\n' "$vm_status" "$driver"
+printf 'NAS passthrough check PASS: VM 200 %s, HBA driver %s, PVE excludes current and legacy NAS pool names\n' "$vm_status" "$driver"
