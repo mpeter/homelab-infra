@@ -699,3 +699,130 @@ preparation. Local commits identify the source revisions; publication and
 integration remain pending, and R02 live command/schedule read-back and
 observable per-disk acceptance remain open. All G1–G5 limits and backup/boot/DIMM
 deferrals survive this step.
+
+## 10. Post-merge continuation — October 21
+
+PR [#33](https://github.com/mpeter/homelab-infra/pull/33) merged at
+`b05e3678e64f476e1e8c7caac38365ff391c420a`; local `main` contains all four task
+commits. This closes the source-delivery portion of R01/R02, not R02 runtime
+acceptance or R04–R11. Sections 1–9 retain their original dated claims.
+
+The former audit worktree has been removed. Its private evidence is preserved
+at `/home/mpeter/work/homelab-infra-audit-evidence/closure-audit-2026-10-18/`.
+All 40 manifest entries matched their hashes on this continuation; 41 files
+are present including the manifest. Earlier S links remain historical
+machine-local references, not missing files to fabricate or republish.
+
+Fresh read-only TrueNAS queries confirm Cron IDs 1/2 still use the predecessor
+commands; their enabled state and original schedules remain intact. All eight
+expected Crucial serials are reported in `tank`. Normal CA/name TLS succeeds
+with a process-local address override; local DNS resolution currently fails.
+At that initial read-only checkpoint no guest writes or SMART starts occurred.
+Subsequently, operator-approved temporary precheck job 18191 captured all eight
+serials with acquisition status 0, no active self-test, and two-/thirty-minute
+short/long durations. The downloaded 24,772-byte capture matched its native
+digest. An oversized cleanup command was explicitly rejected without applying;
+an independently reviewed, operator-approved shortened amendment then cleaned
+the files (job 20014). Independent native read-back confirms temporary cron ID 5
+and its directory absent, permanent jobs unchanged, and `tank` healthy/ONLINE.
+One REST-API deprecation warning remains; it was not dismissed. No task SMART
+starts, DNS changes or service enablement occurred.
+
+PR [#34](https://github.com/mpeter/homelab-infra/pull/34), merged at
+`350719594670f743caab90f3935e1c968667a565`, additionally fixes middleware stdout
+suppression for the aggregate commands. The original command fails the updated
+suppression regression; the grouped command passes all eight scenarios. The
+installed constructor's actual redirection suffix was independently checked.
+Source review, shell syntax, whitespace and scoped secret scan passed. Local
+`main` contains that merge. At this preparation checkpoint, live cron command
+fields still used the predecessor.
+
+See [SMART live acceptance](smart-live-acceptance.md) for source binding,
+precheck receipts, exact v4 packet, bounded window and recovery requirements.
+At this preparation checkpoint, the full command update and short/long window
+were unapproved. Section 11 records the subsequent authorized acceptance.
+Local preparation or middleware job success alone does not satisfy R02.
+
+Five hash-bound focused resident regressions passed from an isolated source
+copy for R04. Those synthetic tests address a different layer from the actual
+October 16 caller and do not establish its carrier-recovery fix. Hash-identical
+copies of the historical failure triplets were located in retained native
+`inventory/local` custody after their old scratch paths disappeared. Subsequent
+current-source replay confirmed the actual defect and both carrier transitions;
+section 11 records that result. No live retry or persistence test was repeated.
+
+The primary checkout and the dirty native-recovery worktree remain untouched.
+G1–G5, restore fidelity, route/client, carrier, TLS/exposure and credential
+limits remain open. Independent backup, boot/DIMM and Groups 8/9 remain gated.
+
+## 11. Authorized SMART acceptance and retained recovery gap — October 21
+
+**R02 technical acceptance is established.** The operator approved the exact
+v4 packet, SHA-256
+`0020a28a7c861744c1492c55c7203922260104e7fe0845955c3ad9a0027303e7`.
+The window began at `2026-10-21T20:04:33.951550Z`; final native verification
+completed at `20:43:38.039740Z`, before its one-hour deadline. No disk fault,
+SMART abort, reboot, service enablement or network write occurred.
+
+The live commands in TrueNAS Cron IDs 1/2 now exactly match merged source
+`350719594670f743caab90f3935e1c968667a565`. Only command fields changed;
+root ownership, enabled state, descriptions, original schedules and stdout/
+stderr settings remain unchanged. Source-bound offline regressions establish
+early/multiple failure propagation and continued individual target reporting;
+no live failure injection was performed.
+
+| Accepted live slice | Source-bound evidence |
+| --- | --- |
+| Eight exact Crucial serials; fresh idle/health/duration admission | Precheck native job 20092; all acquisition statuses 0, health PASSED, short/long durations 2/30 minutes |
+| Short scheduling, independently of middleware status | Job 20104; eight actual start acknowledgements, per-serial exit 0 and aggregate 0 |
+| Short completion | Job 20114; all eight latest short logs completed without error, health PASSED, query/status 0 and no active test |
+| Long scheduling, independently of middleware status | Job 20122; eight actual start acknowledgements, per-serial exit 0 and aggregate 0 |
+| Long completion | Job 20191; all eight latest extended logs completed without error, health PASSED, query/status 0 and no active test |
+| Exact command/settings, final health and cleanup | Raw native reads confirm source agreement, unchanged non-command fields, `tank` ONLINE/healthy with scan FINISHED, all five used capture directories ENOENT, and exact disabled temporary Cron ID 6 deleted and independently absent |
+
+Both self-test histories gain one corresponding entry per serial while
+preserving prior rows. Actual short read-back begins at `20:08:23Z`,
+122.821552 seconds after its conservative post-success anchor. Long read-back
+begins at `20:39:33Z`, 1804.618597 seconds after its conservative anchor.
+All five actual capture/native-digest pairs match. Private receipts remain at
+`/home/mpeter/work/homelab-infra-audit-evidence/closure-continuation-2026-10-21/approved-live-v4/`:
+
+- `independent-drive-evidence-validation.json`, SHA-256
+  `88048b7cad7258149f6e80606334587c25a99f76705f0b8d7448acebab03e41a`.
+- `final-acceptance-readback.json`, SHA-256
+  `7539f5a5bf9b6ae9aec86cf1809a7b80517feb092d26b37917be8e01506c291f`.
+- Long raw capture SHA-256
+  `9c8fd8b7f0c4973122e0598a80102aebffb332759b02d8bd8cb5a7c0fc8527fd`.
+- `final-evidence-review.json`, SHA-256
+  `b56c84cb13aa4cc59ea6d377a674cae7564fb0e4de76db6eaf1c5b3341d5965c`.
+
+Independent evidence review found the original R02 criteria met, without live
+calls or repeated tests. This is **manually dispatched exact-command
+acceptance**, not natural cron firing or notification delivery. The existing
+RESTAPIUsage deprecation warning remains undismissed. Normal CA/name TLS used a
+process-local address override; system DNS is not reported repaired.
+Earlier admission metadata/download/ENOENT responses were not all retained.
+Successful checked cleanup commands and final raw read-backs establish current
+cleanup, not reconstructed earlier provenance. The task-owned credential
+transport process and orphan socket were also removed. Result documentation
+still follows normal reviewed integration; this technical result does not
+close the larger ledger or turn unavailable historical CI into passing CI.
+
+**R04 remains open with a reproduced, source-bound defect.** The offline
+`r04-actual-replay.json` receipt SHA-256 is
+`bec68667a5ecc6f7ad699df84040570e8e8f693dc172fbced3815d410faf3017`;
+all 91 referenced path/hash bindings independently matched. All three failed
+command-15 captures pass exact configuration and six-VLAN invariants, then
+reject primary Up/Listen or Up/Forward under the qualification-only Down guard.
+Automatic inverse calls that same guard before its first journal append.
+Thirty-six restoration receipts plus the unjournaled tag transition confirm
+primary Up→Down during inverse while exact invariants hold; final running and
+startup match baseline `01b4a646e764f2874a2310b7e0efd1622f779f230d1d77a41a176b720a327eff`.
+
+Single-pass source review recommends separating strict qualification from a
+state-parametric restoration guard at every inverse boundary, with bounded
+fresh-read settling rather than treating Listen as forwarding. Settle bounds,
+protected recovery/proof budgets and integrated consumer regressions are not
+yet accepted. No corrected caller, widened qualification, new live attempt or
+physical-cause diagnosis is claimed. R05–R07/R10/R11 and all historical coverage
+limits remain separate retained work; existing deferrals remain gated.
