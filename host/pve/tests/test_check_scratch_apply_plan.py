@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import sys
 import tempfile
+from contextlib import redirect_stdout
 from unittest.mock import patch
 import unittest
 from pathlib import Path
@@ -16,6 +18,14 @@ assert spec is not None and spec.loader is not None
 plan = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = plan
 spec.loader.exec_module(plan)
+
+preflight_spec = importlib.util.spec_from_file_location(
+    "check_scratch_preflight", SCRIPT.with_name("check_scratch_preflight.py")
+)
+assert preflight_spec is not None and preflight_spec.loader is not None
+preflight = importlib.util.module_from_spec(preflight_spec)
+sys.modules[preflight_spec.name] = preflight
+preflight_spec.loader.exec_module(preflight)
 
 
 def report(
@@ -357,8 +367,8 @@ class ScratchApplyPlanTests(unittest.TestCase):
                     (
                         f"BLOCK: {serial}: partition or child devices remain: {device}p1, {device}p9",
                         f"BLOCK: {serial}: signature present on {device}",
-                        f"BLOCK: {serial}: signature present on {device}p1",
-                        f"BLOCK: {serial}: signature present on {device}p9",
+                        f"CLEAR: {serial}: no blkid signature reported on {device}p1",
+                        f"CLEAR: {serial}: no blkid signature reported on {device}p9",
                     )
                 )
             else:
@@ -419,6 +429,101 @@ class ScratchApplyPlanTests(unittest.TestCase):
             plan.validate_recovery_preflight(text, exit_code, layouts)[0],
             "b478c236-f6fe-4490-852e-868339e84ffd",
         )
+
+    def test_recovery_preflight_accepts_real_preflight_output(self):
+        for second_layout in ("generated", "clean"):
+            with self.subTest(second_layout=second_layout):
+                layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: second_layout}
+                candidates = {}
+                for serial, layout in layouts.items():
+                    device = self.recovery_devices[serial][0]
+                    root = json.loads(
+                        self.recovery_layout(serial, generated=layout == "generated")
+                    )["blockdevices"][0]
+                    children = root.get("children", [])
+                    signatures = {device: (2, "")}
+                    if layout == "generated":
+                        signatures[device] = (0, "PTTYPE=gpt\n")
+                        signatures.update(
+                            (child["name"], (2, "")) for child in children
+                        )
+                    candidates[serial] = preflight.CandidateEvidence(
+                        serial=serial,
+                        whole_disks=[(device, serial, "disk")],
+                        aliases=[(f"/dev/disk/by-id/nvme-model_{serial}", device)],
+                        children=children,
+                        signatures=signatures,
+                        boundaries={
+                            region: ("a" * 64, True) for region in ("first", "last")
+                        },
+                        smart={
+                            "passed": True,
+                            "critical_warning": 0,
+                            "available_spare": 100,
+                            "available_spare_threshold": 10,
+                            "media_errors": 0,
+                        },
+                        references={name: [] for name in preflight.REFERENCE_CHECKS},
+                    )
+                evidence = preflight.PreflightEvidence(
+                    candidates=candidates,
+                    controls={name: True for name in preflight.POSITIVE_CONTROLS},
+                    scratch_collision=False,
+                )
+                boot_id = "b478c236-f6fe-4490-852e-868339e84ffd"
+                output = io.StringIO()
+                with (
+                    patch.object(preflight.os, "geteuid", return_value=0),
+                    patch.object(
+                        preflight,
+                        "_collect",
+                        return_value=(evidence, "2026-10-04T11:39:53-04:00", boot_id),
+                    ),
+                    redirect_stdout(output),
+                ):
+                    exit_code = preflight.main([])
+                self.assertEqual(exit_code, 1)
+                accepted_boot_id, _ = plan.validate_recovery_preflight(
+                    output.getvalue(), exit_code, layouts
+                )
+                self.assertEqual(accepted_boot_id, boot_id)
+
+    def test_recovery_preflight_rejects_generated_child_signatures(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        base, exit_code = self.recovery_report(layouts)
+        for serial in (plan.SERIAL_C, plan.SERIAL_D):
+            device = self.recovery_devices[serial][0]
+            for suffix in ("p1", "p9"):
+                with self.subTest(serial=serial, suffix=suffix):
+                    text = base.replace(
+                        f"CLEAR: {serial}: no blkid signature reported on {device}{suffix}",
+                        f"BLOCK: {serial}: signature present on {device}{suffix}",
+                    )
+                    with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+                        plan.validate_recovery_preflight(text, exit_code, layouts)
+
+    def test_recovery_preflight_requires_generated_disk_signature(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        base, exit_code = self.recovery_report(layouts)
+        for serial in (plan.SERIAL_C, plan.SERIAL_D):
+            device = self.recovery_devices[serial][0]
+            with self.subTest(serial=serial):
+                text = base.replace(
+                    f"BLOCK: {serial}: signature present on {device}\n",
+                    f"CLEAR: {serial}: no blkid signature reported on {device}\n",
+                )
+                with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+                    plan.validate_recovery_preflight(text, exit_code, layouts)
+
+    def test_recovery_preflight_rejects_wrong_child_serial(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        text, exit_code = self.recovery_report(layouts)
+        text = text.replace(
+            f"CLEAR: {plan.SERIAL_C}: no blkid signature reported on /dev/nvme4n1p1",
+            "CLEAR: wrong-serial: no blkid signature reported on /dev/nvme4n1p1",
+        )
+        with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+            plan.validate_recovery_preflight(text, exit_code, layouts)
 
     def test_recovery_preflight_rejects_unexpected_block_unknown_and_duplicate_findings(
         self,
