@@ -119,3 +119,127 @@ No switch operation is authorized by this document. Do not repeat accepted
 persistence, SMART acceptance or cleanup to validate this correction. Physical
 carrier cause, wider Group 7 obligations, historical coverage limits, independent
 backup, boot/DIMM and Groups 8/9 remain separate open or gated work.
+
+## Live-plan preparation — October 21, 22:26–22:30 UTC
+
+**Not executable or approved.** Source is merged PR #36,
+`883a7c157522fea69001056baf663726dbc27faa`. The candidate preview is
+`ec1f21d495699de95bc8eab437dbb966256cbb6dca8af525cf0190c51f389dd9`;
+current cycle source binding is
+`53723cb056744b23ececa602e40b3c79b6eca1621ecae0cfb0388818662e3dc5`.
+Future source changes invalidate these identities and require review.
+
+The generated command plan removes only port `1/2/2`'s native VLAN 1 and tagged
+VLANs 40, 10, 20 and 30, then restores them. There are 17 forward and 17 normal
+inverse CLI commands, including context entry/exit. A source-generated exact
+inverse is recorded for each of 18 forward boundaries. No save, reload, link
+shutdown, active-member move, UniFi change or accepted persistence test is included.
+
+| Step | Forward commands | Normal inverse commands |
+| --- | --- | --- |
+| Enter configuration | `configure terminal` | `configure terminal` |
+| Native membership | `interface ethernet 1/2/2`; `no dual-mode 1`; `exit` | After tagged restoration: `interface ethernet 1/2/2`; `dual-mode 1`; `exit` |
+| Tagged membership | For VLANs **40, 10, 20, 30**: `vlan <id>`; `no tagged ethernet 1/2/2`; `exit` | For VLANs **10, 20, 30, 40**: `vlan <id>`; `tagged ethernet 1/2/2`; `exit` |
+| Leave configuration | `exit` | `exit` |
+
+Do not manually dispatch the table: only the reviewed resident supplies durable
+custody, per-command admission, guest proofs and bounded recovery. Its writer
+entrypoint is `network/config-backup-preflight/native-trunk-resident.py
+--r8-full-trunk --pin <accepted-private-pin> --preflight-receipt
+<fresh-private-schema-2-receipt>`, with optional `--pve-credential-fd`. These are
+required private inputs, not values to guess. Switch root/audit credentials use
+stdin; PVE credentials use the existing private keyring or descriptor, never argv
+or logs. The resident runs on the workstation; the admission observation runs in
+the pinned EE. The expected-image field alone does not attest to container execution.
+
+### Observed readiness and blocking conditions
+
+- The local Brocade image ID
+  `7eb690b9bbac7dd602ad4eac7b1a537a1f3d8e54d6178e764b0e4df96813c2e2`
+  is present. A network-disabled, read-only container probe reports Python 3.14.7,
+  ansible-core 2.21.4, Paramiko 4.0.0 and cryptography 50.0.2. An image ID and an
+  OCI repository digest are different identities.
+- At 22:26:31 UTC, the actual corrected-source audit observer in that pinned EE
+  passed exact running/startup baseline, initial state, all six VLAN tables and
+  the strict primary-down guard. No configuration write occurred. This observation
+  expires after ten minutes; it is not reusable admission for a later window.
+- The existing native export and Drive-readback ciphertext files both still hash
+  to `3cdf42da0af330eccfe8c1b4f0595dc71a4ab2a0cfbfe7f2afabe2d2072ddbef`.
+  Fresh switch configuration matches their dated canonical baseline binding.
+  Decryption/key recovery and remote readback remain October 16 evidence; no new
+  import, reboot test, decryption or remote backup download is claimed.
+- A fresh source-pinned PiKVM `--check` verifies the fixed serial owner/descriptor.
+  It does **not** send a serial command or establish fresh `show version`, rescue
+  control or restore acceptance. The latest serial command proof remains dated.
+  PiKVM Ethernet was confirmed to bypass Brocade, but still depends on UniFi;
+  no dead-UDM rescue is claimed.
+- The actual PVE parent collector fails its unchanged bounded contract. A
+  diagnostic with the same SSH options identifies connection timeout to
+  `10.72.10.10:22`; independent TCP probes also time out at the former LAN
+  address `192.168.0.188:22`. This does not diagnose host failure, filtering or
+  routing. No trust bypass, route change or service enablement was attempted.
+- Subsequent read-only workstation route lookup selects `tun0` for both
+  `10.72.10.10` and `10.72.10.11`, not the home-LAN interface. A lookup constrained
+  to the existing home interface selects gateway `192.168.0.1`, source
+  `192.168.0.183`. This is a concrete route-selection conflict to investigate,
+  not proof of a failed PVE/iDRAC service. The ordinary iDRAC CA/name check also
+  times out before TLS, so no fresh chain result is available.
+- The original active root
+  `/home/mpeter/.cache/agent-scratch/m7-r8-live/` is now absent. The retained
+  operation snapshot and failed/restoration evidence remain in native private
+  custody. **Absence is not a verified pending-slot release or permission to
+  create a new attempt.** Its disappearance has not been attributed. Preserve
+  the snapshot for operation
+  `e8a53069b33dc67f75a5e8002804eb4769eba01c6acb23e9fbe2ad2bf59cb4a8`;
+  obtain an explicit reviewed custody disposition before another attempt.
+
+Private preparation evidence is under the continuation evidence base above in
+`r04-live-preparation/`. `candidate-command-plan-v2.json`, SHA-256
+`b47db3a3ad93d153032ef4414c218ae26ff519ab7e7c6cee7000e53c197eb302`,
+contains all commands, emergency boundaries, source bindings and stop conditions.
+Readiness receipts retain the failed PVE path, actual switch observation, dated
+backup hashes, and hash-verified private PiKVM check artifacts.
+
+### Required resource and operator decisions
+
+1. Establish working PVE SSH on the existing USB-management route so the unchanged
+   paired host/VM collector can pass; do not substitute a different path or fake
+   its active-member/default-route result. The earlier prepared client-side
+   proposal would add two temporary `/32` routes, for `10.72.10.10` and
+   `10.72.10.11`, via `192.168.0.1`, device `enp34s0u2u1u2`, source
+   `192.168.0.183`, protocol `static`, metric `42721`. Exact route preimages are
+   empty. Apply and exact reverse-order deletion argv are retained privately in
+   `proposed-workstation-host-routes.json`. **This approach is withdrawn:** the
+   operator requires the work VPN to remain undisturbed and requested a homelab
+   address replan instead. Preserve the file only as historical preparation;
+   do not apply it, disconnect/edit the VPN or weaken host trust.
+2. Resolve the absent active marker versus retained historical custody explicitly,
+   without declaring the failed operation qualified, rewriting its source binding,
+   clearing evidence or silently minting another attempt.
+3. Refresh current recoverable-backup and actual serial-rescue evidence, confirm
+   exclusive console ownership and unchanged bypass topology, and assemble the
+   schema-2 preflight only after all components genuinely pass.
+4. Approve one explicit start/end window, naming timezone or UTC and any exception
+   to the recorded 00:00–05:00 local maintenance policy, the primary-link limitation,
+   the one-attempt unsaved scope and exact recovery authority. The old timing
+   override is consumed. Preserve the existing 1,800/600/212/20-second budget
+   contract; on uncertainty stop, retain custody and do not retry forward commands.
+
+Until these gates are satisfied, no live qualification approval is requested and
+the writer must not be invoked. R04 and the broader session objective remain open.
+
+## Successor address replan
+
+The operator requested that the homelab avoid the work VPN's `10.0.0.0/8` route.
+The proposed [addressing design](../openspec/changes/avoid-work-vpn-address-overlap/design.md)
+selects five checked `172.27` `/24`s, preserving household `192.168.0.0/24`,
+existing confirmed household management interfaces, VLAN IDs, stable names and
+separate ownership. It is a proposal, not an approved network change.
+
+Physical R720 access and a separate admin computer are available for planning,
+but current PVE/iDRAC addresses and each recovery path must still be verified.
+Historical `10.72` observations and failed TCP probes do not refute or establish
+the operator's current `192.168` management view. The R8 live attempt stays on
+hold while the accepted successor topology and source bindings are established.
+Do not repin the old packet, manufacture preflight success or repeat persistence
+to make the proposal appear qualified.
