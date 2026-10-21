@@ -1,146 +1,141 @@
 ---
 status: open
 ---
-# R04 restoration carrier contract
+# Retained closure continuation — VPN-safe address replan
 
-## Objective and boundaries
+## Objective and authority
 
-Resume the retained October 18 closure work at R04: implement and independently
-review the narrow offline recovery guard fix, then prepare (not execute) a live
-recovery plan. Any live network/recovery retry needs separate operator approval.
-Keep qualification strict, exact configuration and six-VLAN invariants intact,
-and protect inverse, guest-proof and cleanup budgets. Do not repeat SMART work,
-accepted disruptive tests, or reopen backup/boot/DIMM/Groups 8/9 deferrals.
+Finish currently actionable retained work in the authoritative October 18 ledger,
+read from main, without rewriting its historical snapshot or repeating accepted
+disruptive tests. Complete acceptance and reviewed source delivery; retain explicit
+coverage limits and operator-approved deferrals. No live network/configuration
+write or disruptive test is authorized by preparation. Preserve the dirty primary
+and native-recovery checkouts, private evidence and secrets.
 
-## Verified state
+## Current operator direction
 
-- Current branch worktree: `fix/r04-carrier-restoration`, created from main
-  `43ad0ab0b0ba88d86521f2a71ff03996379bf778`. Offline implementation and
-  independent Python review are complete. Source is stable; result docs and
-  append-only ledger reconciliation are prepared for delivery.
-- R02 SMART acceptance/result delivery is complete: PRs #34/#35 merged, all eight
-  short/long tests passed, native cleanup verified. Its task worktree and branches
-  were removed. Do not resurrect its timer, transport, tests or cleanup.
-- Primary `/home/mpeter/work/homelab-infra` remains dirty on
-  `feat/group-7-network-plan`; native recovery worktree
-  `/home/mpeter/work/homelab-infra.worktrees/feat-group-7-native-recovery` is dirty
-  and valuable. Neither is owned by this task; preserve both.
-- Private evidence base:
+The operator requested replanning the homelab to avoid the work VPN, then made
+non-overlap absolute: no lab allocation may intersect work-VPN routed address
+space, with no exceptions, route overrides, disconnection or VPN policy changes.
+This covers IPv4/IPv6 and internal storage/pod/service pools, not just management.
+The earlier workstation host-route proposal is withdrawn, retained as history only.
+
+Proposed targets are `172.27.{10,20,30,40,50}.0/24`, with future pod/service
+reservations `172.28.0.0/16` and `172.29.0.0/16`. All are outside the currently
+observed work-VPN IPv4 routes and configured Podman pools. Full IPv4/IPv6 routes
+and rules were captured; no new IPv6 allocation is proposed. Recheck before any
+approval/application; a future overlapping route invalidates admission, never
+authorizes an exception. No address selection or cutover has been approved.
+
+Preserve household `192.168.0.0/24`, lab VPN client pools, VLAN IDs, names and
+ownership. The operator has physical R720 access and a separate admin computer,
+and questions whether current R720 management is still `192.168.0.x`. Latest
+actual retained PVE sample (October 16) says `10.72.10.10` on USB `nic1` with
+default gateway `10.72.10.1`. Today's timeouts do not resolve current assignment.
+Verify device settings from console/trusted client before any change; leave any
+confirmed `192.168` management interface alone. Do not infer live state from
+targets, host-key aliases, failed probes or a source summary.
+
+Planning artifacts: `openspec/changes/avoid-work-vpn-address-overlap/` contains
+proposal/design/tasks and the `lab-addressing` spec. ADR 0020 is proposed, not
+accepted; native ADR 0015's rationale/status is not rewritten. All implementation
+tasks remain unchecked. Strict planning validation passes. Independent design
+review `ses_e9f44eb34ffeC0zxIKUFh2zJRW` found no proposal blockers; its two wording
+clarifications were applied. It approves user design review, not execution.
+
+The proposed gateway-last cutover uses a verified new-subnet L2 path on the
+separate admin computer and endpoint-specific physical recovery, not a duplicate
+UniFi VLAN/gateway or another old `10.72` address. No work-VPN workstation
+interface/route changes. PVE/iDRAC changes stay serialized; any management/egress
+interruption needs explicit approval. Current device truth and tested physical
+recovery remain gates, not assertions that hardware presence proves recovery.
+
+## Delivered and verified
+
+- R01 source is delivered through PR #33. R02 SMART technical acceptance and
+  result delivery are complete through PRs #34/#35. No SMART starts, timers,
+  cleanup or accepted persistence tests need repeating.
+- R04 offline carrier correction is merged PR #36 at
+  `883a7c157522fea69001056baf663726dbc27faa`; local main is updated. Its task
+  worktree and local/remote branches were removed. Source/test hashes match the
+  independently reviewed revision. No live qualification occurred.
+- Original ledger bytes remain unchanged; newer evidence is append-only.
+  Historical G1–G5, R05–R07/R10/R11, independent backup, boot/DIMM and Groups 8/9
+  limits remain open or gated. Do not infer universal closure.
+
+## Current worktree and private evidence
+
+- Preparation worktree: `/home/mpeter/work/homelab-infra.worktrees/prep-r04-live-acceptance`,
+  branch `prep/r04-live-acceptance`, based on `883a7c1`.
+- Primary remains on dirty `feat/group-7-network-plan`; native recovery remains
+  dirty at `/home/mpeter/work/homelab-infra.worktrees/feat-group-7-native-recovery`.
+  Neither is owned for edits or cleanup.
+- Private continuation base:
   `/home/mpeter/work/homelab-infra-audit-evidence/closure-continuation-2026-10-21/`.
-  Existing `r04-actual-replay.json` verifies 91 path/hash bindings, three failed
-  captures and 36 restoration receipts. Do not repeat this completed replay.
-  Exact configuration/VLAN checks pass while primary Up/Listen or Up/Forward
-  fails the primary-down guard before automatic inverse's first journal append.
-  During restoration primary transitions Up to Down; physical cause is unknown.
+  `r04-delivery-and-cleanup.json` records PR36 delivery. The immutable adoption,
+  implementation and corrected-source replay receipts are linked by
+  `docs/r04-carrier-restoration.md`.
+- R04 preparation evidence is in `r04-live-preparation/`. Its command plan v2 hash is
+  `b47db3a3ad93d153032ef4414c218ae26ff519ab7e7c6cee7000e53c197eb302`.
+  It contains 17 forward commands, 17 normal inverse commands and exact emergency
+  inverses for all 18 forward boundaries. Approval status is NOT EXECUTABLE.
+- Current source binding: `53723cb056744b23ececa602e40b3c79b6eca1621ecae0cfb0388818662e3dc5`;
+  preview: `ec1f21d495699de95bc8eab437dbb966256cbb6dca8af525cf0190c51f389dd9`.
 
-## Verified source adoption
+## Fresh read-only preparation and real blockers
 
-Independent inventories completed in agent sessions
-`ses_e9fb29209ffe1TlR2aJH1cs6Pk` and `ses_e9fb0ac1effeTowpRpLuIwXB7M`.
-The latter verified the focused required set against replay scratch manifest
-`/home/mpeter/.cache/agent-scratch/closure-r04-replay-20261021/source-manifest.json`,
-with no unknown per-file provenance. The adoption agent subsequently counted
-37 resident pins (correcting the earlier inventory's 36); all are preserved.
-Adoption completed in agent `ses_e9faf43c5ffeRHYyRo6tsSnXz9`: 61 exact files,
-29,527 lines. The complete import-time dependency set exceeded the initial size
-estimate but contains no unrelated 155-file blanket import. It includes three
-required public `ansible/network-audit` pin files. Private inventory and verification
-receipts are `r04-source-adoption-inventory.json` and
-`r04-source-adoption-verification.json`; inventory SHA-256
-`9d5fbcd9469f573765c7add589bbead91f0b230805c2857ef87c214ca668e458`.
-Application deviation: adoption agent used system patch rather than the required
-dedicated patch tool; all destination hashes were independently checked by it.
-Subsequent edits must use the dedicated patch tool. Independent adoption review
-`ses_e9fa6545fffeE5NnTe8iSUrB83` verified all 61 baseline hashes against retained
-scratch and the manifest, the additions-only patch payloads, the 37 pins and the
-required import/test closure. No adoption blockers or copied private data found;
-94 unrelated manifest files were excluded. Final Python review separately verified
-exactly five authorized production differences and the new regression module.
-Baseline identities remain:
+1. The pinned local Brocade image and isolated package check pass. An initial
+   default-user mount permission failure occurred before audit captures; the
+   rootless container user was corrected without changing trust/source policy.
+2. Corrected-source Brocade audit observation in the pinned EE passed at
+   22:26:31 UTC: exact running/startup baseline `01b4a646…`, initial state,
+   six VLAN tables and strict primary-down guard. No configuration write. Its
+   ten-minute admission lifetime is not extended by saving this handoff.
+3. The PVE source-defined parent collector fails: unchanged SSH to required
+   USB-management `10.72.10.10:22` times out. A diagnostic retaining the original
+   SSH options confirms timeout; TCP to former LAN `192.168.0.188:22` also fails.
+   Brocade SSH and NAS HTTPS TCP probes succeed. Do not diagnose a service,
+   routing or firewall cause from this alone, substitute paths, or bypass checks.
+4. Both dated native-backup ciphertext copies still match
+   `3cdf42da0af330eccfe8c1b4f0595dc71a4ab2a0cfbfe7f2afabe2d2072ddbef`;
+   current switch configuration matches their canonical baseline. Key recovery,
+   remote readback and no-import/boot-test limits remain dated October 16.
+5. PiKVM frozen invoker `--check` succeeds: fixed owner/descriptor verified,
+   capture_admitted=false and restore_verified=false. No serial command was sent.
+   Ten private artifact files were copied/hash-verified outside the worktree in
+   `pikvm-owner-check-artifact/`. The task-owned local tmux session/socket were
+   closed after its exit-0 completion; `rescue-check-transport-closed.json`
+   records this. The source stage was removed; the remote diagnostic runtime is intentionally
+   retained by the helper. Do not delete unknown remote/pending artifacts.
+6. The original active `~/.cache/agent-scratch/m7-r8-live/` root is absent, not
+   verified released. Archived raw pending snapshot and recovery receipts remain
+   under native `inventory/local/m7-r8-authorized-now-2026-10-16/`, operation
+   `e8a53069b33dc67f75a5e8002804eb4769eba01c6acb23e9fbe2ad2bf59cb4a8`.
+   Do not create a new attempt merely because its active marker is missing.
+   Disappearance cause and explicit custody disposition remain unresolved.
 
-- `ansible/network-jobs/empty_vlan_cycle.py` hash
-  `a5723f5bd71ea66b63178e5acd78b3eba11e7b9dc4b438b761eda9c0aeff94dc`;
-  `native_trunk_observation.py` baseline hash
-  `b5ecc0827f3fe65925edd881d5684dc8d38b6df1374701e653683717eb5d42b5`.
-  Existing replay binds these to the failed attempt.
-- Tests are untracked in native tree: `test_empty_vlan_cycle.py` hash
-  `136eb9e52ee82cb8fd2c0739e77afa7387fc69c1f7fcce8ba741fdb8c1ad412a`,
-  `test_native_trunk_observation.py` hash
-  `141ccf2a92a42873838f7b8698a9bdd58ee46628e72f6041043ae83e63b9ecf9`.
-  These are adoption baselines, not hashes of the corrected revision. Corrected
-  identities are in the implementation and corrected-source replay receipts below.
-- Main does not contain the active network-jobs implementation. The cycle's
-  import-time `SOURCE_MANIFEST` reads every `SOURCE_PATHS` file (lines 115–165),
-  including inherited `exercise.SOURCE_PATHS`, guest artifacts and resident.
-  Copying only the two modules does not test the real integrated caller.
-- The private deterministic adoption inventory now binds each selected baseline
-  file to retained replay hashes; preserve it rather than regenerating history.
-- Resident: `network/config-backup-preflight/native-trunk-resident.py` verifies
-  `SOURCE_PINS` at import. Pending restorer/reconcile and probe admission are
-  separate consumers; trace which call sites must use restoration vs qualification.
+## Active work and next decisive action
 
-## Accepted offline contract and verification
+Deliver the reviewed **proposed** address replan and the R04 preparation/hold
+record as planning-only changes. Then obtain design approval and current PVE/iDRAC
+address/interface evidence from the available physical console or authorized
+separate admin client. Do not restart R8, invoke the old packet or apply route
+exceptions. No migration implementation or live cutover is approved.
 
-Strict `require_r8_full_trunk_operational_state` remains AST-identical to baseline.
-New `require_r8_full_trunk_restoration_operational_state` accepts only Down/None
-or Up/Forward after complete interface checks; valid Up/Listen raises specialized
-`R8PrimaryListening`, never write authorization. The cycle validates exact state,
-configuration and all six VLAN tables first. Explicit restoration context covers
-every inverse boundary and receipt admission, including the ambiguous first
-inverse/last forward position; the held boundary remains strict.
-The implemented bounded policy allows at most two extra full observations across
-the whole restoration attempt, shared across all boundaries/sessions, with no
-sleep, command retry or deadline reset. Validate exact configuration, complete
-interface table and all six VLAN tables before classifying Listen as retryable;
-all other drift fails immediately. Strict initial/forward/held observations stay
-unchanged. Receipt admission must use restoration validation for inverse/final
-evidence while its held boundary remains strict. Only current source chains were
-repinned, never historical evidence. Exactly five adopted production files changed:
-cycle, observer, receipt admission, runner pin and resident pins.
+Private replan receipts: `address-replan-current-networks.json`,
+`address-replan-work-vpn-overlap-gate.json` and
+`address-replan-operator-boundaries.json`. The other-vendor description-only
+consult `address-replan-other-vendor.txt` completed successfully; suggestions to
+disconnect the VPN, prefer an access workaround or advertise a broad summary
+route were rejected because they contradict the operator's strict constraint.
+Its task-owned local tmux/socket were closed after the exit-0 result;
+`address-replan-consult-closed.json` records the cleanup.
 
-Existing R8 reads use the phase deadline, NOT the resident's OBSERVE_SECONDS=50
-constant. Count limits plus existing protected deadlines prove fail-closed bounds,
-not guaranteed settling completion in 100/150 seconds. Do not claim that timing.
-The first other-vendor consult timed out. A second bounded description-only
-Claude design consult completed with exit 0: private
-`r04-other-vendor-design.txt` and `.exit`. Its task-owned tmux session was closed.
-It supports the direction but emphasizes safety versus liveness, coherent fresh
-reads, no ambiguous-write replay and no restart replenishment. Implementation
-tests verify existing pending custody blocks restart rather than introducing a
-resume facility. Existing reader order/freshness limits
-and risk of writes against an Up/Forward path belong in the live plan; generic
-STP topology assumptions from that consult are not established lab facts.
-
-Baseline verification: 252 principal passes and five resident passes. Corrected
-verification: meaningful RED four failures; mutation allowing a third extra read
-causes three failures; GREEN 366 focused passes (then 45 new cases), followed by
-47 complete new regression cases, 309 transport passes and five resident-budget
-passes. Counts overlap. Parent reran the original five carrier-focused resident
-tests on corrected code: five passed, 356 deselected. Independent Python review
-`ses_e9f7f1998ffeABNKr6rQF2Slxk` approves the offline fix, checks pin chains and
-strict AST, and reports mypy passing for all five production files. Whole-cycle
-Ruff retains preexisting E731; focused lint/format passes.
-
-Private implementation receipt `r04-restoration-implementation-verification.json`
-SHA-256 `9347a8704d2a2b3dc7b5c20bd05c508c11b67b38a999ec894edc5c15a99a5eee`.
-New `r04-corrected-source-replay.json` SHA-256
-`98a576e8a29bee4352f6b4dbd0c542246e1dea4c8cd129db8f52701cce89758a`:
-all three actual failures (strictly rejected; two Up/Forward restoration-ready,
-one Listen pending/no write), 36 restoration receipts ready, both carrier
-transitions, exact state/configuration/six-VLAN invariants, 521 retained input
-hashes checked. Preliminary replay-harness errors are recorded in its limits;
-they caused no production edits or live calls. Parser replay and integrated caller
-regressions are distinct from live guest-traffic qualification. Do not rerun
-unchanged passing checks merely to validate prose edits.
-
-## Next action
-
-Finish reviewed delivery of the offline correction/result record. All private
-evidence stays outside Git; staged paths are public source/test/docs only and
-scoped Gitleaks/whitespace checks pass. Then prepare, but do not execute, the exact
-source-bound live plan: fresh preflight, current recoverable configuration backups,
-tested out-of-band rescue independent of primary link, preserved old pending
-custody, exact command/recovery preview, protected deadlines and live guest proofs.
-Obtain a separate operator window/primary-link approval. R04 remains open and no
-corrected-source live retry or qualification is claimed. See
-`docs/r04-carrier-restoration.md` for current result and live gates.
+R04 still requires accepted successor topology/source bindings, explicit archived
+pending disposition, fresh recoverable-backup and actual rescue evidence, both
+live guest proofs, a reviewed exact window/recovery packet and operator approval.
+The earlier observation has expired; never extend its admission lifetime or
+reuse the spent October 16 override. R06 missing client/route rows, R07 chain/
+lifecycle/external-vantage gaps and R11 identity-specific evidence remain retained.
+Read-only inventories for them completed without additional closures; no external
+403 error is treated as denial, and no TLS issuance proves credential rotation.

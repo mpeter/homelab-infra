@@ -850,3 +850,43 @@ live plan, current recoverable backups, tested out-of-band rescue, preserved
 pending custody and explicit operator window/primary-link approval remain gates.
 No accepted persistence, SMART test or cleanup was repeated; no physical carrier
 cause or broader Group 7 closure is claimed.
+
+## 13. Work-VPN overlap and proposed lab replan — October 21
+
+Read-only preparation after PR #36 verified the local pinned EE and a fresh
+Brocade observation: exact running/startup baseline, initial primary-down state
+and all six VLAN tables pass. The PVE parent read timed out. Subsequent workstation
+route lookup shows the recorded `10.72` management destinations select the active
+work VPN's `10.0.0.0/8` route. This establishes route overlap, not current endpoint
+addresses or a failed PVE/iDRAC service. Household `192.168.0.0/24` remains distinct.
+
+The operator requires **no homelab allocation to overlap work-VPN routed space,
+without exceptions or VPN changes**, and requested a replan. The prepared
+workstation host-route override is withdrawn and was never applied. The proposed
+[OpenSpec design](../openspec/changes/avoid-work-vpn-address-overlap/design.md)
+uses `172.27` VLAN subnets and reserves `172.28`/`172.29` for future pod/service
+pools. Current complete route/rule and container-network checks find no overlap;
+this does not approve those addresses or establish future VPN compatibility.
+All lab pools, including unrouted storage and future IPv6, must pass the strict
+non-overlap gate before use. No deferred platform is deployed by this proposal.
+
+Physical R720 access and a separate admin computer are available. Current PVE and
+iDRAC settings still need device confirmation; the latest retained actual PVE
+sample is October 16, not a fresh address read-back. Any confirmed `192.168`
+management interface remains untouched unless separately approved. The proposed
+cutover requires tested endpoint-specific recovery and a separate approved packet;
+PiKVM Brocade serial is not R720-console or dead-UDM recovery proof.
+
+The dated native backup ciphertext copies still match their preserved hashes and
+the fresh switch configuration matches their canonical baseline. Key recovery and
+remote readback remain dated, not newly reexecuted. PiKVM's fresh owner/descriptor
+check passes, but sends no serial command. The original active R8 pending root is
+absent; its archived snapshot still matches its original preservation manifest
+and canonical operation identity. **Absence is not semantic release or retry
+authority.** Preserve archived custody and resolve its disposition explicitly.
+
+The [R04 preparation record](r04-carrier-restoration.md) records exact candidate
+commands, source bindings, failed/read-only paths and the successor hold. R04
+live qualification, R06 matrix rows, R07 client/lifecycle/exposure, R11 identities
+and other retained work remain open or gated. No live configuration changed,
+accepted disruptive test repeated, coverage gap resolved or new closure claimed.
