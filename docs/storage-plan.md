@@ -1457,18 +1457,25 @@ configured output suppression hid the per-command detail. The read-only SMART
 capture below confirmed all eight whole disks report `PASSED` and their latest
 short self-tests completed without error. It also confirmed eight matching
 partition aliases. Keep the existing schedules and filter those aliases from
-both commands:
+both commands. Preserve a nonzero aggregate status if any target fails, continue
+through every whole-disk target, and report each target's exit code:
 
 ```sh
-for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; /usr/sbin/smartctl -t short "$d"; done
-for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; /usr/sbin/smartctl -t long "$d"; done
+status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t short "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"
+status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t long "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"
 ```
 
-This is the versioned target for Cron Job IDs 1 and 2; apply it through the
-TrueNAS API and verify command and schedule read-back. On 2026-10-05, only the
-command fields for IDs 1 and 2 were updated; both remained enabled on their
-original schedules. A run of corrected short-test job 1 completed successfully
-as middleware job 5916. It ran against whole-disk aliases only. A preceding
+This is the corrected versioned target for Cron Job IDs 1 and 2. The aggregate
+failure handling was verified locally on 2026-10-20 with
+`bash host/pve/tests/test-truenas-smart-cron.sh`; it has not been applied to the
+guest. A separate authorized change must apply it through the TrueNAS API and
+verify command, unchanged schedule, and per-target result read-back.
+
+On 2026-10-05, only the command fields for IDs 1 and 2 were updated to the
+partition-filtering predecessor; both remained enabled on their original
+schedules. Short-test job 1 reported success as middleware job 5916, but that
+loop returned only its final command's status. It does not establish successful
+test scheduling on every disk. A preceding
 run of the old command (job 5864) returned exit 4; its output was suppressed.
 The read-only capture used a temporary disabled Cron Job that was removed,
 along with its temporary output file, after collection. The API read does not
