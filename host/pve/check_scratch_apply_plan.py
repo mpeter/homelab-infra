@@ -463,9 +463,10 @@ def validate_recovery_preflight(
             expected.add(
                 f"BLOCK: {serial}: partition or child devices remain: {part1}, {part9}"
             )
+            expected.add(f"BLOCK: {serial}: signature present on {device}")
             expected.update(
-                f"BLOCK: {serial}: signature present on {node}"
-                for node in (device, part1, part9)
+                f"CLEAR: {serial}: no blkid signature reported on {node}"
+                for node in (part1, part9)
             )
 
     boundary_findings: set[str] = set()

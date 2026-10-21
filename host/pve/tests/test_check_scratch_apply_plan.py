@@ -357,8 +357,8 @@ class ScratchApplyPlanTests(unittest.TestCase):
                     (
                         f"BLOCK: {serial}: partition or child devices remain: {device}p1, {device}p9",
                         f"BLOCK: {serial}: signature present on {device}",
-                        f"BLOCK: {serial}: signature present on {device}p1",
-                        f"BLOCK: {serial}: signature present on {device}p9",
+                        f"CLEAR: {serial}: no blkid signature reported on {device}p1",
+                        f"CLEAR: {serial}: no blkid signature reported on {device}p9",
                     )
                 )
             else:
@@ -419,6 +419,43 @@ class ScratchApplyPlanTests(unittest.TestCase):
             plan.validate_recovery_preflight(text, exit_code, layouts)[0],
             "b478c236-f6fe-4490-852e-868339e84ffd",
         )
+
+    def test_recovery_preflight_rejects_generated_child_signatures(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        base, exit_code = self.recovery_report(layouts)
+        for serial in (plan.SERIAL_C, plan.SERIAL_D):
+            device = self.recovery_devices[serial][0]
+            for suffix in ("p1", "p9"):
+                with self.subTest(serial=serial, suffix=suffix):
+                    text = base.replace(
+                        f"CLEAR: {serial}: no blkid signature reported on {device}{suffix}",
+                        f"BLOCK: {serial}: signature present on {device}{suffix}",
+                    )
+                    with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+                        plan.validate_recovery_preflight(text, exit_code, layouts)
+
+    def test_recovery_preflight_requires_generated_disk_signature(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        base, exit_code = self.recovery_report(layouts)
+        for serial in (plan.SERIAL_C, plan.SERIAL_D):
+            device = self.recovery_devices[serial][0]
+            with self.subTest(serial=serial):
+                text = base.replace(
+                    f"BLOCK: {serial}: signature present on {device}\n",
+                    f"CLEAR: {serial}: no blkid signature reported on {device}\n",
+                )
+                with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+                    plan.validate_recovery_preflight(text, exit_code, layouts)
+
+    def test_recovery_preflight_rejects_wrong_child_serial(self):
+        layouts = {plan.SERIAL_C: "generated", plan.SERIAL_D: "generated"}
+        text, exit_code = self.recovery_report(layouts)
+        text = text.replace(
+            f"CLEAR: {plan.SERIAL_C}: no blkid signature reported on /dev/nvme4n1p1",
+            "CLEAR: wrong-serial: no blkid signature reported on /dev/nvme4n1p1",
+        )
+        with self.assertRaisesRegex(plan.PlanError, "unexpected findings"):
+            plan.validate_recovery_preflight(text, exit_code, layouts)
 
     def test_recovery_preflight_rejects_unexpected_block_unknown_and_duplicate_findings(
         self,
