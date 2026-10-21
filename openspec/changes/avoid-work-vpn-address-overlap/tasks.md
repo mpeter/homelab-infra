@@ -1,12 +1,16 @@
 # Tasks
 
-Planning validation is not design approval or permission to implement/apply.
-Every task below remains open. Do not change the work VPN or use the withdrawn
-workstation route-exception proposal.
+Planning validation alone is not permission to implement/apply. On October 21,
+the operator approved the exact allocation and complete migration of affected
+active networks, including discovered service/storage consumers and fresh R04
+qualification, with unrestricted maintenance time after backup, endpoint-specific
+recovery and independent-review gates pass. This supersedes the proposal's
+planning-only authorization, not its safety gates. Do not change the work VPN or
+use route/hosts-file exceptions. Unrelated closure gaps remain outside scope.
 
 ## 1. Approve allocation and establish current endpoint truth
 
-- [ ] 1.1 Obtain operator approval of the proposed five `172.27` subnets, future `172.28` pod/`172.29` service reservations and preserved household/lab-VPN scope; verify exact prefixes and the absolute prohibition on work-VPN overlap or changes.
+- [x] 1.1 Obtain operator approval of the proposed five `172.27` subnets, future `172.28` pod/`172.29` service reservations and preserved household/lab-VPN scope; verify exact prefixes and the absolute prohibition on work-VPN overlap or changes.
 - [ ] 1.2 Capture every IPv4/IPv6 routing table/rule, configured container network, home/lab VPN pool and declared remote network; verify every proposed lab pool is disjoint from work-VPN routed space, reject work-VPN catch-all selection and document unknown networks.
 - [ ] 1.3 Observe PVE addresses, default route, USB interface and guest bridge/bond from local console or an authorized trusted client; verify the endpoint ledger distinguishes current management from `.188`/`.190` aliases and preserves confirmed `192.168` interfaces.
 - [ ] 1.4 Observe iDRAC NIC/IP/gateway and current UniFi network/DNS/firewall/VPN objects; verify endpoint MAC/interface/port bindings and record deployed versus reserved entries without inferring clients from target plans.
