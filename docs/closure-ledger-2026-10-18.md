@@ -826,3 +826,27 @@ protected recovery/proof budgets and integrated consumer regressions are not
 yet accepted. No corrected caller, widened qualification, new live attempt or
 physical-cause diagnosis is claimed. R05–R07/R10/R11 and all historical coverage
 limits remain separate retained work; existing deferrals remain gated.
+
+## 12. R04 offline carrier correction — October 21
+
+The [restoration correction](r04-carrier-restoration.md) now separates strict
+primary-down qualification from restoration-only Down/None or Up/Forward
+validation. Explicit restoration context covers normal and emergency inverse
+boundaries and receipt admission. Listen never authorizes a write; at most two
+extra fully validated observations are shared across the entire attempt, without
+resetting deadlines or replaying sends. Drift and exhaustion retain custody.
+
+Independent review found no blockers in the offline correction. The strict
+qualification validator is unchanged. Corrected-source replay verifies all three
+retained failure samples, all 36 restoration receipts and both carrier transitions
+under exact configuration/state and six-VLAN invariants. Integrated regressions
+exercise protected budgets, guest-proof callbacks and receipt semantics; the
+linked result record distinguishes overlapping test counts from live evidence.
+
+**R04 remains open:** no corrected-source live qualification, live guest-traffic
+proof or independent live final read-back has occurred. The existing observation
+ordering/freshness limitation is unchanged. A separately reviewed source-bound
+live plan, current recoverable backups, tested out-of-band rescue, preserved
+pending custody and explicit operator window/primary-link approval remain gates.
+No accepted persistence, SMART test or cleanup was repeated; no physical carrier
+cause or broader Group 7 closure is claimed.
