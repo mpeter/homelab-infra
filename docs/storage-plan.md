@@ -1461,8 +1461,8 @@ both commands. Preserve a nonzero aggregate status if any target fails, continue
 through every whole-disk target, and report each target's exit code:
 
 ```sh
-status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t short "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"
-status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t long "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"
+{ status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t short "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"; }
+{ status=0; for d in /dev/disk/by-id/ata-CT1000MX500SSD1_*; do case "$d" in *-part*) continue;; esac; rc=0; /usr/sbin/smartctl -t long "$d" || rc=$?; printf '%s: exit=%s\n' "$d" "$rc"; [ "$rc" -eq 0 ] || status=1; done; exit "$status"; }
 ```
 
 This is the corrected versioned target for Cron Job IDs 1 and 2. The aggregate
@@ -1470,6 +1470,12 @@ failure handling was verified locally on 2026-10-20 with
 `bash host/pve/tests/test-truenas-smart-cron.sh`; it has not been applied to the
 guest. A separate authorized change must apply it through the TrueNAS API and
 verify command, unchanged schedule, and per-target result read-back.
+
+The outer group is required because TrueNAS appends output redirections to the
+command text. Without it, suppression applies only to the final `exit`, and
+the earlier output can trigger cron email. October 21 offline regression now
+also executes the command with the installed middleware's suppression suffix;
+it verifies no stdout leakage while preserving all target calls and status.
 
 On 2026-10-05, only the command fields for IDs 1 and 2 were updated to the
 partition-filtering predecessor; both remained enabled on their original

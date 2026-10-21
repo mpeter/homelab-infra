@@ -58,6 +58,18 @@ for index in 0 1; do
       case ",$failure_names," in *",$name,"*) result=7;; esac
       grep -Fxq "$devices/$name: exit=$result" "$test_dir/output"
     done
+
+    # TrueNAS 25.10.7 construct_cron_command appends suppression to the text.
+    : > "$test_dir/calls"
+    wrapped_status=0
+    SMART_TEST_CALLS="$test_dir/calls" SMART_TEST_FAILURES="$failure_names" \
+      sh -c "$cron_command > /dev/null" > "$test_dir/suppressed" 2>&1 || wrapped_status=$?
+    [[ $wrapped_status == "$status" ]]
+    [[ $(wc -l < "$test_dir/calls") == 8 ]]
+    if [[ -s $test_dir/suppressed ]]; then
+      printf 'FAIL: %s test leaks output through TrueNAS stdout suppression\n' "$test_type" >&2
+      exit 1
+    fi
   done
 done
 
