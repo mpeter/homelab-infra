@@ -29,6 +29,7 @@ References prefixed **N/** mean that checkout, not the older audit checkout:
 - **S/**: `inventory/local/closure-audit-2026-10-18/` in A, ignored private
   enumeration/receipt data. The single obligation ledger is this document;
   S contains evidence, not another task tracker. Do not publish S automatically.
+  Links into S are machine-local and unpublished; they will not resolve in other clones.
 
 ## 1. Source coverage and snapshot
 
