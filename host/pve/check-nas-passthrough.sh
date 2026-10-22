@@ -38,7 +38,7 @@ fi
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus SSHPASS
 SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_host" account root)
 [[ -n $SSHPASS ]] || fail 'missing PVE credential in desktop keyring'
-pve() { sshpass -e ssh -o ConnectTimeout=10 "root@$pve_host" "$@"; }
+pve() { sshpass -e ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=10 "root@$pve_host" "$@"; }
 
 bash "$repo_root/host/pve/manage-nas-pci-mapping.sh" check
 vm_status=$(pve 'qm status 200' | awk '$1 == "status:" {print $2}')

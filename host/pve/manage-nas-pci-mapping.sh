@@ -20,7 +20,7 @@ repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus SSHPASS
 SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_host" account root)
 [[ -n $SSHPASS ]] || { echo 'missing PVE credential in desktop keyring' >&2; exit 1; }
-pve() { sshpass -e ssh -o ConnectTimeout=10 "root@$pve_host" "$*"; }
+pve() { sshpass -e ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=10 "root@$pve_host" "$*"; }
 fail() { printf 'NAS PCI mapping %s: %s\n' "$mode" "$*" >&2; exit 1; }
 
 if [[ $mode != rollback ]]; then
