@@ -81,6 +81,9 @@ includes a host-required device.
    Both helpers require an already trusted PVE SSH host key and reject unknown
    or changed keys without offering enrollment. Verify the fingerprint through
    an independent trusted path before updating workstation known-hosts entries.
+   They connect to `10.72.10.10` while retaining `192.168.0.188` as the keyring
+   lookup identity and SSH `HostKeyAlias`. Automatic host-key updates are disabled
+   so this address correction does not enroll or alter trusted keys.
 5. Define the NAS VM in OpenTofu with a boot disk on `fast-vm`, a persistent
    network identity, and a memory allocation based on the verified 128 GiB
    host. Do not assume the future 256 GiB upgrade. Keep host-side mapping

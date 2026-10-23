@@ -8,6 +8,11 @@ mkdir "$stage/bin"
 
 cat >"$stage/bin/secret-tool" <<'SH'
 #!/usr/bin/env bash
+set -euo pipefail
+[[ $* == 'lookup homelab-pve-host 192.168.0.188 account root' ]] || {
+  echo 'NAS credential lookup must retain the existing keyring identity' >&2
+  exit 97
+}
 printf 'test-only\n'
 SH
 cat >"$stage/bin/sshpass" <<'SH'
@@ -19,6 +24,18 @@ config=$(ssh -G -F /dev/null "$@" 2>/dev/null)
 grep -Fxq 'stricthostkeychecking true' <<< "$config" || {
   echo 'NAS SSH must require an already trusted host key' >&2
   exit 99
+}
+grep -Fxq 'hostname 10.72.10.10' <<< "$config" || {
+  echo 'NAS SSH must connect to the reachable PVE address' >&2
+  exit 96
+}
+grep -Fxq 'hostkeyalias 192.168.0.188' <<< "$config" || {
+  echo 'NAS SSH must retain the existing trusted host-key identity' >&2
+  exit 95
+}
+grep -Fxq 'updatehostkeys false' <<< "$config" || {
+  echo 'NAS SSH must not alter trusted host keys' >&2
+  exit 94
 }
 case ${!#} in
   *'hardware/pci'*)
