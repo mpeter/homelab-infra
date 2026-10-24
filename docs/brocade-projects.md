@@ -197,6 +197,65 @@ single R720 highly available.
   procedures. This repository does not automate identity, EEPROM, serial, or
   license manipulation.
 
+## Serial console recovery through the PiKVM bridge
+
+The switch's console access path is a chain, not a single device: the
+administrator host, the PiKVM, its USB-serial adapter, and the ICX6610 itself.
+A console or recovery attempt that only confirms one link (for example, "the
+PiKVM is pingable") has not confirmed the path works. Validate the whole chain
+before relying on it for a change window or a recovery exercise:
+
+1. **Host to PiKVM.** Confirm the administrator host reaches the PiKVM's
+   management address and that no other session already owns its serial
+   device. Two sessions opening the same USB-serial port produces corrupted
+   or contended output that looks like a switch problem.
+2. **PiKVM to USB-serial adapter.** Confirm the adapter enumerates on the
+   PiKVM (its device node is present and owned by the expected service) and
+   that its framing (baud rate, parity, stop bits) matches the ICX6610's
+   console defaults. A present-but-misconfigured adapter produces garbled or
+   empty output, which is easy to misattribute to the switch being down.
+3. **Adapter to switch.** Confirm the physical serial cable is seated at the
+   switch's console port and that a known keypress (Enter, a `show` command)
+   produces a response. Only once a response is observed is the chain proven
+   end to end for that session.
+
+Do not assume a previously working link in this chain is still working just
+because an earlier link in the chain checks out. Re-verify the full chain at
+the start of each recovery session, not just once per PiKVM deployment.
+
+### Checking reachability: ARP before readdressing
+
+Before changing the switch's management address, or concluding that the
+switch is unreachable and an address change is needed, check both ping and
+ARP, not ping alone. ICMP can be filtered, rate-limited, or administratively
+disabled on the switch's management interface without the device being
+actually unreachable at Layer 2. An ARP entry for the switch's known MAC
+address (`arp -n` or the PiKVM's/administrator host's ARP table) confirms
+Layer 2 reachability independent of whether the switch answers ping, and a
+missing ARP entry after a confirmed-correct cable and VLAN path is stronger
+evidence of an actual reachability problem than a ping timeout alone.
+
+Only treat an address change as necessary once both pass or fail together: no
+ARP entry *and* no ping response, on a chain already validated per the section
+above. An ARP entry with no ping response points at a filtered or disabled
+ICMP policy on the switch, not a lost address, and does not justify
+readdressing.
+
+### Persisting and verifying a recovery change
+
+Once console control is established and any corrective configuration is
+applied, `write memory` is required for it to survive a reboot; see the
+[`write memory` requirement](#constraints-and-cautions) above. After saving,
+verify the change took effect by reading back the running configuration and,
+separately, the startup configuration, rather than trusting the save command's
+success message alone. The two must agree before the session is considered
+closed. If recovery required a legacy SSH algorithm to reach the switch, keep
+that exposure scoped to the dedicated bastion or execution environment used
+for the recovery session; see the
+[SSH-algorithm constraint](#constraints-and-cautions) above. Do not relax the
+global SSH policy on administrator systems to accommodate it, even
+temporarily during an active recovery.
+
 ## Research references
 
 - [NYC Mesh Brocade Router CLI Notes](https://wiki.nycmesh.net/books/5-networking/page/brocade-router-cli-notes/revisions/902)
