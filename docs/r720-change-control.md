@@ -13,7 +13,7 @@ read-back. An observed inventory entry alone is not desired state.
 | NAS HBA passthrough | `host/pve/` for host binding; Proxmox OpenTofu for VM PCI assignment | Serial and IOMMU preflight, reviewed host change, guest disk read-back |
 | NAS pool, datasets, snapshots, shares | NAS guest configuration and exported appliance settings | Guest read-back, backup, and restore test before unique data |
 | Guest first boot and configuration | `cloud-init/`, then `ansible/` | Image/test-boot and Ansible check/read-back |
-| Physical repair | iDRAC plus documented procedure | Serial/slot confirmation, power and recovery plan, observed inventory refresh |
+| Physical repair | iDRAC plus documented procedure, including [NIC/boot-failure diagnostics](r720-nic-troubleshooting.md) | Serial/slot confirmation, power and recovery plan, observed inventory refresh |
 
 ## Mechanical gates
 
