@@ -66,6 +66,19 @@ The 2026-09-19 baseline found:
   to obsolete algorithms;
 - no observed Layer 3 forwarding traffic.
 
+### Open items after 2026-09-19 baseline
+
+The baseline above is read-only discovery, not an executable recovery or
+write-access capability. Record each gate's evidence before relying on it for
+a live configuration change, a service-account write, or a recovery drill.
+
+| Gate | Evidence required | Current status |
+| --- | --- | --- |
+| R720-to-switch interface identity | MAC/LLDP correlation or a matched counter-increment test confirming the R720 NIC and switch port `1/2/2` from both the host and switch sides | Unverified. The baseline records "the reported R720 cable is on `1/2/2`, but the server's interface identity has not yet been verified from both ends." |
+| Dedicated service account | A least-privilege automation account created, saved with `write memory`, confirmed to survive reboot, and exercised for a real write independent of the root enable credential | Not established. `ansible/network-jobs/writer_account.py` implements a one-shot `homelab_writer` account-creation routine, but its own docstring states it "admits no exercise or live acceptance and provides no CLI, save, retry, automatic inverse, or recovery." No created, saved, or exercised account is recorded. |
+| Tested restore path | A configuration restore executed from a captured running/startup backup (or the native export), independently read back and matched against the intended configuration | Not tested. The repository's closure ledger records that "the refreshed Brocade point was not import/boot tested; older native restore acceptance is for an older point" (`docs/closure-ledger-2026-10-18.md`, R05). |
+| Explicit outage/SLA acceptance | A dated, explicit operator statement accepting that a configuration change or recovery drill on this single, non-redundant switch can take down the whole network, and the acceptable scope/duration for that risk | Not recorded. `docs/networking-plan.md` notes only that a second host-facing link "protects against a port, optic, or cable failure; it does not make the Brocade switch redundant." No operator acceptance of outage risk for switch work exists in this repository. |
+
 ## Recommended projects
 
 ### 1. Instrument the physical network
