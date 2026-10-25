@@ -51,6 +51,17 @@ range and disconnect its network. The procedure must remove the test VM and
 verify that no configuration or disk remains. It cannot be used to create a
 lasting workload.
 
+## Plan tracking
+
+Each OpenSpec change under `openspec/changes/` tracks its own completion
+separately from the live checks above: `openspec validate <change> --strict`
+confirms the proposal/design/spec/tasks artifacts are structurally complete,
+and `openspec status --change <change>` reports task progress. Treat both as
+plan-document checks only; neither executes or proves anything about live
+hardware, provider access, passthrough, backup, or recovery feasibility. A
+clean `--strict` validation means the plan is well-formed, not that the work
+it describes has been attempted or will succeed.
+
 ## Recovery exception
 
 When delay risks boot, access, or data, use the minimum direct action necessary
