@@ -74,7 +74,9 @@ includes a host-required device.
 4. Use Proxmox's on-demand PCI resource mapping for HBA driver handoff; do not
    add a post-stop rebind hook or boot-time VFIO binding. The versioned mapping
    helper provides preview/check/apply/rollback, and the separate
-   `host/pve/check-nas-passthrough.sh` validates the live VM/driver state. A
+   `host/pve/check-nas-passthrough.sh` validates the live VM/driver state (it
+   is intentionally not marked executable; invoke it as
+   `bash host/pve/check-nas-passthrough.sh ...`). A
    gated start moved the HBA to `vfio-pci` and a gated stop left it there; after
    a cold host boot with the VM stopped, `mpt3sas` may bind. See [ADR
    0012](decisions/0012-keep-nas-hba-on-demand-vfio.md).
