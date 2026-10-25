@@ -197,6 +197,21 @@ single R720 highly available.
   configuration backup, and rollback have been tested.
 - `write memory` is required to make FastIron changes survive reboot. Runtime
   read-back and startup configuration must both be verified.
+- Boot-monitor password recovery (config-preserving, tested on this switch):
+  interrupt boot with `b`, run `no password` at the `Monitor>` prompt, then
+  `boot system flash primary`. Confirm via `OK! Skip password check when the
+  system is up.` followed by `No password has been assigned yet...`. Capture
+  console output before and after; purge any password-bearing console log once
+  the account password is reset interactively. Never expose the password value
+  itself in a command, log, or chat message.
+- A pingable-looking address on this LAN can still be occupied: a non-responsive
+  ping does not rule out a live host. Check the ARP table for a MAC answering
+  the address before claiming it, not ping alone.
+- Reaching this switch's SSH from a modern client needs client-side legacy
+  algorithms enabled (`KexAlgorithms`/`HostKeyAlgorithms` including
+  `diffie-hellman-group1-sha1`/`ssh-rsa`), scoped to the bastion or execution
+  environment used for this switch only — never added to a general-purpose
+  client config.
 - Keep NTP client synchronization and source selection in the health checks so
   logs and automation retain reliable timestamps.
 - Treat PoE as unavailable on this chassis; [the PoE RCA](brocade-poe-rca.md)
