@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pve_host=192.168.0.188
+pve_host=10.72.10.10
+pve_identity=192.168.0.188
 device_path=0000:02:00.0
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
 
@@ -36,9 +37,9 @@ fi
 
 [[ $# == 0 ]] || fail 'usage: check-nas-passthrough.sh [validate <running|stopped> <driver> <pool-list>]'
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus SSHPASS
-SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_host" account root)
+SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_identity" account root)
 [[ -n $SSHPASS ]] || fail 'missing PVE credential in desktop keyring'
-pve() { sshpass -e ssh -o ConnectTimeout=10 "root@$pve_host" "$@"; }
+pve() { sshpass -e ssh -o StrictHostKeyChecking=yes -o HostKeyAlias="$pve_identity" -o UpdateHostKeys=no -o ConnectTimeout=10 "root@$pve_host" "$@"; }
 
 bash "$repo_root/host/pve/manage-nas-pci-mapping.sh" check
 vm_status=$(pve 'qm status 200' | awk '$1 == "status:" {print $2}')

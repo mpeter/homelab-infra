@@ -7,7 +7,8 @@ mode=${1:-}
   exit 2
 }
 
-pve_host=192.168.0.188
+pve_host=10.72.10.10
+pve_identity=192.168.0.188
 node=pve
 mapping_id=nas-hba
 device_path=0000:02:00.0
@@ -18,9 +19,9 @@ description='LSI SAS2308 for TrueNAS VM 200'
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
 
 export DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus SSHPASS
-SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_host" account root)
+SSHPASS=$(secret-tool lookup homelab-pve-host "$pve_identity" account root)
 [[ -n $SSHPASS ]] || { echo 'missing PVE credential in desktop keyring' >&2; exit 1; }
-pve() { sshpass -e ssh -o ConnectTimeout=10 "root@$pve_host" "$*"; }
+pve() { sshpass -e ssh -o StrictHostKeyChecking=yes -o HostKeyAlias="$pve_identity" -o UpdateHostKeys=no -o ConnectTimeout=10 "root@$pve_host" "$*"; }
 fail() { printf 'NAS PCI mapping %s: %s\n' "$mode" "$*" >&2; exit 1; }
 
 if [[ $mode != rollback ]]; then
